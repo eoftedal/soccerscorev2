@@ -1,23 +1,41 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Period, type TeamData } from "../types";
 import UpDown from "./UpDown.vue";
 import { getTotal, swapSides } from "../match";
+import { setActive, setInactive } from "./buttonUtil";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 
 const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
-const { matches } = useMatchStore();
-const match = computed(() => {
-  return matches.find((m) => m.id == id);
-});
+const { matches, saveMatch } = useMatchStore();
+const match = matches.find((m) => m.id == id);
+
 const state = reactive({
   holdStart: undefined as undefined | number,
   time: Date.now() as number,
+  saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
 });
+
+if (match) {
+  console.log("I shall watch");
+  watch(
+    () => match,
+    (m) => {
+      if (!state.saveTimeout) {
+        state.saveTimeout = setTimeout(() => {
+          saveMatch(m);
+          state.saveTimeout = undefined;
+        }, 2000);
+      }
+      saveMatch(m);
+    },
+    { deep: true },
+  );
+}
 
 setInterval(() => {
   if (!openPeriod.value) return;
@@ -25,9 +43,9 @@ setInterval(() => {
 }, 500);
 
 function newPeriod() {
-  if (!match.value) return;
+  if (!match) return;
   if (!confirm("Start new period?")) return;
-  match.value.periods.push({
+  match.periods.push({
     start: new Date().getTime(),
     stop: undefined,
     home: {
@@ -53,14 +71,14 @@ function newPeriod() {
   });
 }
 function endMatch() {
-  if (!match.value || !confirm("Are you sure you want to end the match?")) return;
-  match.value.state = "finished";
-  router.replace({ name: "view", params: { id: match.value.id } });
+  if (!match || !confirm("Are you sure you want to end the match?")) return;
+  match.state = "finished";
+  router.replace({ name: "view", params: { id: match.id } });
 }
 
 const openPeriod = computed(() => {
-  if (!match.value) return;
-  return match.value.periods.find((p) => !p.stop);
+  if (!match) return;
+  return match.periods.find((p) => !p.stop);
 });
 function addTouch(period: Period, team: "home" | "away") {
   const t = Date.now();
@@ -118,7 +136,7 @@ function confirmEnd() {
 
 <template>
   <div v-if="match" class="match">
-    <header>
+    <header :class="{ pending: state.saveTimeout != undefined }">
       <h1>{{ match.homeTeam }}</h1>
       <h1>
         <span class="time" v-if="openPeriod">{{ periodTime }}</span>
@@ -278,22 +296,40 @@ function confirmEnd() {
           First touch
           <span>{{ openPeriod.home.touches.length }}</span>
         </button>
-        <button class="minus" @click="openPeriod.home.touches.pop()">-</button>
+        <button
+          class="minus"
+          @touchstart.prevent="setActive($event)"
+          @touchend.prevent="
+            setInactive($event);
+            openPeriod.home.touches.pop();
+          "
+        >
+          -
+        </button>
       </div>
       <div></div>
       <div class="big button">
         <button
           class="plus"
-          @touchstart.prevent="state.holdStart = Date.now()"
-          @touchend.prevent="addTouch(openPeriod, 'away')"
+          @touchstart.prevent="
+            state.holdStart = Date.now();
+            setActive($event);
+          "
+          @touchend.prevent="
+            addTouch(openPeriod, 'away');
+            setInactive($event);
+          "
         >
           First touch
           <span>{{ openPeriod.away.touches.length }}</span>
         </button>
         <button
           class="minus"
-          @touchstart.prevent=""
-          @touchend.prevent="openPeriod.away.touches.pop()"
+          @touchstart.prevent="setActive($event)"
+          @touchend.prevent="
+            openPeriod.away.touches.pop();
+            setInactive($event);
+          "
         >
           -
         </button>
@@ -305,6 +341,10 @@ function confirmEnd() {
 .match header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
+  border-top: 1px solid #fff;
+}
+.match header.pending {
+  border-color: #44f;
 }
 .match header h1 {
   font-size: 140%;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
+import { setActive, setInactive } from "./buttonUtil";
 
 const emit = defineEmits<{
   (e: "add", time: number, delta: number): void;
@@ -23,11 +24,26 @@ function remove() {
   <div class="button">
     <button
       class="plus"
-      @touchstart.prevent="state.holdStart = Date.now()"
-      @touchend.prevent="add()"
+      @touchstart.prevent="
+        state.holdStart = Date.now();
+        setActive($event);
+      "
+      @touchend.prevent="
+        add();
+        setInactive($event);
+      "
     >
       <slot></slot>
     </button>
-    <button @touchstart.prevent="" @touchend.prevent="remove()" class="minus">-</button>
+    <button
+      @touchstart.prevent="setActive($event)"
+      @touchend.prevent="
+        remove();
+        setInactive($event);
+      "
+      class="minus"
+    >
+      -
+    </button>
   </div>
 </template>

@@ -8,3 +8,9 @@ button {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
 }
+button:active,
+button.active {
+  border-color: #36d;
+  color: #36d;
+  background-color: #fff;
+}

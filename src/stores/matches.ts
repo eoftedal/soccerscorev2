@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { Match, Period } from "@/types";
-
+/*
 function generateDemoMatch2(): Match {
   const start = new Date("2024-06-04T19:00:00").toISOString();
   const m: Match = {
@@ -88,9 +88,32 @@ function generateDemoMatch(): Match {
   console.log(m);
   return m;
 }
-
+*/
 export const useMatchStore = defineStore("match", () => {
-  const matches = ref([generateDemoMatch(), generateDemoMatch2()] as Match[]);
+  const matchIndex = ref([] as string[]);
+  const loadedIndex = JSON.parse(window.localStorage.getItem("matchIndex") ?? "[]") as string[];
+  loadedIndex.forEach((id) => {
+    matchIndex.value.push(id);
+  });
+  const matches = ref([
+    /*generateDemoMatch(), generateDemoMatch2()*/
+  ] as Match[]);
+  loadedIndex.forEach((id) => {
+    const data = window.localStorage.getItem("match-" + id);
+    if (data) {
+      const match = JSON.parse(data) as Match;
+      matches.value.push(match);
+    }
+  });
+
+  function saveMatch(match: Match) {
+    if (!matchIndex.value.includes(match.id)) {
+      matchIndex.value.push(match.id);
+      window.localStorage.setItem("matchIndex", JSON.stringify(matchIndex.value));
+    }
+    window.localStorage.setItem("match-" + match.id, JSON.stringify(match));
+  }
+
   function newMatch() {
     matches.value.push({
       id: new Date().getTime().toString(),
@@ -102,9 +125,9 @@ export const useMatchStore = defineStore("match", () => {
       time: new Date().toLocaleTimeString().split(":").slice(0, 2).join(":"),
       location: "Nadderud kunstgress",
       state: "not_started",
-      periodLength: 45,
+      periodLength: 35,
     });
   }
 
-  return { matches, newMatch };
+  return { matches, newMatch, saveMatch };
 });
