@@ -33,8 +33,9 @@ function goalScorers(side: "home" | "away") {
   match.value.periods.forEach((p, i) => {
     p[side].goals.forEach((x) => {
       const goalTime = Math.ceil((x[0] - p.start + i * m.periodLength) / 60000);
-      result[x[1]] = result[x[1]] ?? [];
-      result[x[1]].push(goalTime);
+      const name = x[1] || "Unknown";
+      result[name] = result[name] ?? [];
+      result[name].push(goalTime);
     });
   });
   const all = Object.entries(result);
@@ -57,7 +58,7 @@ console.log(JSON.stringify(match.value).length);
         <span>{{ match.homeTeam }}</span>
         <span>{{ homeGoals.length }}</span>
       </h1>
-      <h1>-</h1>
+      <h1 class="divider">-</h1>
       <h1>
         <span>{{ awayGoals.length }}</span>
         <span>{{ match.awayTeam }}</span>
@@ -96,6 +97,11 @@ main {
   align-items: top;
   grid-template-columns: 1fr auto;
 }
+h1.divider {
+  width: 1em;
+  text-align: center;
+}
+
 .matchview h2 {
   font-size: 90%;
 }

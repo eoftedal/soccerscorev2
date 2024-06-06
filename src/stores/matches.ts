@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { Match, Period } from "@/types";
-/*
+
 function generateDemoMatch2(): Match {
   const start = new Date("2024-06-04T19:00:00").toISOString();
   const m: Match = {
@@ -88,7 +88,7 @@ function generateDemoMatch(): Match {
   console.log(m);
   return m;
 }
-*/
+
 export const useMatchStore = defineStore("match", () => {
   const matchIndex = ref([] as string[]);
   const loadedIndex = JSON.parse(window.localStorage.getItem("matchIndex") ?? "[]") as string[];
