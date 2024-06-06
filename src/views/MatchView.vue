@@ -32,7 +32,7 @@ function goalScorers(side: "home" | "away") {
   const result = {} as Record<string, number[]>;
   match.value.periods.forEach((p, i) => {
     p[side].goals.forEach((x) => {
-      const goalTime = Math.ceil((x[0] - p.start + i * m.periodLength) / 60000);
+      const goalTime = Math.ceil((x[0] - p.start) / 60000) + i * m.periodLength;
       const name = x[1] || "Unknown";
       result[name] = result[name] ?? [];
       result[name].push(goalTime);
