@@ -4,7 +4,7 @@ import { computed, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Period, type TeamData } from "../types";
 import UpDown from "./UpDown.vue";
-import { getTotal } from "../match";
+import { getTotal, swapSides } from "../match";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 
 const router = useRouter();
@@ -131,6 +131,15 @@ function confirmEnd() {
     </header>
     <div class="pause" v-if="match.periods.length == 0 || match.periods.every((x) => x.stop)">
       <div class="form">
+        <label>Home:</label>
+        <input type="text" v-model="match.homeTeam" />
+      </div>
+      <div class="form">
+        <label>Away:</label>
+        <input type="text" v-model="match.awayTeam" />
+        <button @click="swapSides(match)">Swap home/away</button>
+      </div>
+      <div class="form">
         <label>Date:</label>
         <input type="date" v-model="match.date" />
       </div>
@@ -139,12 +148,13 @@ function confirmEnd() {
         <input type="time" v-model="match.time" />
       </div>
       <div class="form">
-        <label>Period duration:</label>
-        <input type="number" v-model="match.periodLength" min="10" max="45" />
-      </div>
-      <div class="form">
         <label>Location:</label>
         <input type="text" v-model="match.location" />
+      </div>
+      <div class="form">
+        <label>Period duration:</label>
+        {{ match.periodLength }}
+        <input type="range" v-model="match.periodLength" min="10" max="45" />
       </div>
       <div class="toolbar">
         <button @click="newPeriod()">Start new period</button>

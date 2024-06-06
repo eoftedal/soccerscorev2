@@ -97,3 +97,14 @@ export function getMatchPassStrings(match: Match): [number[], number[]] {
   });
   return total;
 }
+
+export function swapSides(match: Match) {
+  match.periods.forEach((x) => {
+    const { home, away } = x;
+    x.home = away;
+    x.away = home;
+  });
+  const { homeTeam, awayTeam } = match;
+  match.homeTeam = awayTeam;
+  match.awayTeam = homeTeam;
+}
