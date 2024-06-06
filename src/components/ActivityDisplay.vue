@@ -153,7 +153,7 @@ function firstTwo(data: number[]): [number, number] {
         ]"
       />
       <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
-        <ActivityRow :values="getMatchPassStrings(props.match).map((x) => x[l])" />
+        <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
       </template>
       <ActivityRow
         :values="[
