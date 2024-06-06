@@ -56,11 +56,11 @@ console.log(JSON.stringify(match.value).length);
     <header class="matchview">
       <h1>
         <span>{{ match.homeTeam }}</span>
-        <span>{{ homeGoals.length }}</span>
+        <span class="goals">{{ homeGoals.length }}</span>
       </h1>
       <h1 class="divider">-</h1>
       <h1>
-        <span>{{ awayGoals.length }}</span>
+        <span class="goals">{{ awayGoals.length }}</span>
         <span>{{ match.awayTeam }}</span>
       </h1>
       <h2 class="home">
@@ -97,8 +97,14 @@ main {
   align-items: top;
   grid-template-columns: 1fr auto;
 }
+h1 {
+  font-size: 140%;
+}
+h1 .goals {
+  font-weight: bold;
+}
 h1.divider {
-  width: 1em;
+  width: 0.8em;
   text-align: center;
 }
 
