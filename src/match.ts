@@ -54,12 +54,14 @@ export function getPossession(period: Period): [number, number, number, number] 
     possession[1],
   ];
 }
-export function getMatchPossession(match: Match): [number, number] {
+export function getMatchPossession(match: Match): [number, number, number, number] {
   const periods = match.periods.map(getPossession);
   const total = periods.reduce((acc, x) => [acc[0] + x[2], acc[1] + x[3]], [0, 0]);
   return [
     Math.round((total[0] / (total[0] + total[1])) * 100),
     Math.round((total[1] / (total[0] + total[1])) * 100),
+    total[0],
+    total[1],
   ];
 }
 
