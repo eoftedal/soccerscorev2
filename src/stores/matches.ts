@@ -95,7 +95,11 @@ export const useMatchStore = defineStore("match", () => {
   loadedIndex.forEach((id) => {
     matchIndex.value.push(id);
   });
-  const matches = ref([generateDemoMatch(), generateDemoMatch2()] as Match[]);
+  const matches = ref(
+    (window.location.hostname == "localhost"
+      ? [generateDemoMatch(), generateDemoMatch2()]
+      : []) as Match[],
+  );
   loadedIndex.forEach((id) => {
     const data = window.localStorage.getItem("match-" + id);
     if (data) {
