@@ -42,7 +42,7 @@ function download() {
         });
     }, 500);
   };
-  img.src = "/soccerscorev2/grass.png";
+  img.src = "grass.png";
 }
 const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time);
@@ -156,7 +156,7 @@ download();
         </tr>
       </table>
     </div>
-    <img src="/soccerscorev2/grass.png" />
+    <img src="grass.png" />
   </main>
 </template>
 <style scoped>
@@ -169,7 +169,7 @@ download();
   height: 1280px;
   background: #000;
   padding: 1em;
-  background: url("/soccerscorev2/grass.png");
+  background: url("grass.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
