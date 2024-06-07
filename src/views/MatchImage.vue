@@ -17,6 +17,7 @@ const { getMatch } = useMatchStore();
 const state = reactive({
   match: getMatch(id) as Match,
   data: "",
+  msg: "",
 });
 
 const matchbg = ref(undefined as undefined | HTMLDivElement);
@@ -29,7 +30,10 @@ function download() {
   console.log("Loading image...");
   img.onload = () => {
     document.body.scrollTo(0, 0);
-
+    state.msg = "Image loaded: " + img.src;
+    if (matchbg.value) {
+      matchbg.value.style.backgroundImage = `url(${img.src})`;
+    }
     setTimeout(() => {
       document.body.scrollTo(0, 0);
       const node = document.querySelector("div.match") as HTMLElement;
@@ -43,7 +47,10 @@ function download() {
         .catch(function (error: Error) {
           console.error("oops, something went wrong!", error);
         });
-    }, 500);
+    }, 1000);
+  };
+  img.onerror = () => {
+    state.msg = "Error loading image";
   };
   img.src = "grass.png";
 }
@@ -159,6 +166,7 @@ download();
         </tr>
       </table>
     </div>
+    {{ state.msg }}
   </main>
 </template>
 <style scoped>
