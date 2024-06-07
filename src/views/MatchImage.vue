@@ -162,7 +162,6 @@ download();
         </tr>
       </table>
     </div>
-    <img src="/grass.png" style="visibility: hidden" />
   </main>
 </template>
 <style scoped>
