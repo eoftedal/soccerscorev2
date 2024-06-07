@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
+import { goalScorers } from "@/match";
 
 const route = useRoute();
+const router = useRouter();
 const id = route.params.id;
 const { matches } = useMatchStore();
 const match = computed(() => {
@@ -21,29 +23,13 @@ const awayGoals = computed(() => {
 });
 
 const homeGoalScorers = computed(() => {
-  return goalScorers("home");
+  if (!match.value) return [];
+  return goalScorers(match.value, "home");
 });
 const awayGoalScorers = computed(() => {
-  return goalScorers("away");
+  if (!match.value) return [];
+  return goalScorers(match.value, "away");
 });
-function goalScorers(side: "home" | "away") {
-  const m = match.value;
-  if (!m) return [];
-  const result = {} as Record<string, number[]>;
-  match.value.periods.forEach((p, i) => {
-    p[side].goals.forEach((x) => {
-      const goalTime = Math.ceil((x[0] - p.start) / 60000) + i * m.periodLength;
-      const name = x[1] || "Unknown";
-      result[name] = result[name] ?? [];
-      result[name].push(goalTime);
-    });
-  });
-  const all = Object.entries(result);
-  all.sort((a, b) => {
-    return Math.min(...a[1]) - Math.min(...b[1]);
-  });
-  return all;
-}
 
 const saveBlob = (function () {
   const a = document.createElement("a");
@@ -99,6 +85,7 @@ function download() {
     </div>
   </main>
   <button @click="download()">Download</button>
+  <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
 </template>
 <style scoped>
 main {

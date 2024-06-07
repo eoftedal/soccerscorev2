@@ -108,6 +108,14 @@ export const useMatchStore = defineStore("match", () => {
     }
   });
 
+  function getMatch(id: string): Match | undefined {
+    const data = window.localStorage.getItem("match-" + id);
+    if (data) {
+      return JSON.parse(data) as Match;
+    }
+    return undefined;
+  }
+
   function saveMatch(match: Match) {
     if (!matchIndex.value.includes(match.id)) {
       matchIndex.value.push(match.id);
@@ -131,5 +139,5 @@ export const useMatchStore = defineStore("match", () => {
     });
   }
 
-  return { matches, newMatch, saveMatch };
+  return { matches, newMatch, saveMatch, getMatch };
 });

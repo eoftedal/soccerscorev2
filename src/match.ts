@@ -110,3 +110,22 @@ export function swapSides(match: Match) {
   match.homeTeam = awayTeam;
   match.awayTeam = homeTeam;
 }
+
+export function goalScorers(match: Match, side: "home" | "away") {
+  const m = match;
+  if (!m) return [];
+  const result = {} as Record<string, number[]>;
+  match.periods.forEach((p, i) => {
+    p[side].goals.forEach((x) => {
+      const goalTime = Math.ceil((x[0] - p.start) / 60000) + i * m.periodLength;
+      const name = x[1] || "Unknown";
+      result[name] = result[name] ?? [];
+      result[name].push(goalTime);
+    });
+  });
+  const all = Object.entries(result);
+  all.sort((a, b) => {
+    return Math.min(...a[1]) - Math.min(...b[1]);
+  });
+  return all;
+}
