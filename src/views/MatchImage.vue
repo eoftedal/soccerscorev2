@@ -42,7 +42,7 @@ function download() {
         });
     }, 500);
   };
-  img.src = "grass.png";
+  img.src = "/soccerscorev2/grass.png";
 }
 const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time);
@@ -168,7 +168,7 @@ download();
   height: 1280px;
   background: #000;
   padding: 1em;
-  background: url("/grass.png");
+  background: url("/soccerscorev2/grass.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
