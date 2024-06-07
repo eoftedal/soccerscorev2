@@ -45,7 +45,24 @@ function goalScorers(side: "home" | "away") {
   return all;
 }
 
-console.log(JSON.stringify(match.value).length);
+const saveBlob = (function () {
+  const a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style.display = "none";
+  return function (blob: Blob, fileName: string) {
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+})();
+
+function download() {
+  const data = JSON.stringify(match.value);
+  const file = new Blob([data], { type: "application/json" });
+  saveBlob(file, "data.json");
+}
 </script>
 
 <template>
@@ -81,6 +98,7 @@ console.log(JSON.stringify(match.value).length);
       </div>
     </div>
   </main>
+  <button @click="download()">Download</button>
 </template>
 <style scoped>
 main {
