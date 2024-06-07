@@ -4,9 +4,10 @@ import { computed, reactive, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Period, type TeamData } from "../types";
 import UpDown from "./UpDown.vue";
-import { getTotal, swapSides } from "../match";
+import { getTotal, swapSides, getPossession } from "../match";
 import { setActive, setInactive } from "./buttonUtil";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
+import { msToTimeString } from "../timeUtils";
 
 const router = useRouter();
 const route = useRoute();
@@ -14,10 +15,16 @@ const id = route.params.id;
 const { matches, saveMatch } = useMatchStore();
 const match = matches.find((m) => m.id == id);
 
+const touchTypes = ["touches", "corners", "freekicks", "penalties"] as const;
+const side = ["home", "away"] as const;
+type TouchType = (typeof touchTypes)[number];
+type SideType = (typeof side)[number];
+
 const state = reactive({
   holdStart: undefined as undefined | number,
   time: Date.now() as number,
   saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
+  periodEvents: [] as [number, TouchType, SideType][],
 });
 
 if (match) {
@@ -45,6 +52,7 @@ setInterval(() => {
 function newPeriod() {
   if (!match) return;
   if (!confirm("Start new period?")) return;
+  state.periodEvents = [];
   match.periods.push({
     start: new Date().getTime(),
     stop: undefined,
@@ -80,11 +88,23 @@ const openPeriod = computed(() => {
   if (!match) return;
   return match.periods.find((p) => !p.stop);
 });
-function addTouch(period: Period, team: "home" | "away") {
+function addTouch(period: Period, team: SideType) {
   const t = Date.now();
   period[team].touches.push([t, state.holdStart ? t - state.holdStart : 0]);
   state.holdStart = undefined;
+  state.periodEvents.push([t, "touches", team]);
 }
+function removeTouch(period: Period, team: SideType) {
+  const event = period[team].touches.pop();
+  if (!event) return;
+  const ix = state.periodEvents.findIndex(
+    (x) => x[1] == "touches" && x[2] == team && x[0] == event[0],
+  );
+  if (ix > -1) {
+    state.periodEvents.splice(ix, 1);
+  }
+}
+
 function addEventWithDelta(
   period: Period | undefined,
   team: "home" | "away",
@@ -94,6 +114,7 @@ function addEventWithDelta(
 ) {
   if (!period) return;
   period[team][key].push([time, delta]);
+  state.periodEvents.push([time, key, team]);
 }
 function addEvent(
   period: Period,
@@ -107,7 +128,13 @@ function removeEvent(
   team: "home" | "away",
   key: "corners" | "freekicks" | "penalties" | "redCards" | "shots" | "yellowCards",
 ) {
-  period[team][key].pop();
+  const event = period[team][key].pop();
+  const eventTime = Array.isArray(event) ? event[0] : event;
+  if (!event) return;
+  const ix = state.periodEvents.findIndex((x) => x[1] == key && x[2] == team && x[0] == eventTime);
+  if (ix > -1) {
+    state.periodEvents.splice(ix, 1);
+  }
 }
 
 function addGoal(period: Period, team: "home" | "away") {
@@ -132,6 +159,26 @@ function confirmEnd() {
   if (!confirm("Stop the current period?")) return;
   openPeriod.value.stop = Date.now();
 }
+const homePasses = computed(() => {
+  return state.periodEvents.filter((x, i) => {
+    if (x[1] != "touches" || x[2] != "home") return false;
+    const previous = state.periodEvents[i - 1];
+    if (!previous || previous[2] != "home") return false;
+    return true;
+  }).length;
+});
+const awayPasses = computed(() => {
+  return state.periodEvents.filter((x, i) => {
+    if (x[1] != "touches" || x[2] != "away") return false;
+    const previous = state.periodEvents[i - 1];
+    if (!previous || previous[2] != "away") return false;
+    return true;
+  }).length;
+});
+const possession = computed(() => {
+  if (!openPeriod.value) return [0, 0, 0, 0];
+  return getPossession(openPeriod.value);
+});
 </script>
 
 <template>
@@ -290,18 +337,32 @@ function confirmEnd() {
       <div class="big button">
         <button
           class="plus"
-          @touchstart.prevent="state.holdStart = Date.now()"
-          @touchend.prevent="addTouch(openPeriod, 'home')"
+          @touchstart.prevent="
+            state.holdStart = Date.now();
+            setActive($event);
+          "
+          @touchend.prevent="
+            addTouch(openPeriod, 'home');
+            setInactive($event);
+          "
         >
-          First touch
-          <span>{{ openPeriod.home.touches.length }}</span>
+          <span>First touch</span>
+          <span class="num">{{ openPeriod.home.touches.length }}</span>
+
+          <span>Passes</span>
+          <span class="num">{{ homePasses }}</span>
+
+          <span>Possession </span>
+          <span class="num">{{ possession[0] }}%</span>
+          <span>Poss. time</span>
+          <span class="num">{{ msToTimeString(possession[2]) }}</span>
         </button>
         <button
           class="minus"
           @touchstart.prevent="setActive($event)"
           @touchend.prevent="
             setInactive($event);
-            openPeriod.home.touches.pop();
+            removeTouch(openPeriod, 'home');
           "
         >
           -
@@ -320,14 +381,20 @@ function confirmEnd() {
             setInactive($event);
           "
         >
-          First touch
-          <span>{{ openPeriod.away.touches.length }}</span>
+          <span>First touch</span>
+          <span class="num">{{ openPeriod.away.touches.length }}</span>
+          <span>Passes</span>
+          <span class="num">{{ awayPasses }}</span>
+          <span>Possession</span>
+          <span class="num">{{ possession[1] }}%</span>
+          <span>Poss. time</span>
+          <span class="num">{{ msToTimeString(possession[3]) }}</span>
         </button>
         <button
           class="minus"
           @touchstart.prevent="setActive($event)"
           @touchend.prevent="
-            openPeriod.away.touches.pop();
+            removeTouch(openPeriod, 'away');
             setInactive($event);
           "
         >
@@ -368,6 +435,13 @@ div.big {
 }
 div.big .plus {
   width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+  text-align: left;
+}
+div.big .plus .num {
+  text-align: right;
 }
 button {
   display: flex;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { type Match, type Period } from "../types";
 import ActivityRow from "./ActivityRow.vue";
+import { msToTimeString } from "../timeUtils";
 
 import {
   getAllEventsSorted,
@@ -57,11 +58,6 @@ function chunk(data: number[], chunkSize: number = 2) {
     result.push(data.slice(i, i + chunkSize));
   }
   return result;
-}
-function msToTimeString(ms: number) {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 </script>
 
