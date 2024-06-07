@@ -171,7 +171,7 @@ download();
   height: 1280px;
   background: #000;
   padding: 1em;
-  background: url("../grass.png");
+  background: url("../grass.png"), url("grass.png"), url("/soccerscorev2/grass.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
