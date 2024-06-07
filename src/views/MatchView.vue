@@ -76,16 +76,24 @@ console.log(JSON.stringify(match.value).length);
       </h2>
     </header>
     <div class="activity">
-      <ActivityDisplay :match="match" />
+      <div class="wrapper">
+        <ActivityDisplay :match="match" />
+      </div>
     </div>
   </main>
 </template>
 <style scoped>
 main {
-  margin: 2em;
+  margin: 0.5em;
 }
 .activity {
   margin-top: 2em;
+  width: calc(100%);
+  overflow: auto;
+}
+.wrapper {
+  transform: scale(0.9);
+  transform-origin: 0 0;
 }
 .matchview {
   width: 100%;

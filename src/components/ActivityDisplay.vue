@@ -200,13 +200,6 @@ input[type="range"] {
 }
 .columns {
   display: flex;
-  transform: scale(0.9);
-  transform-origin: 0 0;
-}
-.wrapper {
-  width: calc(100% + 3em);
-  overflow: auto;
-  margin: 0em -1.5em;
 }
 .column svg {
   border-left: 1px dashed #999;
