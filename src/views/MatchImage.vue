@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
@@ -18,6 +18,8 @@ const state = reactive({
   match: getMatch(id) as Match,
   data: "",
 });
+
+const matchbg = ref(undefined as undefined | HTMLDivElement);
 
 document.body.scrollTo(0, 0);
 
@@ -44,6 +46,9 @@ function download() {
     }, 500);
   };
   img.src = "grass.png";
+  if (matchbg.value) {
+    matchbg.value.style.backgroundImage = `url(${img.src})`;
+  }
 }
 const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time);
@@ -80,7 +85,7 @@ download();
       <!--p>{{ state.data.length }}</p-->
       <img :src="state.data" />
     </div>
-    <div class="match" v-if="state.data == ''">
+    <div class="match" ref="matchbg" v-if="state.data == ''">
       <table>
         <tr class="date">
           <td colspan="5"><DateView :time="dt.getTime()" /><br />{{ state.match.location }}</td>
@@ -157,7 +162,7 @@ download();
         </tr>
       </table>
     </div>
-    <img src="/grass.png" />
+    <img src="/grass.png" style="visibility: hidden" />
   </main>
 </template>
 <style scoped>
