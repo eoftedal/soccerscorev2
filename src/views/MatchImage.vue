@@ -46,9 +46,6 @@ function download() {
     }, 500);
   };
   img.src = "grass.png";
-  if (matchbg.value) {
-    matchbg.value.style.backgroundImage = `url(${img.src})`;
-  }
 }
 const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time);
@@ -174,7 +171,7 @@ download();
   height: 1280px;
   background: #000;
   padding: 1em;
-  background: url("grass.png");
+  background: url("../grass.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
