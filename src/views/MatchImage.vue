@@ -27,6 +27,7 @@ function download() {
   console.log("Loading image...");
   img.onload = () => {
     document.body.scrollTo(0, 0);
+
     setTimeout(() => {
       document.body.scrollTo(0, 0);
       const node = document.querySelector("div.match") as HTMLElement;
@@ -156,7 +157,7 @@ download();
         </tr>
       </table>
     </div>
-    <img src="grass.png" />
+    <img src="/grass.png" />
   </main>
 </template>
 <style scoped>
