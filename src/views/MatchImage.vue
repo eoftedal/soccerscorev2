@@ -141,9 +141,9 @@ download();
           <td>{{ passStrings[1][1] }}</td>
         </tr>
         <tr class="stat">
-          <td>{{ possession[0] }}%</td>
+          <td>{{ possession[0].toFixed(1) }}%</td>
           <td colspan="3">Possession</td>
-          <td>{{ possession[1] }}%</td>
+          <td>{{ possession[1].toFixed(1) }}%</td>
         </tr>
         <tr class="stat">
           <td>{{ msToTimeString(possession[2]) }}</td>

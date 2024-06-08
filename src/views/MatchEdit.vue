@@ -353,7 +353,7 @@ const possession = computed(() => {
           <span class="num">{{ homePasses }}</span>
 
           <span>Possession </span>
-          <span class="num">{{ possession[0] }}%</span>
+          <span class="num">{{ possession[0].toFixed(1) }}%</span>
           <span>Poss. time</span>
           <span class="num">{{ msToTimeString(possession[2]) }}</span>
         </button>
@@ -386,7 +386,7 @@ const possession = computed(() => {
           <span>Passes</span>
           <span class="num">{{ awayPasses }}</span>
           <span>Possession</span>
-          <span class="num">{{ possession[1] }}%</span>
+          <span class="num">{{ possession[1].toFixed(1) }}%</span>
           <span>Poss. time</span>
           <span class="num">{{ msToTimeString(possession[3]) }}</span>
         </button>

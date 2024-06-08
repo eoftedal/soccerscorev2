@@ -119,7 +119,11 @@ function chunk(data: number[], chunkSize: number = 2) {
         <ActivityRow :values="[p[3].home.corners.length, p[3].away.corners.length]" />
         <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
         <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
-        <ActivityRow :values="firstTwo(getPossession(p[3]))" :percentage="true" />
+        <ActivityRow
+          :values="firstTwo(getPossession(p[3]))"
+          :percentage="true"
+          :formatter="(n) => n.toFixed(1)"
+        />
         <ActivityRow
           :values="firstTwo(chunk(getPossession(p[3]))[1])"
           :formatter="msToTimeString"
@@ -159,7 +163,11 @@ function chunk(data: number[], chunkSize: number = 2) {
             getTotal(props.match, 'away', 'penalties'),
           ]"
         />
-        <ActivityRow :values="firstTwo(getMatchPossession(props.match))" :percentage="true" />
+        <ActivityRow
+          :values="firstTwo(getMatchPossession(props.match))"
+          :percentage="true"
+          :formatter="(n) => n.toFixed(1)"
+        />
         <ActivityRow
           :values="firstTwo(chunk(getMatchPossession(props.match))[1])"
           :formatter="msToTimeString"
