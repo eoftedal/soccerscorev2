@@ -55,7 +55,7 @@ function download() {
   img.src = "grass.png";
 }
 const dt = computed(() => {
-  return new Date(state.match.date + "T" + state.match.time);
+  return new Date(state.match.date + "T" + state.match.time + ":00.000Z");
 });
 
 const homeGoalScorers = computed(() => {
