@@ -179,6 +179,20 @@ const possession = computed(() => {
   if (!openPeriod.value) return [0, 0, 0, 0];
   return getPossession(openPeriod.value);
 });
+
+function getAllTouches(period: Period): [number, number] {
+  return [
+    period.home.touches.length + period.home.corners.length + period.home.freekicks.length,
+    period.away.touches.length + period.away.corners.length + period.away.freekicks.length,
+  ];
+}
+function getPassAcc(period: Period): [number, number] {
+  const allTouches = getAllTouches(period);
+  return [
+    allTouches[0] == 0 ? 0 : (homePasses.value / allTouches[0]) * 100,
+    allTouches[1] == 0 ? 0 : (awayPasses.value / allTouches[1]) * 100,
+  ];
+}
 </script>
 
 <template>
@@ -351,7 +365,8 @@ const possession = computed(() => {
 
           <span>Passes</span>
           <span class="num">{{ homePasses }}</span>
-
+          <span>Pass acc</span>
+          <span class="num">{{ getPassAcc(openPeriod)[0].toFixed(1) }}%</span>
           <span>Possession </span>
           <span class="num">{{ possession[0].toFixed(1) }}%</span>
           <span>Poss. time</span>
@@ -385,6 +400,8 @@ const possession = computed(() => {
           <span class="num">{{ openPeriod.away.touches.length }}</span>
           <span>Passes</span>
           <span class="num">{{ awayPasses }}</span>
+          <span>Pass acc</span>
+          <span class="num">{{ getPassAcc(openPeriod)[1].toFixed(1) }}%</span>
           <span>Possession</span>
           <span class="num">{{ possession[1].toFixed(1) }}%</span>
           <span>Poss. time</span>

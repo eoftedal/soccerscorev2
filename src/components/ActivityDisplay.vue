@@ -59,6 +59,26 @@ function chunk(data: number[], chunkSize: number = 2) {
   }
   return result;
 }
+
+function getAllTouches(period: Period): [number, number] {
+  return [
+    period.home.touches.length + period.home.corners.length + period.home.freekicks.length,
+    period.away.touches.length + period.away.corners.length + period.away.freekicks.length,
+  ];
+}
+function getPassAcc(period: Period): [number, number] {
+  const allTouches = getAllTouches(period);
+  const allPasses = getPassStrings(period);
+  return [(allPasses[0][1] / allTouches[0]) * 100, (allPasses[1][1] / allTouches[1]) * 100];
+}
+
+function getMatchPassAcc(match: Match): [number, number] {
+  const allTouches = match.periods
+    .map((p) => getAllTouches(p))
+    .reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
+  const allPasses = getMatchPassStrings(match);
+  return [(allPasses[0][1] / allTouches[0]) * 100, (allPasses[1][1] / allTouches[1]) * 100];
+}
 </script>
 
 <template>
@@ -75,6 +95,7 @@ function chunk(data: number[], chunkSize: number = 2) {
         <div class="row">Possession</div>
         <div class="row">Poss.time</div>
         <div class="row">Touches</div>
+        <div class="row">Pass %</div>
         <div class="row">Passes</div>
         <div class="row">Pass strings</div>
         <div class="row">Long strings</div>
@@ -129,6 +150,7 @@ function chunk(data: number[], chunkSize: number = 2) {
           :formatter="msToTimeString"
         />
         <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
+        <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
         <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
           <ActivityRow :values="firstTwo(getPassStrings(p[3]).map((x) => x[l]))" />
         </template>
@@ -177,6 +199,11 @@ function chunk(data: number[], chunkSize: number = 2) {
             getTotal(props.match, 'home', 'touches'),
             getTotal(props.match, 'away', 'touches'),
           ]"
+        />
+        <ActivityRow
+          :values="getMatchPassAcc(props.match)"
+          percentage
+          :formatter="(n) => n.toFixed(1)"
         />
         <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
           <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />

@@ -47,6 +47,7 @@ export function getPossession(period: Period): [number, number, number, number] 
     previousT = x[0];
   });
   const total = possession[0] + possession[1];
+  if (total == 0) return [0, 0, 0, 0];
   return [
     (possession[0] / total) * 100,
     (possession[1] / total) * 100,

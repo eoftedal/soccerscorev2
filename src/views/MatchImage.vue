@@ -77,6 +77,19 @@ const possession = computed(() => {
   return getMatchPossession(state.match);
 });
 
+const allTouchesHomeCount = computed(() => {
+  if (!state.match) return 1;
+  return state.match.periods
+    .map((x) => x.home.touches.length + x.home.corners.length + x.home.freekicks.length)
+    .reduce((a, b) => a + b, 0);
+});
+const allTouchesAwayCount = computed(() => {
+  if (!state.match) return 1;
+  return state.match.periods
+    .map((x) => x.away.touches.length + x.away.corners.length + x.away.freekicks.length)
+    .reduce((a, b) => a + b, 0);
+});
+
 download();
 </script>
 <template>
@@ -139,6 +152,11 @@ download();
           <td>{{ passStrings[0][1] }}</td>
           <td colspan="3">Pasninger</td>
           <td>{{ passStrings[1][1] }}</td>
+        </tr>
+        <tr class="stat">
+          <td>{{ (passStrings[0][1] / allTouchesHomeCount).toFixed(1) }}%</td>
+          <td colspan="3">Pass %</td>
+          <td>{{ (passStrings[1][1] / allTouchesAwayCount).toFixed(1) }}%</td>
         </tr>
         <tr class="stat">
           <td>{{ possession[0].toFixed(1) }}%</td>
