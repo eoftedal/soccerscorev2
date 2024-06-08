@@ -10,6 +10,7 @@ import {
   getTotal,
   getMatchPossession,
   getMatchPassStrings,
+  getMatchAveragePassStrings,
 } from "../match";
 import { computed, ref } from "vue";
 
@@ -99,6 +100,7 @@ function getMatchPassAcc(match: Match): [number, number] {
         <div class="row">Passes</div>
         <div class="row">Pass strings</div>
         <div class="row">Long strings</div>
+        <div class="row">Avg string</div>
         <div class="row">Yellow cards</div>
         <div class="row">Red cards</div>
       </div>
@@ -152,8 +154,20 @@ function getMatchPassAcc(match: Match): [number, number] {
         <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
         <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
         <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
-          <ActivityRow :values="firstTwo(getPassStrings(p[3]).map((x) => x[l]))" />
+          <ActivityRow
+            :values="
+              firstTwo(
+                getPassStrings(p[3])
+                  .slice(0, 2)
+                  .map((x) => (x as number[])[l]),
+              )
+            "
+          />
         </template>
+        <ActivityRow
+          :values="getPassStrings(p[3]).slice(2, 4) as [number, number]"
+          :formatter="(n) => n.toFixed(1)"
+        />
         <ActivityRow :values="[p[3].home.yellowCards.length, p[3].away.yellowCards.length]" />
         <ActivityRow :values="[p[3].home.redCards.length, p[3].away.redCards.length]" />
       </div>
@@ -208,6 +222,10 @@ function getMatchPassAcc(match: Match): [number, number] {
         <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
           <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
         </template>
+        <ActivityRow
+          :values="getMatchAveragePassStrings(props.match)"
+          :formatter="(n) => n.toFixed(1)"
+        />
         <ActivityRow
           :values="[
             getTotal(props.match, 'home', 'yellowCards'),

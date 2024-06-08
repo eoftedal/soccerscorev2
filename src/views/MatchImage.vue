@@ -149,14 +149,14 @@ download();
           <td>{{ getTotal(state.match, "away", "penalties") }}</td>
         </tr>
         <tr class="stat">
+          <td>{{ ((passStrings[0][1] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
+          <td colspan="3">Pass.sikk.</td>
+          <td>{{ ((passStrings[1][1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
+        </tr>
+        <tr class="stat">
           <td>{{ passStrings[0][1] }}</td>
           <td colspan="3">Pasninger</td>
           <td>{{ passStrings[1][1] }}</td>
-        </tr>
-        <tr class="stat">
-          <td>{{ (passStrings[0][1] / allTouchesHomeCount).toFixed(1) }}%</td>
-          <td colspan="3">Pass %</td>
-          <td>{{ (passStrings[1][1] / allTouchesAwayCount).toFixed(1) }}%</td>
         </tr>
         <tr class="stat">
           <td>{{ possession[0].toFixed(1) }}%</td>
@@ -267,7 +267,7 @@ tr.stat {
   font-weight: bold;
 }
 tr.scorers {
-  font-size: 60%;
+  font-size: 70%;
 }
 tr.scorers td {
   padding-bottom: 2em;

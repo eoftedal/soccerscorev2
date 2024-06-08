@@ -70,21 +70,60 @@ export function getTotal(match: Match, team: "home" | "away", stat: keyof TeamDa
   return match.periods.reduce((acc, x) => acc + x[team][stat].length, 0);
 }
 
-export function getPassStrings(period: Period): [number[], number[]] {
+export function getPassStrings(
+  period: Period,
+): [number[], number[], number, number, [number, number], [number, number]] {
   const allEvents = getAllEventsSorted(period);
   let count = 0;
   let previous = "";
   const result = [[], []] as [number[], number[]];
+  const strings: { H: [number, number]; A: [number, number] } = {
+    H: [0, 0],
+    A: [0, 0],
+  };
   allEvents.forEach((x) => {
     if (previous == x[0] && x[2] == EventType.Touch) {
       count++;
       result[x[0] == "H" ? 0 : 1][count] = (result[x[0] == "H" ? 0 : 1][count] ?? 0) + 1;
     } else {
+      if (count > 0) {
+        strings[x[0]][0] += count;
+        strings[x[0]][1]++;
+      }
       count = 0;
     }
     previous = x[0];
   });
-  return result;
+  return [
+    result[0],
+    result[1],
+    strings.H[1] == 0 ? 0 : strings.H[0] / strings.H[1],
+    strings.A[1] == 0 ? 0 : strings.A[0] / strings.A[1],
+    strings.H,
+    strings.A,
+  ];
+}
+
+export function getMatchAveragePassStrings(match: Match): [number, number] {
+  const data = match.periods
+    .map((p) => getPassStrings(p))
+    .map((x) => [x[4], x[5]])
+    .reduce(
+      (a, b) => {
+        return [
+          [a[0][0] + b[0][0], a[0][1] + b[0][1]],
+          [a[1][0] + b[1][0], a[1][1] + b[1][1]],
+        ];
+      },
+      [
+        [0, 0],
+        [0, 0],
+      ],
+    );
+  return [
+    data[0][1] == 0 ? 0 : data[0][0] / data[0][1],
+    data[1][1] == 0 ? 0 : data[1][0] / data[1][1],
+  ];
 }
 
 export function getMatchPassStrings(match: Match): [number[], number[]] {
