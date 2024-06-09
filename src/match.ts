@@ -169,3 +169,13 @@ export function goalScorers(match: Match, side: "home" | "away") {
   });
   return all;
 }
+
+export function getShots(period: Period): [number, number] {
+  return [
+    period.home.shots.length + period.home.goals.length + period.home.penalties.length,
+    period.away.shots.length + period.away.goals.length + period.away.penalties.length,
+  ];
+}
+export function getMatchShots(match: Match) {
+  return match.periods.map(getShots).reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
+}

@@ -5,7 +5,13 @@ import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { type Match } from "@/types";
-import { getMatchPassStrings, getMatchPossession, getTotal, goalScorers } from "@/match";
+import {
+  getMatchPassStrings,
+  getMatchPossession,
+  getMatchShots,
+  getTotal,
+  goalScorers,
+} from "@/match";
 import { msToTimeString } from "@/timeUtils";
 
 const route = useRoute();
@@ -128,9 +134,9 @@ download();
           </td>
         </tr>
         <tr class="stat">
-          <td>{{ getTotal(state.match, "home", "shots") }}</td>
+          <td>{{ getMatchShots(state.match)[0] }}</td>
           <td colspan="3">Skudd</td>
-          <td>{{ getTotal(state.match, "away", "shots") }}</td>
+          <td>{{ getMatchShots(state.match)[1] }}</td>
         </tr>
 
         <tr class="stat">

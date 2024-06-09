@@ -11,6 +11,8 @@ import {
   getMatchPossession,
   getMatchPassStrings,
   getMatchAveragePassStrings,
+  getShots,
+  getMatchShots,
 } from "../match";
 import { computed, ref } from "vue";
 
@@ -90,6 +92,7 @@ function getMatchPassAcc(match: Match): [number, number] {
         <svg height="100" width="100"></svg>
         <div class="row">Goals</div>
         <div class="row">Shots</div>
+        <div class="row">Shots %</div>
         <div class="row">Corners</div>
         <div class="row">Free kicks</div>
         <div class="row">Penalties</div>
@@ -138,7 +141,15 @@ function getMatchPassAcc(match: Match): [number, number] {
           </text>
         </svg>
         <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
-        <ActivityRow :values="[p[3].home.shots.length, p[3].away.shots.length]" />
+        <ActivityRow :values="getShots(p[3])" />
+        <ActivityRow
+          :values="[
+            (p[3].home.goals.length / getShots(p[3])[0]) * 100,
+            (p[3].away.goals.length / getShots(p[3])[1]) * 100,
+          ]"
+          :formatter="(n) => n.toFixed(1)"
+          :percentage="true"
+        />
         <ActivityRow :values="[p[3].home.corners.length, p[3].away.corners.length]" />
         <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
         <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
@@ -178,8 +189,14 @@ function getMatchPassAcc(match: Match): [number, number] {
         <ActivityRow
           :values="[getTotal(props.match, 'home', 'goals'), getTotal(props.match, 'away', 'goals')]"
         />
+        <ActivityRow :values="getMatchShots(props.match)" />
         <ActivityRow
-          :values="[getTotal(props.match, 'home', 'shots'), getTotal(props.match, 'away', 'shots')]"
+          :values="[
+            (getTotal(props.match, 'home', 'goals') / getMatchShots(props.match)[0]) * 100,
+            (getTotal(props.match, 'away', 'goals') / getMatchShots(props.match)[1]) * 100,
+          ]"
+          :formatter="(n) => n.toFixed(1)"
+          percentage
         />
         <ActivityRow
           :values="[
