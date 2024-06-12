@@ -476,7 +476,7 @@ button {
   justify-content: space-between;
 }
 .button button.plus {
-  min-width: 25vw;
+  min-width: 27vw;
 }
 .button:nth-child(3n) {
   flex-direction: row-reverse;
