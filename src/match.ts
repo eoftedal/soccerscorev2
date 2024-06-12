@@ -37,10 +37,11 @@ export function getPossession(period: Period): [number, number, number, number] 
   let previousT = "";
   allEvents.forEach((x) => {
     if (previous != -1 && previousT != "") {
+      const delay = x[1][1] > 400 ? x[1][1] : 0;
       if (previousT == "H") {
-        possession[0] += x[1][0] - x[1][1] - previous;
+        possession[0] += x[1][0] - delay - previous;
       } else if (previousT == "A") {
-        possession[1] += x[1][0] - x[1][1] - previous;
+        possession[1] += x[1][0] - delay - previous;
       }
     }
     previous = x[1][0];
