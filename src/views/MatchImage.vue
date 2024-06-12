@@ -5,6 +5,7 @@ import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { type Match } from "@/types";
+import GrassImage from "../assets/grass.png";
 import {
   getMatchPassStrings,
   getMatchPossession,
@@ -58,7 +59,7 @@ function download() {
   img.onerror = () => {
     state.msg = "Error loading image";
   };
-  img.src = "grass.png";
+  img.src = GrassImage;
 }
 const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time + ":00.000Z");
@@ -203,7 +204,7 @@ download();
   height: 1280px;
   background: #000;
   padding: 1em;
-  background-image: url("../grass.png"), url("grass.png"), url("/soccerscorev2/grass.png");
+  background-image: url("assets/grass.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;

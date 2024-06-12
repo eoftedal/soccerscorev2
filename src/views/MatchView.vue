@@ -84,8 +84,10 @@ function download() {
       </div>
     </div>
   </main>
-  <button @click="download()">Download</button>
-  <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
+  <div class="buttons">
+    <button @click="download()">Download</button>
+    <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
+  </div>
 </template>
 <style scoped>
 main {
@@ -131,5 +133,10 @@ h3 {
   font-size: 100%;
   text-align: center;
   width: 100%;
+}
+.buttons {
+  margin-bottom: 2em;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
