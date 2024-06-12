@@ -20,10 +20,12 @@ const second = computed(() => {
 </script>
 <template>
   <div class="row">
-    <span :class="{ positive: values[0] > values[1], negative: values[1] > values[0] }"
+    <span
+      :class="{ positive: values[0] > (values[1] ?? 0), negative: values[1] > (values[0] ?? 0) }"
       >{{ first }}{{ props.percentage ? "%" : "" }}</span
     >
-    <span :class="{ positive: values[1] > values[0], negative: values[0] > values[1] }"
+    <span
+      :class="{ positive: values[1] > (values[0] ?? 0), negative: values[0] > (values[1] ?? 0) }"
       >{{ second }}{{ props.percentage ? "%" : "" }}</span
     >
   </div>
