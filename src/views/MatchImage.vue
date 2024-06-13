@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
@@ -25,11 +25,22 @@ const state = reactive({
   match: getMatch(id) as Match,
   data: "",
   msg: "",
+  hidePossession: false,
+  hidePasses: false,
 });
 
 const matchbg = ref(undefined as undefined | HTMLDivElement);
 
 document.body.scrollTo(0, 0);
+
+watch(
+  () => state.hidePasses,
+  () => download(),
+);
+watch(
+  () => state.hidePossession,
+  () => download(),
+);
 
 function download() {
   state.data = "";
@@ -54,7 +65,7 @@ function download() {
         .catch(function (error: Error) {
           console.error("oops, something went wrong!", error);
         });
-    }, 1000);
+    }, 2000);
   };
   img.onerror = () => {
     state.msg = "Error loading image";
@@ -101,6 +112,13 @@ download();
 </script>
 <template>
   <main>
+    <button @click="state.hidePossession = !state.hidePossession">
+      {{ state.hidePossession ? "Show possession" : "Hide possession" }}
+    </button>
+    <button @click="state.hidePasses = !state.hidePasses">
+      {{ state.hidePasses ? "Show passes" : "Hide passes" }}
+    </button>
+
     <div v-if="state.data == ''" class="loader">Forbereder... Vennligst vent</div>
     <div v-if="state.data != ''">
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
@@ -155,22 +173,22 @@ download();
           <td colspan="3">Straffe</td>
           <td>{{ getTotal(state.match, "away", "penalties") }}</td>
         </tr>
-        <tr class="stat">
+        <tr class="stat" v-if="!state.hidePasses">
           <td>{{ ((passStrings[0][1] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
           <td colspan="3">Pass.sikk.</td>
           <td>{{ ((passStrings[1][1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
         </tr>
-        <tr class="stat">
+        <tr class="stat" v-if="!state.hidePasses">
           <td>{{ passStrings[0][1] }}</td>
           <td colspan="3">Pasninger</td>
           <td>{{ passStrings[1][1] }}</td>
         </tr>
-        <tr class="stat">
+        <tr class="stat" v-if="!state.hidePossession">
           <td>{{ possession[0].toFixed(1) }}%</td>
           <td colspan="3">Possession</td>
           <td>{{ possession[1].toFixed(1) }}%</td>
         </tr>
-        <tr class="stat">
+        <tr class="stat" v-if="!state.hidePossession">
           <td>{{ msToTimeString(possession[2]) }}</td>
           <td colspan="3">Poss. tid</td>
           <td>{{ msToTimeString(possession[3]) }}</td>
@@ -204,7 +222,6 @@ download();
   height: 1280px;
   background: #000;
   padding: 1em;
-  background-image: url("assets/grass.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
