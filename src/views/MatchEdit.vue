@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed, reactive, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Period, type TeamData } from "../types";
 import UpDown from "./UpDown.vue";
@@ -8,6 +8,7 @@ import { getTotal, swapSides, getPossession } from "../match";
 import { setActive, setInactive } from "./buttonUtil";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { msToTimeString } from "../timeUtils";
+import ModalDialog from "../components/ModalDialog.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -25,6 +26,11 @@ const state = reactive({
   time: Date.now() as number,
   saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
   periodEvents: [] as [number, TouchType, SideType][],
+  promptDialog: {
+    title: "",
+    data: "",
+    onOk: undefined as undefined | (() => void),
+  },
 });
 
 if (match) {
@@ -193,6 +199,36 @@ function getPassAcc(period: Period): [number, number] {
     allTouches[1] == 0 ? 0 : (awayPasses.value / allTouches[1]) * 100,
   ];
 }
+
+const goalEvents = computed(() => {
+  if (!openPeriod.value) return [];
+  const events = openPeriod.value.home.goals
+    .map((x) => [x, "home"] as [[number, string], "home" | "away"])
+    .concat(openPeriod.value.away.goals.map((x) => [x, "away"]));
+  return events.sort((a, b) => a[0][0] - b[0][0]);
+});
+
+function changeName(e: [number, string]) {
+  const name = prompt("Scorer", e[1]);
+  if (name == null || name == undefined) return;
+  e[1] = name;
+  /*state.promptDialog.title = "Scorer";
+  state.promptDialog.data = e[1];
+  state.promptDialog.onOk = () => {
+    e[1] = state.promptDialog.data;
+  };
+  modal.value?.open();*/
+}
+function swapGoalSide(e: [number, string], side: "home" | "away") {
+  const team: "homeTeam" | "awayTeam" = side == "home" ? "awayTeam" : "homeTeam";
+  if (!confirm("Move goal to " + match?.[team] + " ?")) return;
+  const ix = openPeriod.value?.[side].goals.indexOf(e);
+  if (ix == undefined || ix == -1) return;
+  openPeriod.value?.[side].goals.splice(ix, 1);
+  openPeriod.value?.[side == "home" ? "away" : "home"].goals.push(e);
+}
+
+const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
 
 <template>
@@ -208,6 +244,7 @@ function getPassAcc(period: Period): [number, number] {
       </h1>
       <h1>{{ match.awayTeam }}</h1>
     </header>
+
     <div class="pause" v-if="match.periods.length == 0 || match.periods.every((x) => x.stop)">
       <div class="form">
         <label>Home:</label>
@@ -241,6 +278,7 @@ function getPassAcc(period: Period): [number, number] {
       </div>
       <ActivityDisplay :match="match" v-if="match.periods.length > 0" />
     </div>
+
     <div class="grid" v-if="openPeriod">
       <UpDown
         @add="addEvent(openPeriod, 'home', 'redCards')"
@@ -419,9 +457,42 @@ function getPassAcc(period: Period): [number, number] {
         </button>
       </div>
     </div>
+    <div class="goalEvents" v-if="openPeriod">
+      <h2>Goals:</h2>
+      <div v-for="(e, i) of goalEvents" v-bind:key="i" :class="e[1]">
+        <span @click="changeName(e[0])"
+          ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
+          {{ e[0][1] }}</span
+        >
+        <button @click.prevent="swapGoalSide(e[0], e[1])">Switch team</button>
+      </div>
+    </div>
   </div>
+  <ModalDialog
+    v-if="match"
+    ref="modal"
+    @ok="state.promptDialog.onOk ? state.promptDialog.onOk() : undefined"
+  >
+    {{ state.promptDialog.title }}
+    <input type="text" v-model="state.promptDialog.data" />
+  </ModalDialog>
 </template>
 <style>
+.goalEvents h2 {
+  text-align: center;
+  font-size: 100%;
+  border-bottom: 1px solid #ddd;
+}
+.goalEvents {
+  padding: 0.5em;
+}
+.goalEvents div {
+  display: flex;
+  justify-content: space-between;
+}
+.goalEvents div.away {
+  flex-direction: row-reverse;
+}
 .match header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
