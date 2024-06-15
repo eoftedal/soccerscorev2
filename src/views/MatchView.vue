@@ -99,7 +99,7 @@ main {
   overflow: auto;
 }
 .wrapper {
-  transform: scale(0.8);
+  transform: scale(0.9);
   transform-origin: 0 0;
 }
 .matchview {
