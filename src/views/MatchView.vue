@@ -86,6 +86,7 @@ function download() {
   </main>
   <div class="buttons">
     <button @click="download()">Download</button>
+    <button @click="router.push({ name: 'edit', params: { id } })">Edit</button>
     <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
   </div>
 </template>

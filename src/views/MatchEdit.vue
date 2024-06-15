@@ -203,8 +203,22 @@ function getPassAcc(period: Period): [number, number] {
 const goalEvents = computed(() => {
   if (!openPeriod.value) return [];
   const events = openPeriod.value.home.goals
-    .map((x) => [x, "home"] as [[number, string], "home" | "away"])
-    .concat(openPeriod.value.away.goals.map((x) => [x, "away"]));
+    .map((x) => [x, "home", openPeriod.value] as [[number, string], "home" | "away", Period])
+    .concat(
+      openPeriod.value.away.goals.map(
+        (x) => [x, "away", openPeriod.value] as [[number, string], "home" | "away", Period],
+      ),
+    );
+  return events.sort((a, b) => a[0][0] - b[0][0]);
+});
+
+const goalEventsMatch = computed(() => {
+  if (!match?.periods?.length) return [];
+  const events = match.periods.flatMap((p) =>
+    p.home.goals
+      .map((x) => [x, "home", p] as [[number, string], "home" | "away", Period])
+      .concat(p.away.goals.map((x) => [x, "away", p])),
+  );
   return events.sort((a, b) => a[0][0] - b[0][0]);
 });
 
@@ -219,13 +233,13 @@ function changeName(e: [number, string]) {
   };
   modal.value?.open();*/
 }
-function swapGoalSide(e: [number, string], side: "home" | "away") {
+function swapGoalSide(e: [number, string], side: "home" | "away", period: Period) {
   const team: "homeTeam" | "awayTeam" = side == "home" ? "awayTeam" : "homeTeam";
   if (!confirm("Move goal to " + match?.[team] + " ?")) return;
-  const ix = openPeriod.value?.[side].goals.indexOf(e);
+  const ix = period[side].goals.indexOf(e);
   if (ix == undefined || ix == -1) return;
-  openPeriod.value?.[side].goals.splice(ix, 1);
-  openPeriod.value?.[side == "home" ? "away" : "home"].goals.push(e);
+  period[side].goals.splice(ix, 1);
+  period[side == "home" ? "away" : "home"].goals.push(e);
 }
 
 const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
@@ -277,6 +291,16 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <button @click="endMatch()">End match</button>
       </div>
       <ActivityDisplay :match="match" v-if="match.periods.length > 0" />
+      <div class="goalEvents">
+        <h2>Goals:</h2>
+        <div v-for="(e, i) of goalEventsMatch" v-bind:key="i" :class="e[1]">
+          <span @click="changeName(e[0])"
+            ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
+            {{ e[0][1] }}</span
+          >
+          <button @click.prevent="swapGoalSide(e[0], e[1], e[2])">Switch team</button>
+        </div>
+      </div>
     </div>
 
     <div class="grid" v-if="openPeriod">
@@ -464,7 +488,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
           ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
           {{ e[0][1] }}</span
         >
-        <button @click.prevent="swapGoalSide(e[0], e[1])">Switch team</button>
+        <button @click.prevent="swapGoalSide(e[0], e[1], e[2])">Switch team</button>
       </div>
     </div>
   </div>
