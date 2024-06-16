@@ -13,6 +13,8 @@ import {
   getMatchAveragePassStrings,
   getShots,
   getMatchShots,
+  getMatchShotAccuracy,
+  getShotAccuracy,
 } from "../match";
 import { computed, ref } from "vue";
 
@@ -143,10 +145,7 @@ function getMatchPassAcc(match: Match): [number, number] {
         <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
         <ActivityRow :values="getShots(p[3])" />
         <ActivityRow
-          :values="[
-            getShots(p[3])[0] == 0 ? 0 : (p[3].home.goals.length / getShots(p[3])[0]) * 100,
-            getShots(p[3])[1] == 0 ? 0 : (p[3].away.goals.length / getShots(p[3])[1]) * 100,
-          ]"
+          :values="getShotAccuracy(p[3])"
           :formatter="(n) => n.toFixed(1)"
           :percentage="true"
         />
@@ -191,10 +190,7 @@ function getMatchPassAcc(match: Match): [number, number] {
         />
         <ActivityRow :values="getMatchShots(props.match)" />
         <ActivityRow
-          :values="[
-            (getTotal(props.match, 'home', 'goals') / getMatchShots(props.match)[0]) * 100,
-            (getTotal(props.match, 'away', 'goals') / getMatchShots(props.match)[1]) * 100,
-          ]"
+          :values="getMatchShotAccuracy(props.match)"
           :formatter="(n) => n.toFixed(1)"
           percentage
         />

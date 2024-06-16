@@ -509,6 +509,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
 }
 .goalEvents {
   padding: 0.5em;
+  padding-bottom: 2em;
 }
 .goalEvents div {
   display: flex;

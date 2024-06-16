@@ -177,6 +177,25 @@ export function getShots(period: Period): [number, number] {
     period.away.shots.length + period.away.goals.length + period.away.penalties.length,
   ];
 }
-export function getMatchShots(match: Match) {
+export function getShotAccuracy(period: Period): [number, number] {
+  const shots = getShots(period);
+  const goals = [period.home.goals.length, period.away.goals.length];
+  return [
+    shots[0] == 0 ? 0 : (goals[0] / shots[0]) * 100,
+    shots[1] == 0 ? 0 : (goals[1] / shots[1]) * 100,
+  ];
+}
+
+export function getMatchShots(match: Match): [number, number] {
   return match.periods.map(getShots).reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
+}
+export function getMatchShotAccuracy(match: Match): [number, number] {
+  const shots = getMatchShots(match);
+  const goals = match.periods
+    .map((x) => [x.home.goals.length, x.away.goals.length])
+    .reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
+  return [
+    shots[0] == 0 ? 0 : (goals[0] / shots[0]) * 100,
+    shots[1] == 0 ? 0 : (goals[1] / shots[1]) * 100,
+  ];
 }
