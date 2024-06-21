@@ -49,6 +49,11 @@ function download() {
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
 }
+function formatScoringTime(time: number, period: number, periodDuration: number) {
+  const extraTime = time - (period + 1) * periodDuration;
+  if (extraTime <= 0) return time;
+  return `${periodDuration}+${extraTime}`;
+}
 </script>
 
 <template>
@@ -68,13 +73,19 @@ function download() {
       </h1>
       <h2 class="home">
         <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
-          {{ n }} {{ times.map((x) => x + "'").join(", ") }}
+          {{ n }}
+          {{
+            times.map((x) => formatScoringTime(x[0], x[1], match!.periodLength) + "'").join(", ")
+          }}
         </div>
       </h2>
       <div></div>
       <h2 class="away">
         <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
-          {{ n }} {{ times.map((x) => x + "'").join(", ") }}
+          {{ n }}
+          {{
+            times.map((x) => formatScoringTime(x[0], x[1], match!.periodLength) + "'").join(", ")
+          }}
         </div>
       </h2>
     </header>

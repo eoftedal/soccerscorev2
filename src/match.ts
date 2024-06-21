@@ -155,18 +155,18 @@ export function swapSides(match: Match) {
 export function goalScorers(match: Match, side: "home" | "away") {
   const m = match;
   if (!m) return [];
-  const result = {} as Record<string, number[]>;
+  const result = {} as Record<string, [number, number][]>;
   match.periods.forEach((p, i) => {
     p[side].goals.forEach((x) => {
       const goalTime = Math.ceil((x[0] - p.start) / 60000) + i * m.periodLength;
       const name = x[1] || "Unknown";
       result[name] = result[name] ?? [];
-      result[name].push(goalTime);
+      result[name].push([goalTime, i]);
     });
   });
   const all = Object.entries(result);
   all.sort((a, b) => {
-    return Math.min(...a[1]) - Math.min(...b[1]);
+    return Math.min(...a[1].map((x) => x[0])) - Math.min(...b[1].map((x) => x[0]));
   });
   return all;
 }
@@ -198,4 +198,20 @@ export function getMatchShotAccuracy(match: Match): [number, number] {
     shots[0] == 0 ? 0 : (goals[0] / shots[0]) * 100,
     shots[1] == 0 ? 0 : (goals[1] / shots[1]) * 100,
   ];
+}
+export function getPasses(period: Period): [number, number] {
+  const allEvents = getAllEventsSorted(period);
+  let prev: Side | undefined = undefined;
+  const passes: [number, number] = [0, 0];
+  allEvents.forEach((x) => {
+    if (prev == x[0] && x[2] == EventType.Touch) {
+      passes[x[0] == "H" ? 0 : 1]++;
+    }
+    prev = x[0];
+  });
+  return passes;
+}
+export function getMatchPasses(match: Match): [number, number] {
+  const strings = match.periods.map(getPasses);
+  return [strings.reduce((a, b) => a + b[0], 0), strings.reduce((a, b) => a + b[1], 0)];
 }

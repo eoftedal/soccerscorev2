@@ -15,6 +15,8 @@ import {
   getMatchShots,
   getMatchShotAccuracy,
   getShotAccuracy,
+  getPasses,
+  getMatchPasses,
 } from "../match";
 import { computed, ref } from "vue";
 
@@ -73,16 +75,16 @@ function getAllTouches(period: Period): [number, number] {
 }
 function getPassAcc(period: Period): [number, number] {
   const allTouches = getAllTouches(period);
-  const allPasses = getPassStrings(period);
-  return [(allPasses[0][1] / allTouches[0]) * 100, (allPasses[1][1] / allTouches[1]) * 100];
+  const allPasses = getPasses(period);
+  return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
 }
 
 function getMatchPassAcc(match: Match): [number, number] {
   const allTouches = match.periods
     .map((p) => getAllTouches(p))
     .reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
-  const allPasses = getMatchPassStrings(match);
-  return [(allPasses[0][1] / allTouches[0]) * 100, (allPasses[1][1] / allTouches[1]) * 100];
+  const allPasses = getMatchPasses(match);
+  return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
 }
 </script>
 
@@ -163,7 +165,8 @@ function getMatchPassAcc(match: Match): [number, number] {
         />
         <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
         <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
-        <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
+        <ActivityRow :values="getPasses(p[3])" />
+        <template v-for="(l, j) in [3, 7]" v-bind:key="j">
           <ActivityRow
             :values="
               firstTwo(
@@ -232,7 +235,8 @@ function getMatchPassAcc(match: Match): [number, number] {
           percentage
           :formatter="(n) => n.toFixed(1)"
         />
-        <template v-for="(l, j) in [1, 3, 7]" v-bind:key="j">
+        <ActivityRow :values="getMatchPasses(props.match)" />
+        <template v-for="(l, j) in [3, 7]" v-bind:key="j">
           <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
         </template>
         <ActivityRow

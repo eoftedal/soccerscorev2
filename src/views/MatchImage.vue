@@ -8,6 +8,7 @@ import { type Match } from "@/types";
 import GrassImage from "../assets/grass.png";
 import {
   getMatchPassStrings,
+  getMatchPasses,
   getMatchPossession,
   getMatchShots,
   getTotal,
@@ -108,6 +109,17 @@ const allTouchesAwayCount = computed(() => {
     .reduce((a, b) => a + b, 0);
 });
 
+function formatScoringTime(time: number, period: number, periodDuration: number) {
+  const extraTime = time - (period + 1) * periodDuration;
+  if (extraTime <= 0) return time;
+  return `${periodDuration}+${extraTime}`;
+}
+
+const passes = computed(() => {
+  if (!state.match) return [0, 0];
+  return getMatchPasses(state.match);
+});
+
 download();
 </script>
 <template>
@@ -142,13 +154,23 @@ download();
         <tr class="scorers">
           <td colspan="2">
             <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
-              {{ n }} {{ times.map((x) => x + "'").join(", ") }}
+              {{ n }}
+              {{
+                times
+                  .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
+                  .join(", ")
+              }}
             </div>
           </td>
           <td colspan="1"></td>
           <td colspan="2">
             <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
-              {{ n }} {{ times.map((x) => x + "'").join(", ") }}
+              {{ n }}
+              {{
+                times
+                  .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
+                  .join(", ")
+              }}
             </div>
           </td>
         </tr>
@@ -174,14 +196,14 @@ download();
           <td>{{ getTotal(state.match, "away", "penalties") }}</td>
         </tr>
         <tr class="stat" v-if="!state.hidePasses">
-          <td>{{ ((passStrings[0][1] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
+          <td>{{ ((passes[0] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
           <td colspan="3">Pass.sikk.</td>
-          <td>{{ ((passStrings[1][1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
+          <td>{{ ((passes[1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
         </tr>
         <tr class="stat" v-if="!state.hidePasses">
-          <td>{{ passStrings[0][1] }}</td>
+          <td>{{ passes[0] }}</td>
           <td colspan="3">Pasninger</td>
-          <td>{{ passStrings[1][1] }}</td>
+          <td>{{ passes[1] }}</td>
         </tr>
         <tr class="stat" v-if="!state.hidePossession">
           <td>{{ possession[0].toFixed(1) }}%</td>

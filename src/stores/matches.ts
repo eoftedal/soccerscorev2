@@ -27,7 +27,7 @@ function generateDemoMatch(): Match {
     date: start.split("T")[0],
     time: start.split("T")[1].split(":").slice(0, 2).join(":"),
     homeTeam: "Stabæk",
-    awayTeam: "Bortelag",
+    awayTeam: "Demo",
     state: "finished",
     currentPeriod: 1,
     periodLength: 35,
@@ -85,6 +85,7 @@ function generateDemoMatch(): Match {
     }
     return period;
   });
+  m.periods[0].home.goals.push([m.periods[0].start + (m.periodLength + 1) * 60 * 1000, "PlayerA"]);
   console.log(m);
   return m;
 }
