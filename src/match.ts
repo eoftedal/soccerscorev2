@@ -1,6 +1,6 @@
 import type { Match, Period, TeamData } from "./types";
 
-enum EventType {
+export enum EventType {
   Touch,
   Shot,
   Corner,

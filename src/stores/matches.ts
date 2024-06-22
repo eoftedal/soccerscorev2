@@ -129,7 +129,7 @@ export const useMatchStore = defineStore("match", () => {
     matches.value.push({
       id: new Date().getTime().toString(),
       homeTeam: "Stabæk",
-      awayTeam: "Bortelag",
+      awayTeam: "Mostander",
       currentPeriod: -1,
       periods: [],
       date: new Date().toISOString().split("T")[0],

@@ -2,7 +2,7 @@
 import { type Match, type Period } from "../types";
 import ActivityRow from "./ActivityRow.vue";
 import { msToTimeString } from "../timeUtils";
-
+import PeriodChart from "./PeriodChart.vue";
 import {
   getAllEventsSorted,
   getPassStrings,
@@ -99,7 +99,7 @@ function getLongestStringMatch(match: Match): [number, number] {
 
 <template>
   <div class="wrapper">
-    <input type="range" v-model="window" min="1" max="50" step="1" />
+    <!--input type="range" v-model="window" min="1" max="50" step="1" /-->
     <div class="columns">
       <div class="column">
         <svg height="100" width="100"></svg>
@@ -122,7 +122,7 @@ function getLongestStringMatch(match: Match): [number, number] {
         <div class="row">Red cards</div>
       </div>
       <div class="column" v-for="(p, i) of periodPaths" v-bind:key="i">
-        <svg height="100" width="100">
+        <!--svg height="100" width="100">
           <line x1="0" y1="50" x2="100" y2="50" stroke="black" fill="black" />
           <path :d="p[0]" fill="red" />
           <line
@@ -153,7 +153,8 @@ function getLongestStringMatch(match: Match): [number, number] {
           <text v-for="(g, i) in p[2]" v-bind:key="i" :x="g" y="90" text-anchor="middle">
             &#x26BD;
           </text>
-        </svg>
+        </svg-->
+        <PeriodChart :period="p[3]" />
         <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
         <ActivityRow :values="getShots(p[3])" />
         <ActivityRow
@@ -279,9 +280,18 @@ input[type="range"] {
 .columns {
   display: flex;
 }
-.column svg {
-  border-left: 1px dashed #999;
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+.column svg {
+  xborder-left: 1px dashed #999;
+  xpadding-left: 10px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
 .column:first-child svg {
   border-left: none;
 }
