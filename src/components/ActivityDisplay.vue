@@ -102,7 +102,7 @@ function getLongestStringMatch(match: Match): [number, number] {
     <!--input type="range" v-model="window" min="1" max="50" step="1" /-->
     <div class="columns">
       <div class="column">
-        <svg height="100" width="100"></svg>
+        <svg></svg>
         <div class="row">Goals</div>
         <div class="row">Shots</div>
         <div class="row">Shots %</div>
@@ -287,11 +287,8 @@ input[type="range"] {
 }
 .column svg {
   border-left: 1px dashed #999;
-  xpadding-left: 10px;
   flex-grow: 0;
   flex-shrink: 0;
-  transform: scale(1.2);
-  transform-origin: 0% 0%;
   margin-bottom: 1em;
 }
 
@@ -307,8 +304,8 @@ input[type="range"] {
 
 svg,
 .placeholder {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
 }
 .row {
   width: 100%;
