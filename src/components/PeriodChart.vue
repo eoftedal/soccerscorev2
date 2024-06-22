@@ -43,8 +43,8 @@ const chartData = computed(() => {
       }
     }
     //const posTime = Math.max(times[0] + times[1], 1);
-    lines.push([x, 50, x, 50 - 50 * (times[0] / slotTime), 2]);
-    lines.push([x, 50, x, 50 + 50 * (times[1] / slotTime), 2]);
+    lines.push([x, 49, x, 49 - 50 * (times[0] / slotTime), 2]);
+    lines.push([x, 51, x, 51 + 50 * (times[1] / slotTime), 2]);
     x += 2;
     time += slotTime;
   }
