@@ -86,6 +86,15 @@ function getMatchPassAcc(match: Match): [number, number] {
   const allPasses = getMatchPasses(match);
   return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
 }
+
+function getLongestString(period: Period): [number, number] {
+  const passStrings = getPassStrings(period);
+  return [passStrings[0].length - 1, passStrings[1].length - 1];
+}
+function getLongestStringMatch(match: Match): [number, number] {
+  const passStrings = getMatchPassStrings(match);
+  return [passStrings[0].length - 1, passStrings[1].length - 1];
+}
 </script>
 
 <template>
@@ -107,6 +116,7 @@ function getMatchPassAcc(match: Match): [number, number] {
         <div class="row">Passes</div>
         <div class="row">Pass strings</div>
         <div class="row">Long strings</div>
+        <div class="row">Longest string</div>
         <div class="row">Avg string</div>
         <div class="row">Yellow cards</div>
         <div class="row">Red cards</div>
@@ -177,6 +187,7 @@ function getMatchPassAcc(match: Match): [number, number] {
             "
           />
         </template>
+        <ActivityRow :values="getLongestString(p[3])" />
         <ActivityRow
           :values="getPassStrings(p[3]).slice(2, 4) as [number, number]"
           :formatter="(n) => n.toFixed(1)"
@@ -239,6 +250,7 @@ function getMatchPassAcc(match: Match): [number, number] {
         <template v-for="(l, j) in [3, 7]" v-bind:key="j">
           <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
         </template>
+        <ActivityRow :values="getLongestStringMatch(props.match)" />
         <ActivityRow
           :values="getMatchAveragePassStrings(props.match)"
           :formatter="(n) => n.toFixed(1)"
