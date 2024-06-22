@@ -19,25 +19,30 @@ const chartData = computed(() => {
   let x = 0;
   console.log(time, endTime, time < endTime);
   while (time < endTime) {
-    if (prevTime < time) prevTime = time;
     const times = [0, 0];
     const slotEvents = events.filter((x) => x[1][0] >= time && x[1][0] < time + slotTime);
     const after = events.find((x) => x[1][0] >= time + slotTime);
-    slotEvents.forEach((x) => {
+    slotEvents.forEach((x, i) => {
       if (x[0] == prev && x[2] == EventType.Touch) {
-        let t = x[1][0] - prevTime - x[1][1];
+        let pTime = x[1][1] > 400 ? prevTime + x[1][1] : prevTime;
+        if (pTime < time) pTime = time;
+        let t = x[1][0] - pTime;
+        //if (prevTime < time) t -= time - prevTime;
         if (t > 0) times[x[0] == "H" ? 0 : 1] += t;
+        if (t < 0)
+          console.log("NEGATIVE", i, t, x[1][1], x[1][0], prevTime, x[0], x[1][0] - prevTime);
       }
       prevTime = x[1][0];
       prev = x[0];
     });
     if (after) {
       if (prev == after[0] && after[2] == EventType.Touch) {
-        const t = time + slotTime - prevTime - after[1][1];
+        let t = time + slotTime - prevTime;
+        if (after[1][1] > 400) t -= after[1][1];
         if (t > 0) times[after[0] == "H" ? 0 : 1] += t;
       }
     }
-    console.log(times);
+    //const posTime = Math.max(times[0] + times[1], 1);
     lines.push([x, 50, x, 50 - 50 * (times[0] / slotTime), 2]);
     lines.push([x, 50, x, 50 + 50 * (times[1] / slotTime), 2]);
     x += 2;
