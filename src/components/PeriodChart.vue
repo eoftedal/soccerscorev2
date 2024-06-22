@@ -24,7 +24,7 @@ const chartData = computed(() => {
     const after = events.find((x) => x[1][0] >= time + slotTime);
     slotEvents.forEach((x, i) => {
       if (x[0] == prev && x[2] == EventType.Touch) {
-        let pTime = x[1][1] > 400 ? prevTime + x[1][1] : prevTime;
+        let pTime = x[1][1] > 600 ? prevTime + x[1][1] : prevTime;
         if (pTime < time) pTime = time;
         let t = x[1][0] - pTime;
         //if (prevTime < time) t -= time - prevTime;
@@ -38,7 +38,7 @@ const chartData = computed(() => {
     if (after) {
       if (prev == after[0] && after[2] == EventType.Touch) {
         let t = time + slotTime - prevTime;
-        if (after[1][1] > 400) t -= after[1][1];
+        if (after[1][1] > 600) t -= after[1][1];
         if (t > 0) times[after[0] == "H" ? 0 : 1] += t;
       }
     }

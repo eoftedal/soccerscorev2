@@ -286,10 +286,13 @@ input[type="range"] {
   align-items: center;
 }
 .column svg {
-  xborder-left: 1px dashed #999;
+  border-left: 1px dashed #999;
   xpadding-left: 10px;
   flex-grow: 0;
   flex-shrink: 0;
+  transform: scale(1.2);
+  transform-origin: 0% 0%;
+  margin-bottom: 1em;
 }
 
 .column:first-child svg {
@@ -310,6 +313,7 @@ svg,
 .row {
   width: 100%;
   display: flex;
+  min-width: 120px;
 }
 .row span {
   text-align: right;

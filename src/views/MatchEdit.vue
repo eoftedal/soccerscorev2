@@ -290,7 +290,11 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <button @click="newPeriod()">Start new period</button>
         <button @click="endMatch()">End match</button>
       </div>
-      <ActivityDisplay :match="match" v-if="match.periods.length > 0" />
+      <div class="activityScrollWrapper">
+        <div class="activityWrapper">
+          <ActivityDisplay :match="match" v-if="match.periods.length > 0" />
+        </div>
+      </div>
       <div class="goalEvents">
         <h2>Goals:</h2>
         <div v-for="(e, i) of goalEventsMatch" v-bind:key="i" :class="e[1]">
@@ -556,6 +560,16 @@ div.big .plus {
 div.big .plus .num {
   text-align: right;
 }
+.activityScrollWrapper {
+  width: 100%;
+  overflow: auto;
+}
+.activityWrapper {
+  margin-left: 1em;
+  transform-origin: 0 0;
+  transform: scale(0.8);
+}
+
 button {
   display: flex;
   justify-content: space-between;
