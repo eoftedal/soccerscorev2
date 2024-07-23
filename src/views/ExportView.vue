@@ -116,4 +116,7 @@ ul.export {
 ul.export input[type="checkbox"] {
   margin-right: 0.5em;
 }
+h2 {
+  margin-top: 1em;
+}
 </style>
