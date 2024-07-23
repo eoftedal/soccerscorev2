@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import ExportView from "../views/ExportView.vue";
 import MatchView from "@/views/MatchView.vue";
 import MatchEdit from "@/views/MatchEdit.vue";
 import MatchImage from "@/views/MatchImage.vue";
@@ -11,6 +12,11 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/export",
+      name: "export",
+      component: ExportView,
     },
     {
       path: "/match/:id",

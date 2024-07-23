@@ -2,7 +2,9 @@
 import { useMatchStore } from "@/stores/matches";
 import { computed } from "vue";
 import { type Match } from "@/types";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+
+const router = useRouter();
 
 const { matches, newMatch } = useMatchStore();
 
@@ -49,6 +51,7 @@ const finished = computed(() => {
         </RouterLink>
       </li>
     </ul>
+    <button @click="router.push({ name: 'export' })">Export/import matches</button>
   </main>
 </template>
 <style scoped>

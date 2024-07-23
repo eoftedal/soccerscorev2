@@ -4,6 +4,7 @@ import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers } from "@/match";
+import { saveBlob } from "./viewUtils";
 
 const route = useRoute();
 const router = useRouter();
@@ -30,19 +31,6 @@ const awayGoalScorers = computed(() => {
   if (!match.value) return [];
   return goalScorers(match.value, "away");
 });
-
-const saveBlob = (function () {
-  const a = document.createElement("a");
-  document.body.appendChild(a);
-  a.style.display = "none";
-  return function (blob: Blob, fileName: string) {
-    const url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-})();
 
 function download() {
   const data = JSON.stringify(match.value);
