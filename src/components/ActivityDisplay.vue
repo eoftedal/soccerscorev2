@@ -115,6 +115,7 @@ function getLongestStringMatch(match: Match): [number, number] {
         <div class="row">Pass %</div>
         <div class="row">Passes</div>
         <div class="row">Pass strings</div>
+        <div class="row">Med strings</div>
         <div class="row">Long strings</div>
         <div class="row">Longest string</div>
         <div class="row">Avg string</div>
@@ -177,7 +178,7 @@ function getLongestStringMatch(match: Match): [number, number] {
         <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
         <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
         <ActivityRow :values="getPasses(p[3])" />
-        <template v-for="(l, j) in [3, 7]" v-bind:key="j">
+        <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
           <ActivityRow
             :values="
               firstTwo(
