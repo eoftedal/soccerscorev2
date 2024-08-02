@@ -249,7 +249,7 @@ function getLongestStringMatch(match: Match): [number, number] {
           :formatter="(n) => n.toFixed(1)"
         />
         <ActivityRow :values="getMatchPasses(props.match)" />
-        <template v-for="(l, j) in [3, 7]" v-bind:key="j">
+        <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
           <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
         </template>
         <ActivityRow :values="getLongestStringMatch(props.match)" />
