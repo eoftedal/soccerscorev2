@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers } from "@/match";
 import { saveBlob } from "./viewUtils";
+import { formatScoringTime } from "@/timeUtils";
 
 const route = useRoute();
 const router = useRouter();
@@ -36,11 +37,6 @@ function download() {
   const data = JSON.stringify(match.value);
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
-}
-function formatScoringTime(time: number, period: number, periodDuration: number) {
-  const extraTime = time - (period + 1) * periodDuration;
-  if (extraTime <= 0) return time;
-  return `${periodDuration * (period + 1)}+${extraTime}`;
 }
 </script>
 

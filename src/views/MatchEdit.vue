@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Period, type TeamData } from "../types";
 import UpDown from "./UpDown.vue";
@@ -20,6 +20,31 @@ const touchTypes = ["touches", "corners", "freekicks", "penalties"] as const;
 const side = ["home", "away"] as const;
 type TouchType = (typeof touchTypes)[number];
 type SideType = (typeof side)[number];
+
+const lockState = ref<WakeLockSentinel | undefined>(undefined);
+
+onMounted(async () => {
+  try {
+    const wakeLock = await navigator.wakeLock.request("screen");
+    wakeLock.addEventListener("release", () => {
+      console.log("Screen Wake Lock released:", wakeLock.released);
+      lockState.value = undefined;
+    });
+    window.onbeforeunload = () => {
+      if (lockState.value?.released === false) wakeLock.release();
+      lockState.value = undefined;
+    };
+    lockState.value = wakeLock;
+  } catch (err) {
+    // the wake lock request fails - usually system related, such being low on battery
+    console.log(err);
+    lockState.value = undefined;
+  }
+});
+onUnmounted(() => {
+  if (lockState.value?.released === false) lockState.value?.release();
+  lockState.value = undefined;
+});
 
 const state = reactive({
   holdStart: undefined as undefined | number,
@@ -496,6 +521,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
     </div>
   </div>
+  {{ lockState && !lockState.released ? "Wakelock is active" : "Wakelock not active" }}
   <ModalDialog
     v-if="match"
     ref="modal"

@@ -14,7 +14,7 @@ import {
   getTotal,
   goalScorers,
 } from "@/match";
-import { msToTimeString } from "@/timeUtils";
+import { msToTimeString, formatScoringTime } from "@/timeUtils";
 
 const route = useRoute();
 
@@ -108,12 +108,6 @@ const allTouchesAwayCount = computed(() => {
     .map((x) => x.away.touches.length + x.away.corners.length + x.away.freekicks.length)
     .reduce((a, b) => a + b, 0);
 });
-
-function formatScoringTime(time: number, period: number, periodDuration: number) {
-  const extraTime = time - (period + 1) * periodDuration;
-  if (extraTime <= 0) return time;
-  return `${periodDuration * (period + 1)}+${extraTime}`;
-}
 
 const passes = computed(() => {
   if (!state.match) return [0, 0];
