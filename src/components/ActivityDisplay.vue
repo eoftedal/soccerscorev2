@@ -155,7 +155,7 @@ function getLongestStringMatch(match: Match): [number, number] {
             &#x26BD;
           </text>
         </svg-->
-        <PeriodChart :period="p[3]" />
+        <PeriodChart :period="p[3]" :invert="!props.match.homeTeam.includes('Stabæk')" />
         <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
         <ActivityRow :values="getShots(p[3])" />
         <ActivityRow

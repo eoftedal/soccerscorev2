@@ -271,7 +271,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
 
 <template>
-  <div v-if="match" class="match">
+  <div v-if="match" class="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }">
     <header :class="{ pending: state.saveTimeout != undefined }">
       <h1>{{ match.homeTeam }}</h1>
       <h1>

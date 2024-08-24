@@ -118,7 +118,7 @@ const passes = computed(() => {
 download();
 </script>
 <template>
-  <main>
+  <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
     <button @click="state.hidePossession = !state.hidePossession">
       {{ state.hidePossession ? "Show possession" : "Hide possession" }}
     </button>
@@ -371,6 +371,14 @@ div.bars {
     border-bottom-left-radius: 0em;
     color: #fff;
     text-align: right;
+  }
+}
+.home div.bars {
+  div {
+    background: rgb(0, 102, 255);
+  }
+  div:nth-child(2) {
+    background: #fff;
   }
 }
 </style>

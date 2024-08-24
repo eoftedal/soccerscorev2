@@ -5,6 +5,7 @@ import { computed } from "vue";
 
 const props = defineProps<{
   period: Period;
+  invert: boolean;
 }>();
 const chartData = computed(() => {
   const events = getAllEventsSorted(props.period);
@@ -72,7 +73,7 @@ const chartData = computed(() => {
       :y1="line[1]"
       :x2="line[2]"
       :y2="line[3]"
-      :stroke="i % 2 == 0 ? '#88f' : '#0d0'"
+      :stroke="i % 2 == (props.invert ? 1 : 0) ? '#88f' : '#0d0'"
       :stroke-width="line[4]"
     />
     <line
