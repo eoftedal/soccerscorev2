@@ -169,7 +169,7 @@ download();
             </div>
           </td>
         </tr>
-        <tr>
+        <tr v-if="!state.hidePossession">
           <td colspan="5" class="bars">
             <div class="bars">
               <div :style="{ width: possession[0] + '%' }"></div>
