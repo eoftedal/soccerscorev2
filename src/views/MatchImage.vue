@@ -45,6 +45,7 @@ watch(
 
 function download() {
   state.data = "";
+  //if (state.data == "") return;
   const img = new Image();
   console.log("Loading image...");
   img.onload = () => {
@@ -168,6 +169,36 @@ download();
             </div>
           </td>
         </tr>
+        <tr>
+          <td colspan="5" class="bars">
+            <div class="bars">
+              <div :style="{ width: possession[0] + '%' }"></div>
+              <div :style="{ width: possession[1] + '%' }"></div>
+            </div>
+          </td>
+        </tr>
+
+        <tr class="stat" v-if="!state.hidePossession">
+          <td>{{ possession[0].toFixed(1) }}%</td>
+          <td colspan="3">Possession</td>
+          <td>{{ possession[1].toFixed(1) }}%</td>
+        </tr>
+        <tr class="stat" v-if="!state.hidePossession">
+          <td>{{ msToTimeString(possession[2]) }}</td>
+          <td colspan="3">Poss. tid</td>
+          <td>{{ msToTimeString(possession[3]) }}</td>
+        </tr>
+        <tr class="stat" v-if="!state.hidePasses">
+          <td>{{ ((passes[0] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
+          <td colspan="3">Pass.sikk.</td>
+          <td>{{ ((passes[1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
+        </tr>
+        <tr class="stat" v-if="!state.hidePasses">
+          <td>{{ passes[0] }}</td>
+          <td colspan="3">Pasninger</td>
+          <td>{{ passes[1] }}</td>
+        </tr>
+
         <tr class="stat">
           <td>{{ getMatchShots(state.match)[0] }}</td>
           <td colspan="3">Skudd</td>
@@ -189,26 +220,7 @@ download();
           <td colspan="3">Straffe</td>
           <td>{{ getTotal(state.match, "away", "penalties") }}</td>
         </tr>
-        <tr class="stat" v-if="!state.hidePasses">
-          <td>{{ ((passes[0] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
-          <td colspan="3">Pass.sikk.</td>
-          <td>{{ ((passes[1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
-        </tr>
-        <tr class="stat" v-if="!state.hidePasses">
-          <td>{{ passes[0] }}</td>
-          <td colspan="3">Pasninger</td>
-          <td>{{ passes[1] }}</td>
-        </tr>
-        <tr class="stat" v-if="!state.hidePossession">
-          <td>{{ possession[0].toFixed(1) }}%</td>
-          <td colspan="3">Possession</td>
-          <td>{{ possession[1].toFixed(1) }}%</td>
-        </tr>
-        <tr class="stat" v-if="!state.hidePossession">
-          <td>{{ msToTimeString(possession[2]) }}</td>
-          <td colspan="3">Poss. tid</td>
-          <td>{{ msToTimeString(possession[3]) }}</td>
-        </tr>
+
         <tr class="stat">
           <td>{{ getTotal(state.match, "home", "yellowCards") }}</td>
           <td colspan="3">Gule kort</td>
@@ -332,5 +344,33 @@ tr.filler {
 }
 img {
   width: 100%;
+}
+td.bars {
+  width: 100%;
+}
+div.bars {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  xjustify-content: space-around;
+
+  div {
+    height: 0.5em;
+    background: #fff;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    margin-right: 4px;
+    color: #000;
+    text-align: left;
+  }
+  div:nth-child(2) {
+    background: rgb(0, 102, 255);
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    border-top-left-radius: 0em;
+    border-bottom-left-radius: 0em;
+    color: #fff;
+    text-align: right;
+  }
 }
 </style>
