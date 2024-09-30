@@ -107,6 +107,7 @@ function getLongestStringMatch(match: Match): [number, number] {
         <div class="row">Shots</div>
         <div class="row">Shots %</div>
         <div class="row">Corners</div>
+        <div class="row">Off-sides</div>
         <div class="row">Free kicks</div>
         <div class="row">Penalties</div>
         <div class="row">Possession</div>
@@ -164,6 +165,7 @@ function getLongestStringMatch(match: Match): [number, number] {
           :percentage="true"
         />
         <ActivityRow :values="[p[3].home.corners.length, p[3].away.corners.length]" />
+        <ActivityRow :values="[p[3].home.offsides?.length ?? 0, p[3].away.offsides?.length ?? 0]" />
         <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
         <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
         <ActivityRow
@@ -214,6 +216,12 @@ function getLongestStringMatch(match: Match): [number, number] {
           :values="[
             getTotal(props.match, 'home', 'corners'),
             getTotal(props.match, 'away', 'corners'),
+          ]"
+        />
+        <ActivityRow
+          :values="[
+            getTotal(props.match, 'home', 'offsides'),
+            getTotal(props.match, 'away', 'offsides'),
           ]"
         />
         <ActivityRow

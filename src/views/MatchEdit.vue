@@ -16,7 +16,7 @@ const id = route.params.id;
 const { matches, saveMatch } = useMatchStore();
 const match = matches.find((m) => m.id == id);
 
-const touchTypes = ["touches", "corners", "freekicks", "penalties"] as const;
+const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
 const side = ["home", "away"] as const;
 type TouchType = (typeof touchTypes)[number];
 type SideType = (typeof side)[number];
@@ -50,7 +50,7 @@ const state = reactive({
   holdStart: undefined as undefined | number,
   time: Date.now() as number,
   saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
-  periodEvents: [] as [number, TouchType, SideType][],
+  periodEvents: [] as [number, TouchType, SideType | "N"][],
   promptDialog: {
     title: "",
     data: "",
@@ -87,6 +87,7 @@ function newPeriod() {
   match.periods.push({
     start: new Date().getTime(),
     stop: undefined,
+    outOfPlay: [],
     home: {
       touches: [],
       goals: [],
@@ -96,6 +97,7 @@ function newPeriod() {
       penalties: [],
       redCards: [],
       yellowCards: [],
+      offsides: [],
     },
     away: {
       touches: [],
@@ -106,6 +108,7 @@ function newPeriod() {
       penalties: [],
       redCards: [],
       yellowCards: [],
+      offsides: [],
     },
   });
 }
@@ -150,15 +153,19 @@ function addEventWithDelta(
 function addEvent(
   period: Period,
   team: "home" | "away",
-  key: "redCards" | "shots" | "yellowCards",
+  key: "redCards" | "shots" | "yellowCards" | "offsides",
 ) {
+  if (period[team][key] == undefined) {
+    period[team][key] = [];
+  }
   period[team][key].push(Date.now());
 }
 function removeEvent(
   period: Period,
   team: "home" | "away",
-  key: "corners" | "freekicks" | "penalties" | "redCards" | "shots" | "yellowCards",
+  key: "corners" | "freekicks" | "penalties" | "redCards" | "shots" | "yellowCards" | "offsides",
 ) {
+  if (!period[team][key]) return;
   const event = period[team][key].pop();
   const eventTime = Array.isArray(event) ? event[0] : event;
   if (!event) return;
@@ -266,6 +273,13 @@ function swapGoalSide(e: [number, string], side: "home" | "away", period: Period
   period[side].goals.splice(ix, 1);
   period[side == "home" ? "away" : "home"].goals.push(e);
 }
+function addOutOfPlayEvent() {
+  if (!openPeriod.value) return;
+  openPeriod.value.outOfPlay = openPeriod.value.outOfPlay ?? [];
+  const t = Date.now();
+  openPeriod.value.outOfPlay.push(t);
+  state.periodEvents.push([t, "outofplay", "N"]);
+}
 
 const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
@@ -277,6 +291,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <h1>
         <span class="time" v-if="openPeriod">{{ periodTime }}</span>
         <button v-if="openPeriod" @click="confirmEnd">End period</button>
+        <button v-if="openPeriod" @click="addOutOfPlayEvent">Out of play</button>
         <span v-if="!openPeriod"
           >{{ getTotal(match, "home", "goals") }} - {{ getTotal(match, "away", "goals") }}</span
         >
@@ -398,6 +413,22 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </UpDown>
 
       <UpDown
+        @add="addEvent(openPeriod, 'home', 'offsides')"
+        @remove="removeEvent(openPeriod, 'home', 'offsides')"
+      >
+        Off-sides
+        <span>{{ openPeriod.home.offsides?.length ?? 0 }}</span>
+      </UpDown>
+      <div></div>
+      <UpDown
+        @add="addEvent(openPeriod, 'away', 'offsides')"
+        @remove="removeEvent(openPeriod, 'away', 'offsides')"
+      >
+        Off-sides
+        <span>{{ openPeriod.away.offsides?.length ?? 0 }}</span>
+      </UpDown>
+
+      <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'freekicks', t, d)"
         @remove="removeEvent(openPeriod, 'home', 'freekicks')"
       >
@@ -409,7 +440,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
         @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'freekicks', t, d)"
         @remove="removeEvent(openPeriod, 'away', 'freekicks')"
       >
-        Free kicsk
+        Free kicks
         <span>{{ openPeriod.away.freekicks.length }}</span>
       </UpDown>
 
@@ -573,7 +604,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
   grid-template-columns: 1fr auto 1fr;
 }
 div.big {
-  height: 50vh;
+  height: 45vh;
   width: 100%;
 }
 div.big .plus {

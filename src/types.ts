@@ -14,6 +14,7 @@ export type Match = {
 export type Period = {
   home: TeamData;
   away: TeamData;
+  outOfPlay?: Array<MatchEvent>;
   start: number;
   stop: number | undefined;
 };
@@ -21,6 +22,7 @@ export type Period = {
 export type TeamData = {
   goals: Array<[MatchEvent, string]>;
   shots: Array<MatchEvent>;
+  offsides?: Array<MatchEvent>;
   touches: Array<MatchEventWithDelta>;
   corners: Array<MatchEventWithDelta>;
   freekicks: Array<MatchEventWithDelta>;

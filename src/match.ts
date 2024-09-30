@@ -6,9 +6,10 @@ export enum EventType {
   Corner,
   Penalty,
   Freekick,
+  OutOfPlay,
 }
 
-type Side = "H" | "A";
+type Side = "H" | "A" | "N";
 
 function getAllTeamEvents(data: TeamData): Array<[[number, number], EventType]> {
   return data.touches
@@ -18,14 +19,16 @@ function getAllTeamEvents(data: TeamData): Array<[[number, number], EventType]> 
     .concat(data.penalties.map((x) => [x, EventType.Penalty]));
 }
 
-export function getAllEventsSorted(period: Period) {
+export function getAllEventsSorted(period: Period): Array<[Side, [number, number], EventType]> {
   const homeEvents: Array<[Side, [number, number], EventType]> = getAllTeamEvents(period.home).map(
     (x) => ["H", ...x],
   );
   const awayEvents: Array<[Side, [number, number], EventType]> = getAllTeamEvents(period.away).map(
     (x) => ["A", ...x],
   );
-  const allEvents = homeEvents.concat(awayEvents);
+  const allEvents = homeEvents
+    .concat(awayEvents)
+    .concat(period.outOfPlay?.map((x) => ["N", [x, 0], EventType.OutOfPlay]) ?? []);
   allEvents.sort((a, b) => a[1][0] - b[1][0]);
   return allEvents;
 }
@@ -68,7 +71,7 @@ export function getMatchPossession(match: Match): [number, number, number, numbe
 }
 
 export function getTotal(match: Match, team: "home" | "away", stat: keyof TeamData): number {
-  return match.periods.reduce((acc, x) => acc + x[team][stat].length, 0);
+  return match.periods.reduce((acc, x) => acc + (x[team][stat] ?? []).length, 0);
 }
 
 export function getPassStrings(
@@ -78,9 +81,10 @@ export function getPassStrings(
   let count = 0;
   let previous = "";
   const result = [[], []] as [number[], number[]];
-  const strings: { H: [number, number]; A: [number, number] } = {
+  const strings: { H: [number, number]; A: [number, number]; N: [number, number] } = {
     H: [0, 0],
     A: [0, 0],
+    N: [0, 0],
   };
   allEvents.forEach((x) => {
     if (previous == x[0] && x[2] == EventType.Touch) {
