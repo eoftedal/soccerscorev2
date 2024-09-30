@@ -158,7 +158,7 @@ function addEvent(
   if (period[team][key] == undefined) {
     period[team][key] = [];
   }
-  period[team][key].push(Date.now());
+  period[team][key]!.push(Date.now());
 }
 function removeEvent(
   period: Period,
@@ -166,7 +166,7 @@ function removeEvent(
   key: "corners" | "freekicks" | "penalties" | "redCards" | "shots" | "yellowCards" | "offsides",
 ) {
   if (!period[team][key]) return;
-  const event = period[team][key].pop();
+  const event = period[team][key]!.pop();
   const eventTime = Array.isArray(event) ? event[0] : event;
   if (!event) return;
   const ix = state.periodEvents.findIndex((x) => x[1] == key && x[2] == team && x[0] == eventTime);
