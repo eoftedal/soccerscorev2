@@ -291,7 +291,17 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <h1>
         <span class="time" v-if="openPeriod">{{ periodTime }}</span>
         <button v-if="openPeriod" @click="confirmEnd">End period</button>
-        <button v-if="openPeriod" @click="addOutOfPlayEvent">Out of play</button>
+        <button
+          v-if="openPeriod"
+          @click="addOutOfPlayEvent"
+          :class="{
+            active:
+              state.periodEvents.slice(-1)[0] == undefined ||
+              state.periodEvents.slice(-1)[0][1] == 'outofplay',
+          }"
+        >
+          Out of play
+        </button>
         <span v-if="!openPeriod"
           >{{ getTotal(match, "home", "goals") }} - {{ getTotal(match, "away", "goals") }}</span
         >
