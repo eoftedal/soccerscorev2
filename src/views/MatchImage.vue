@@ -136,105 +136,107 @@ download();
     </div>
     <div class="match" ref="matchbg" v-if="state.data == ''">
       <table>
-        <tr class="date">
-          <td colspan="5"><DateView :time="dt.getTime()" /><br />{{ state.match.location }}</td>
-        </tr>
-        <tr class="teams">
-          <td>{{ state.match.homeTeam }}</td>
-          <td>{{ getTotal(state.match, "home", "goals") }}</td>
-          <td>-</td>
-          <td>{{ getTotal(state.match, "away", "goals") }}</td>
-          <td>{{ state.match.awayTeam }}</td>
-        </tr>
-        <tr class="scorers">
-          <td colspan="2">
-            <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
-              {{ n }}
-              {{
-                times
-                  .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
-                  .join(", ")
-              }}
-            </div>
-          </td>
-          <td colspan="1"></td>
-          <td colspan="2">
-            <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
-              {{ n }}
-              {{
-                times
-                  .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
-                  .join(", ")
-              }}
-            </div>
-          </td>
-        </tr>
-        <tr v-if="!state.hidePossession">
-          <td colspan="5" class="bars">
-            <div class="bars">
-              <div :style="{ width: possession[0] + '%' }"></div>
-              <div :style="{ width: possession[1] + '%' }"></div>
-            </div>
-          </td>
-        </tr>
+        <tbody>
+          <tr class="date">
+            <td colspan="5"><DateView :time="dt.getTime()" /><br />{{ state.match.location }}</td>
+          </tr>
+          <tr class="teams">
+            <td>{{ state.match.homeTeam }}</td>
+            <td>{{ getTotal(state.match, "home", "goals") }}</td>
+            <td>-</td>
+            <td>{{ getTotal(state.match, "away", "goals") }}</td>
+            <td>{{ state.match.awayTeam }}</td>
+          </tr>
+          <tr class="scorers">
+            <td colspan="2">
+              <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
+                {{ n }}
+                {{
+                  times
+                    .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
+                    .join(", ")
+                }}
+              </div>
+            </td>
+            <td colspan="1"></td>
+            <td colspan="2">
+              <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
+                {{ n }}
+                {{
+                  times
+                    .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
+                    .join(", ")
+                }}
+              </div>
+            </td>
+          </tr>
+          <tr v-if="!state.hidePossession">
+            <td colspan="5" class="bars">
+              <div class="bars">
+                <div :style="{ width: possession[0] + '%' }"></div>
+                <div :style="{ width: possession[1] + '%' }"></div>
+              </div>
+            </td>
+          </tr>
 
-        <tr class="stat" v-if="!state.hidePossession">
-          <td>{{ possession[0].toFixed(1) }}%</td>
-          <td colspan="3">Possession</td>
-          <td>{{ possession[1].toFixed(1) }}%</td>
-        </tr>
-        <tr class="stat" v-if="!state.hidePossession">
-          <td>{{ msToTimeString(possession[2]) }}</td>
-          <td colspan="3">Poss. tid</td>
-          <td>{{ msToTimeString(possession[3]) }}</td>
-        </tr>
-        <tr class="stat" v-if="!state.hidePasses">
-          <td>{{ ((passes[0] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
-          <td colspan="3">Pass.sikk.</td>
-          <td>{{ ((passes[1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
-        </tr>
-        <tr class="stat" v-if="!state.hidePasses">
-          <td>{{ passes[0] }}</td>
-          <td colspan="3">Pasninger</td>
-          <td>{{ passes[1] }}</td>
-        </tr>
+          <tr class="stat" v-if="!state.hidePossession">
+            <td>{{ possession[0].toFixed(1) }}%</td>
+            <td colspan="3">Possession</td>
+            <td>{{ possession[1].toFixed(1) }}%</td>
+          </tr>
+          <tr class="stat" v-if="!state.hidePossession">
+            <td>{{ msToTimeString(possession[2]) }}</td>
+            <td colspan="3">Poss. tid</td>
+            <td>{{ msToTimeString(possession[3]) }}</td>
+          </tr>
+          <tr class="stat" v-if="!state.hidePasses">
+            <td>{{ ((passes[0] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
+            <td colspan="3">Pass.sikk.</td>
+            <td>{{ ((passes[1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
+          </tr>
+          <tr class="stat" v-if="!state.hidePasses">
+            <td>{{ passes[0] }}</td>
+            <td colspan="3">Pasninger</td>
+            <td>{{ passes[1] }}</td>
+          </tr>
 
-        <tr class="stat">
-          <td>{{ getMatchShots(state.match)[0] }}</td>
-          <td colspan="3">Skudd</td>
-          <td>{{ getMatchShots(state.match)[1] }}</td>
-        </tr>
+          <tr class="stat">
+            <td>{{ getMatchShots(state.match)[0] }}</td>
+            <td colspan="3">Skudd</td>
+            <td>{{ getMatchShots(state.match)[1] }}</td>
+          </tr>
 
-        <tr class="stat">
-          <td>{{ getTotal(state.match, "home", "corners") }}</td>
-          <td colspan="3">Hjørnespark</td>
-          <td>{{ getTotal(state.match, "away", "corners") }}</td>
-        </tr>
-        <tr class="stat">
-          <td>{{ getTotal(state.match, "home", "freekicks") }}</td>
-          <td colspan="3">Frispark</td>
-          <td>{{ getTotal(state.match, "away", "freekicks") }}</td>
-        </tr>
-        <tr class="stat">
-          <td>{{ getTotal(state.match, "home", "penalties") }}</td>
-          <td colspan="3">Straffe</td>
-          <td>{{ getTotal(state.match, "away", "penalties") }}</td>
-        </tr>
+          <tr class="stat">
+            <td>{{ getTotal(state.match, "home", "corners") }}</td>
+            <td colspan="3">Hjørnespark</td>
+            <td>{{ getTotal(state.match, "away", "corners") }}</td>
+          </tr>
+          <tr class="stat">
+            <td>{{ getTotal(state.match, "home", "freekicks") }}</td>
+            <td colspan="3">Frispark</td>
+            <td>{{ getTotal(state.match, "away", "freekicks") }}</td>
+          </tr>
+          <tr class="stat">
+            <td>{{ getTotal(state.match, "home", "penalties") }}</td>
+            <td colspan="3">Straffe</td>
+            <td>{{ getTotal(state.match, "away", "penalties") }}</td>
+          </tr>
 
-        <tr class="stat">
-          <td>{{ getTotal(state.match, "home", "yellowCards") }}</td>
-          <td colspan="3">Gule kort</td>
-          <td>{{ getTotal(state.match, "away", "yellowCards") }}</td>
-        </tr>
-        <tr class="stat">
-          <td>{{ getTotal(state.match, "home", "redCards") }}</td>
-          <td colspan="3">Røde kort</td>
-          <td>{{ getTotal(state.match, "away", "redCards") }}</td>
-        </tr>
+          <tr class="stat">
+            <td>{{ getTotal(state.match, "home", "yellowCards") }}</td>
+            <td colspan="3">Gule kort</td>
+            <td>{{ getTotal(state.match, "away", "yellowCards") }}</td>
+          </tr>
+          <tr class="stat">
+            <td>{{ getTotal(state.match, "home", "redCards") }}</td>
+            <td colspan="3">Røde kort</td>
+            <td>{{ getTotal(state.match, "away", "redCards") }}</td>
+          </tr>
 
-        <tr class="filler">
-          <td colspan="5"></td>
-        </tr>
+          <tr class="filler">
+            <td colspan="5"></td>
+          </tr>
+        </tbody>
       </table>
     </div>
     {{ state.msg }}

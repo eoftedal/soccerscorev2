@@ -291,17 +291,6 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <h1>
         <span class="time" v-if="openPeriod">{{ periodTime }}</span>
         <button v-if="openPeriod" @click="confirmEnd">End period</button>
-        <button
-          v-if="openPeriod"
-          @click="addOutOfPlayEvent"
-          :class="{
-            active:
-              state.periodEvents.slice(-1)[0] == undefined ||
-              state.periodEvents.slice(-1)[0][1] == 'outofplay',
-          }"
-        >
-          Out of play
-        </button>
         <span v-if="!openPeriod"
           >{{ getTotal(match, "home", "goals") }} - {{ getTotal(match, "away", "goals") }}</span
         >
@@ -330,6 +319,14 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <div class="form">
         <label>Location:</label>
         <input type="text" v-model="match.location" />
+      </div>
+      <div class="form">
+        <label>Gametype:</label>
+        <select v-model="match.gameType">
+          <option>11v11</option>
+          <option>9v9</option>
+          <option>7v7</option>
+        </select>
       </div>
       <div class="form">
         <label>Period duration:</label>
@@ -480,6 +477,20 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <span>{{ openPeriod.away.shots.length }}</span>
       </UpDown>
 
+      <div class="wide">
+        <button
+          v-if="openPeriod"
+          @click="addOutOfPlayEvent"
+          :class="{
+            active:
+              state.periodEvents.slice(-1)[0] == undefined ||
+              state.periodEvents.slice(-1)[0][1] == 'outofplay',
+          }"
+          class="wide"
+        >
+          <div>Out of play</div>
+        </button>
+      </div>
       <div class="big button">
         <button
           class="plus"
@@ -516,7 +527,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
         </button>
       </div>
       <div></div>
-      <div class="big button">
+      <div class="big button right">
         <button
           class="plus"
           @touchstart.prevent="
@@ -614,7 +625,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
   grid-template-columns: 1fr auto 1fr;
 }
 div.big {
-  height: 45vh;
+  height: 41vh;
   width: 100%;
 }
 div.big .plus {
@@ -643,7 +654,7 @@ button {
 }
 .button {
   display: flex;
-  height: 5vh;
+  height: 5.5vh;
   justify-content: space-between;
 }
 .button button {
@@ -655,10 +666,12 @@ button {
 .button button.plus {
   min-width: 27vw;
 }
-.button:nth-child(3n) {
+.button:nth-child(3n),
+.button:nth-child(3n) button {
   flex-direction: row-reverse;
 }
-.button:nth-child(3n) button {
+.button.big.right,
+.button.big.right button {
   flex-direction: row-reverse;
 }
 .button .minus {
@@ -679,5 +692,16 @@ div.mid {
 .pause .form label {
   width: 8em;
   display: inline-block;
+}
+div.wide {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  vertical-align: middle;
+  text-align: center;
+  button {
+    height: 5.5vh;
+    width: 100%;
+    display: inline-block;
+  }
 }
 </style>

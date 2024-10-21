@@ -115,9 +115,9 @@ function getLongestStringMatch(match: Match): [number, number] {
         <div class="row">Touches</div>
         <div class="row">Pass %</div>
         <div class="row">Passes</div>
-        <div class="row">Pass strings</div>
-        <div class="row">Med strings</div>
-        <div class="row">Long strings</div>
+        <div class="row">3-strings</div>
+        <div class="row">5-strings</div>
+        <div class="row">7-strings</div>
         <div class="row">Longest string</div>
         <div class="row">Avg string</div>
         <div class="row">Yellow cards</div>

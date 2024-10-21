@@ -45,6 +45,7 @@ function download() {
   <main v-if="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }">
     <h3>{{ match.date }} {{ match.time }}</h3>
     <h3>{{ match.location }}</h3>
+    <h3>{{ match.gameType }}</h3>
     <header class="matchview">
       <h1>
         <span>{{ match.homeTeam }}</span>

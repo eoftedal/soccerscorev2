@@ -5,6 +5,7 @@ export type Match = {
   time: string;
   homeTeam: string;
   awayTeam: string;
+  gameType: string;
   state: "not_started" | "paused" | "in_progress" | "finished";
   currentPeriod: number;
   periods: Period[];

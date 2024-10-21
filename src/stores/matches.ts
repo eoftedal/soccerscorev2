@@ -11,6 +11,7 @@ function generateDemoMatch2(): Match {
     time: start.split("T")[1].split(":").slice(0, 2).join(":"),
     homeTeam: "Stabæk",
     awayTeam: "Bortelag",
+    gameType: "11v11",
     state: "not_started",
     currentPeriod: 1,
     periodLength: 35,
@@ -28,6 +29,7 @@ function generateDemoMatch(): Match {
     time: start.split("T")[1].split(":").slice(0, 2).join(":"),
     homeTeam: "Stabæk",
     awayTeam: "Demo",
+    gameType: "11v11",
     state: "finished",
     currentPeriod: 1,
     periodLength: 35,
@@ -105,6 +107,7 @@ export const useMatchStore = defineStore("match", () => {
     const data = window.localStorage.getItem("match-" + id);
     if (data) {
       const match = JSON.parse(data) as Match;
+      if (!match.gameType) match.gameType = "9v9";
       matches.value.push(match);
     }
   });
@@ -112,7 +115,9 @@ export const useMatchStore = defineStore("match", () => {
   function getMatch(id: string): Match | undefined {
     const data = window.localStorage.getItem("match-" + id);
     if (data) {
-      return JSON.parse(data) as Match;
+      const m = JSON.parse(data) as Match;
+      if (!m.gameType) m.gameType = "9v9";
+      return m;
     }
     return undefined;
   }
@@ -130,6 +135,7 @@ export const useMatchStore = defineStore("match", () => {
       id: new Date().getTime().toString(),
       homeTeam: "Stabæk",
       awayTeam: "Motstander",
+      gameType: "11v11",
       currentPeriod: -1,
       periods: [],
       date: new Date().toISOString().split("T")[0],
