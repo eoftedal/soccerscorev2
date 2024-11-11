@@ -27,8 +27,10 @@ const props = defineProps<{
 const window = ref(20);
 
 const periodPaths = computed(() => {
-  return props.match.periods.map((period) => {
-    const total = period.stop ? period.stop - period.start : props.match.periodLength * 60 * 1000;
+  return props.match.periods.map((period, i) => {
+    const total = period.stop
+      ? period.stop - period.start
+      : (i <= 1 ? props.match.periodLength : props.match.extraPeriodLength) * 60 * 1000;
     const allEvents = getAllEventsSorted(period);
     const events = allEvents.map((x, i) => {
       const eventsToLookAt = allEvents

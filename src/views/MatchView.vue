@@ -60,7 +60,13 @@ function download() {
         <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
           {{ n }}
           {{
-            times.map((x) => formatScoringTime(x[0], x[1], match!.periodLength) + "'").join(", ")
+            times
+              .map(
+                (x) =>
+                  formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) +
+                  "'",
+              )
+              .join(", ")
           }}
         </div>
       </h2>
@@ -69,7 +75,13 @@ function download() {
         <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
           {{ n }}
           {{
-            times.map((x) => formatScoringTime(x[0], x[1], match!.periodLength) + "'").join(", ")
+            times
+              .map(
+                (x) =>
+                  formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) +
+                  "'",
+              )
+              .join(", ")
           }}
         </div>
       </h2>

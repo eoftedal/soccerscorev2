@@ -15,6 +15,7 @@ function generateDemoMatch2(): Match {
     state: "not_started",
     currentPeriod: 1,
     periodLength: 35,
+    extraPeriodLength: 10,
     periods: [],
   };
   return m;
@@ -33,6 +34,7 @@ function generateDemoMatch(): Match {
     state: "finished",
     currentPeriod: 1,
     periodLength: 35,
+    extraPeriodLength: 10,
     periods: [],
   };
   const s = new Date(start).getTime();
@@ -108,6 +110,7 @@ export const useMatchStore = defineStore("match", () => {
     if (data) {
       const match = JSON.parse(data) as Match;
       if (!match.gameType) match.gameType = "9v9";
+      if (!match.extraPeriodLength) match.extraPeriodLength = 10;
       matches.value.push(match);
     }
   });
@@ -117,6 +120,7 @@ export const useMatchStore = defineStore("match", () => {
     if (data) {
       const m = JSON.parse(data) as Match;
       if (!m.gameType) m.gameType = "9v9";
+      if (!m.extraPeriodLength) m.extraPeriodLength = 10;
       return m;
     }
     return undefined;
@@ -143,6 +147,7 @@ export const useMatchStore = defineStore("match", () => {
       location: "Nadderud kunstgress",
       state: "not_started",
       periodLength: 35,
+      extraPeriodLength: 10,
     });
   }
 

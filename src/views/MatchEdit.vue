@@ -330,8 +330,13 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
       <div class="form">
         <label>Period duration:</label>
-        {{ match.periodLength }}
+        {{ match.periodLength }} min
         <input type="range" v-model="match.periodLength" min="10" max="45" />
+      </div>
+      <div class="form">
+        <label>Extra-period:</label>
+        {{ match.extraPeriodLength }} min
+        <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
       </div>
       <div class="toolbar">
         <button @click="newPeriod()">Start new period</button>

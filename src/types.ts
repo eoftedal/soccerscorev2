@@ -10,6 +10,7 @@ export type Match = {
   currentPeriod: number;
   periods: Period[];
   periodLength: number;
+  extraPeriodLength: number;
 };
 
 export type Period = {

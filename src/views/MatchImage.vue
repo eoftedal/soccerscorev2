@@ -153,7 +153,15 @@ fetch(GrassImage)
                 {{ n }}
                 {{
                   times
-                    .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
+                    .map(
+                      (x) =>
+                        formatScoringTime(
+                          x[0],
+                          x[1],
+                          state.match.periodLength,
+                          state.match.extraPeriodLength,
+                        ) + "'",
+                    )
                     .join(", ")
                 }}
               </div>
@@ -164,7 +172,15 @@ fetch(GrassImage)
                 {{ n }}
                 {{
                   times
-                    .map((x) => formatScoringTime(x[0], x[1], state.match.periodLength) + "'")
+                    .map(
+                      (x) =>
+                        formatScoringTime(
+                          x[0],
+                          x[1],
+                          state.match.periodLength,
+                          state.match.extraPeriodLength,
+                        ) + "'",
+                    )
                     .join(", ")
                 }}
               </div>

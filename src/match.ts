@@ -162,7 +162,11 @@ export function goalScorers(match: Match, side: "home" | "away") {
   const result = {} as Record<string, [number, number][]>;
   match.periods.forEach((p, i) => {
     p[side].goals.forEach((x) => {
-      const goalTime = Math.ceil((x[0] - p.start) / 60000) + i * m.periodLength;
+      let elapsed = i * m.periodLength;
+      if (i > 1) {
+        elapsed = 2 * m.periodLength + (i - 1) * m.extraPeriodLength;
+      }
+      const goalTime = Math.ceil((x[0] - p.start) / 60000) + elapsed;
       const name = x[1] || "Unknown";
       result[name] = result[name] ?? [];
       result[name].push([goalTime, i]);
