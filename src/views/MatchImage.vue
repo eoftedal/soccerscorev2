@@ -117,16 +117,20 @@ fetch(GrassImage)
     <button @click="state.hidePasses = !state.hidePasses">
       {{ state.hidePasses ? "Show passes" : "Hide passes" }}
     </button>
-    <a v-if="state.data" class="linkButton" :href="state.data" :download="imageTitle"
-      >Download image</a
-    >
 
     <div v-if="state.data == ''" class="loader">Forbereder... Vennligst vent</div>
 
     <div v-if="state.data != ''">
+      <a
+        v-if="state.data"
+        class="linkButton"
+        :href="state.data"
+        :download="imageTitle"
+        type="image/png"
+        >Download image</a
+      >
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->
-      <p>For å laste ned på iphone, trykk på bildet og hold inne til menyen kommer opp.</p>
       <!--p>{{ state.data.length }}</p-->
       <img :src="state.data" />
     </div>

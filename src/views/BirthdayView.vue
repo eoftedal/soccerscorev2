@@ -30,7 +30,9 @@ function generateImage() {
   <input type="text" v-model="state.name" placeholder="Navn" />
   <button @click="() => generateImage()">Generate image</button>
   {{ state.imageSrc }}
-  <a v-if="state.dl" class="linkButton" :href="state.dl" download="image.png">Download</a>
+  <a v-if="state.dl" class="linkButton" :href="state.dl" type="image/png" download="image.png"
+    >Download</a
+  >
   <div class="frame" ref="frame">
     <div class="frame-inner">
       <div
