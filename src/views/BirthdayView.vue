@@ -8,6 +8,7 @@ const state = reactive({
   imageSrc: null as string | null,
   name: "",
   dl: "",
+  title: "Stabæk Akademi 2012",
 });
 
 function toDataURL(blob: Blob): Promise<string> {
@@ -31,18 +32,21 @@ const onFileChange = (event: Event) => {
   }
 };
 function generateImage() {
+  let count = 0;
   requestAnimationFrame(() => {
     if (frame.value == null) return;
     toPng(frame.value).then((dataUrl) => {
       console.log("data", dataUrl.length);
       state.dl = dataUrl;
     });
+    if (count++ < 3) setTimeout(() => generateImage(), 500);
   });
 }
 </script>
 <template>
   <input type="file" @change="onFileChange" />
   <input type="text" v-model="state.name" placeholder="Navn" />
+  <input type="text" v-model="state.title" placeholder="Tittel" />
   <button @click="() => generateImage()">Generate image</button>
   {{ state.imageSrc?.slice(0, 40) }}
   <a v-if="state.dl" class="linkButton" :href="state.dl" type="image/png" download="image.png"
@@ -58,8 +62,12 @@ function generateImage() {
         :style="{ backgroundImage: `url('${state.imageSrc}')` }"
         alt="Uploaded Image"
       >
-        <header>{{ state.name || "Navn" }}</header>
-        <footer>Stabæk Akademi 2012</footer>
+        <header>
+          <div>{{ state.name || "Navn" }}</div>
+        </header>
+        <footer>
+          <div>{{ state.title }}</div>
+        </footer>
       </div>
     </div>
   </div>
@@ -67,9 +75,9 @@ function generateImage() {
 <style scoped>
 .frame {
   height: 1350px;
-  width: 1080px;
+  width: 1012px;
   background: #003e80;
-  padding: 50px;
+  padding: 100px;
 }
 .frame-inner {
   height: 100%;
@@ -92,10 +100,15 @@ header {
   font-size: 5em;
   font-weight: bold;
   padding-left: 1em;
-  padding-right: 1em;
-  padding-top: 0.2em;
+  padding-right: em;
+  padding-bottom: 0em;
   border-left: 10px solid #dc9800;
   border-bottom: 10px solid #dc9800;
+}
+header div {
+  xbackground: red;
+  position: relative;
+  top: -40px;
 }
 footer {
   bottom: -10px;
@@ -103,16 +116,21 @@ footer {
   position: absolute;
   background: #003e80;
   color: #fff;
-  background-image: url("/stb_logo.svg");
-  background-size: 1em auto;
-  background-position: 20px center;
-  background-repeat: no-repeat;
   font-size: 3em;
   font-weight: bold;
-  padding-left: 80px;
   padding-right: 0.5em;
   padding-top: 0.2em;
   border-top: 10px solid #dc9800;
   border-right: 10px solid #dc9800;
+}
+footer div {
+  padding-left: 80px;
+  background-image: url("/stb_logo.svg");
+  background-size: 1em auto;
+  background-position: 20px center;
+  background-repeat: no-repeat;
+  position: relative;
+  top: 40px;
+  left: -60px;
 }
 </style>
