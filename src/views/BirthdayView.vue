@@ -2,7 +2,7 @@
 import { reactive, ref } from "vue";
 import { toPng } from "html-to-image";
 
-const frame = ref(null);
+const frame = ref<HTMLDivElement | null>(null);
 
 const state = reactive({
   imageSrc: null as string | null,
@@ -10,18 +10,33 @@ const state = reactive({
   dl: "",
 });
 
+function toDataURL(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => resolve(reader.result?.toString() ?? "");
+    reader.readAsDataURL(blob);
+  });
+}
+
 // Function to handle file change
 const onFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
   if (file) {
-    state.imageSrc = URL.createObjectURL(file); // Create a local URL for the file
+    toDataURL(file).then((dataUrl) => {
+      //state.imageSrc = "/soccerscorev2/stb_logo.svg";
+      state.imageSrc = dataUrl ?? "";
+    });
   }
 };
 function generateImage() {
-  if (frame.value == null) return;
-  toPng(frame.value).then((dataUrl) => {
-    state.dl = dataUrl;
+  requestAnimationFrame(() => {
+    if (frame.value == null) return;
+    toPng(frame.value).then((dataUrl) => {
+      console.log("data", dataUrl.length);
+      state.dl = dataUrl;
+    });
   });
 }
 </script>
@@ -29,16 +44,18 @@ function generateImage() {
   <input type="file" @change="onFileChange" />
   <input type="text" v-model="state.name" placeholder="Navn" />
   <button @click="() => generateImage()">Generate image</button>
-  {{ state.imageSrc }}
+  {{ state.imageSrc?.slice(0, 40) }}
   <a v-if="state.dl" class="linkButton" :href="state.dl" type="image/png" download="image.png"
     >Download</a
   >
+  <br />
+  <img v-if="state.dl" :src="state.dl" alt="Generated image" width="100px" />
   <div class="frame" ref="frame">
     <div class="frame-inner">
       <div
         class="inner"
         v-if="state.imageSrc"
-        :style="{ backgroundImage: `url(${state.imageSrc})` }"
+        :style="{ backgroundImage: `url('${state.imageSrc}')` }"
         alt="Uploaded Image"
       >
         <header>{{ state.name || "Navn" }}</header>
