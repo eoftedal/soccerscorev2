@@ -98,12 +98,13 @@ const passes = computed(() => {
 });
 
 const imageTitle = computed(() => {
-  return `${state.match.homeTeam} - ${state.match.awayTeam} ${state.match.date} ${state.match.time}.png`;
+  return `image.png`;
 });
 
 fetch(GrassImage)
   .then((response) => response.blob())
   .then((blob) => {
+    console.log(blob.type);
     state.grass = URL.createObjectURL(blob);
     download();
   });
