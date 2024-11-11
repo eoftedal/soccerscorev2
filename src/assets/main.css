@@ -1,16 +1,26 @@
 @import "./base.css";
 
-button {
+button,
+a.linkButton {
   border-radius: 5px;
   background-color: #36d;
   color: #fff;
   border: 1px solid #fff;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+  text-decoration: none;
 }
 button:active,
-button.active {
+button.active,
+a.linkButton:active,
+a.linkButton.active {
   border-color: #36d;
   color: #36d;
   background-color: #fff;
+}
+a.linkButton {
+  display: inline-block;
+  text-align: center;
+  padding: 0.5em;
+  font-size: 13.33333333px;
 }

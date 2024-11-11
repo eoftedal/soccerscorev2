@@ -6,14 +6,7 @@ import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { type Match } from "@/types";
 import GrassImage from "../assets/grass.png";
-import {
-  getMatchPassStrings,
-  getMatchPasses,
-  getMatchPossession,
-  getMatchShots,
-  getTotal,
-  goalScorers,
-} from "@/match";
+import { getMatchPasses, getMatchPossession, getMatchShots, getTotal, goalScorers } from "@/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 
 const route = useRoute();
@@ -28,6 +21,7 @@ const state = reactive({
   msg: "",
   hidePossession: false,
   hidePasses: false,
+  grass: "",
 });
 
 const matchbg = ref(undefined as undefined | HTMLDivElement);
@@ -46,34 +40,27 @@ watch(
 function download() {
   state.data = "";
   //if (state.data == "") return;
-  const img = new Image();
   console.log("Loading image...");
-  img.onload = () => {
-    document.body.scrollTo(0, 0);
-    state.msg = "Image loaded: " + img.src;
-    if (matchbg.value) {
-      matchbg.value.style.backgroundImage = `url(${img.src})`;
-    }
-    setTimeout(() => {
-      document.body.scrollTo(0, 0);
-      const node = document.querySelector("div.match") as HTMLElement;
-      toPng(node)
-        .then(function (dataUrl: string) {
-          //if (!blob) return alert("error");
-          //saveAs(blob, 'match.png')
-          if (dataUrl.length < 500000) return setTimeout(() => download(), 500);
-          state.data = dataUrl;
-        })
-        .catch(function (error: Error) {
-          console.error("oops, something went wrong!", error);
-        });
-    }, 2000);
-  };
-  img.onerror = () => {
-    state.msg = "Error loading image";
-  };
-  img.src = GrassImage;
+  document.body.scrollTo(0, 0);
+  if (matchbg.value) {
+    matchbg.value.style.backgroundImage = `url(${state.grass})`;
+  }
+  document.body.scrollTo(0, 0);
+  requestAnimationFrame(() => {
+    const node = document.querySelector("div.match") as HTMLElement;
+    toPng(node)
+      .then(function (dataUrl: string) {
+        //if (!blob) return alert("error");
+        //saveAs(blob, 'match.png')
+        if (dataUrl.length < 500000) return setTimeout(() => download(), 500);
+        state.data = dataUrl;
+      })
+      .catch(function (error: Error) {
+        console.error("oops, something went wrong!", error);
+      });
+  });
 }
+
 const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time + ":00.000Z");
 });
@@ -85,11 +72,6 @@ const homeGoalScorers = computed(() => {
 const awayGoalScorers = computed(() => {
   if (!state.match) return [];
   return goalScorers(state.match, "away");
-});
-
-const passStrings = computed(() => {
-  if (!state.match) return [];
-  return getMatchPassStrings(state.match);
 });
 
 const possession = computed(() => {
@@ -115,7 +97,16 @@ const passes = computed(() => {
   return getMatchPasses(state.match);
 });
 
-download();
+const imageTitle = computed(() => {
+  return `${state.match.homeTeam} - ${state.match.awayTeam} ${state.match.date} ${state.match.time}.png`;
+});
+
+fetch(GrassImage)
+  .then((response) => response.blob())
+  .then((blob) => {
+    state.grass = URL.createObjectURL(blob);
+    download();
+  });
 </script>
 <template>
   <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
@@ -125,8 +116,12 @@ download();
     <button @click="state.hidePasses = !state.hidePasses">
       {{ state.hidePasses ? "Show passes" : "Hide passes" }}
     </button>
+    <a v-if="state.data" class="linkButton" :href="state.data" :download="imageTitle"
+      >Download image</a
+    >
 
     <div v-if="state.data == ''" class="loader">Forbereder... Vennligst vent</div>
+
     <div v-if="state.data != ''">
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->

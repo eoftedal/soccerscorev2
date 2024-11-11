@@ -33,6 +33,11 @@ const router = createRouter({
       name: "image",
       component: MatchImage,
     },
+    {
+      path: "/birthday",
+      name: "birthday",
+      component: () => import("../views/BirthdayView.vue"),
+    },
   ],
 });
 
