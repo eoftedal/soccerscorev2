@@ -95,42 +95,60 @@ header {
   top: -10px;
   right: -10px;
   position: absolute;
-  background: #003e80;
+  background: #dc9800;
   color: #fff;
-  font-size: 5em;
+  font-size: 4.5em;
+  xtext-transform: uppercase;
   font-weight: bold;
-  padding-left: 1em;
-  padding-right: em;
-  padding-bottom: 0em;
-  border-left: 10px solid #dc9800;
-  border-bottom: 10px solid #dc9800;
+  padding-left: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  height: 90px;
+  xborder-top: 10px solid #dc9800;
+  xborder-bottom: 10px solid #dc9800;
+  clip-path: polygon(0 0, 100% 0, 100% 120px, 120px 120px);
 }
 header div {
-  xbackground: red;
-  position: relative;
-  top: -40px;
+  margin-top: -30px;
+  margin-left: -30px;
+  background: #003e80;
+  padding-left: 120px;
+  clip-path: polygon(4px 0, 100% 0, 100% 110px, 114px 110px);
+}
+:root {
+  --clip-subtract: 10px;
 }
 footer {
-  bottom: -10px;
+  bottom: -40px;
   left: -10px;
   position: absolute;
-  background: #003e80;
+  background: #dc9800;
   color: #fff;
+  padding-right: 10px;
+  padding-top: 10px;
   font-size: 3em;
   font-weight: bold;
-  padding-right: 0.5em;
-  padding-top: 0.2em;
-  border-top: 10px solid #dc9800;
-  border-right: 10px solid #dc9800;
+  xborder-top: 10px solid #dc9800;
+  xborder-right: 10px solid #dc9800;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 110px) 0,
+    calc(100% - 40px) calc(110px - 40px),
+    calc(100% - 55px) 100%,
+    0 112px
+  );
+  height: 110px;
 }
 footer div {
-  padding-left: 80px;
+  background-color: #003e80;
+  padding-right: 120px;
   background-image: url("/stb_logo.svg");
   background-size: 1em auto;
-  background-position: 20px center;
+  background-position: 0px center;
   background-repeat: no-repeat;
-  position: relative;
-  top: 40px;
-  left: -60px;
+  padding-top: 20px;
+  clip-path: polygon(0 0, calc(100% - 104px) 0, calc(100% - 4px) 100px, 0px 100px);
+  padding-left: 70px;
+  height: 100px;
 }
 </style>
