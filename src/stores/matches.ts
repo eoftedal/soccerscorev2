@@ -121,6 +121,7 @@ export const useMatchStore = defineStore("match", () => {
       const m = JSON.parse(data) as Match;
       if (!m.gameType) m.gameType = "9v9";
       if (!m.extraPeriodLength) m.extraPeriodLength = 10;
+      if (!m.tags) m.tags = [];
       return m;
     }
     return undefined;
@@ -148,6 +149,7 @@ export const useMatchStore = defineStore("match", () => {
       state: "not_started",
       periodLength: 35,
       extraPeriodLength: 10,
+      tags: [],
     });
   }
 

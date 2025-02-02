@@ -11,6 +11,7 @@ export type Match = {
   periods: Period[];
   periodLength: number;
   extraPeriodLength: number;
+  tags?: string[];
 };
 
 export type Period = {

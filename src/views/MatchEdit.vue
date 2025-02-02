@@ -9,6 +9,7 @@ import { setActive, setInactive } from "./buttonUtil";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { msToTimeString } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";
+import TagList from "@/components/TagList.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -280,7 +281,17 @@ function addOutOfPlayEvent() {
   openPeriod.value.outOfPlay.push(t);
   state.periodEvents.push([t, "outofplay", "N"]);
 }
-
+function addTag(el: HTMLInputElement) {
+  if (!match) return;
+  match.tags = match.tags ?? [];
+  match.tags.push(el.value);
+  el.value = "";
+  console.log(match.tags);
+}
+function removeTag(tag: string) {
+  if (!match) return;
+  match.tags = match.tags?.filter((x) => x != tag);
+}
 const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
 
@@ -337,6 +348,13 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <label>Extra-period:</label>
         {{ match.extraPeriodLength }} min
         <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
+      </div>
+      <div class="form">
+        <label>Tags:</label>
+        <input type="text" @keydown.enter.prevent="addTag($event.target as HTMLInputElement)" />
+        <div>
+          <TagList :tags="match.tags" @click="removeTag" />
+        </div>
       </div>
       <div class="toolbar">
         <button @click="newPeriod()">Start new period</button>
