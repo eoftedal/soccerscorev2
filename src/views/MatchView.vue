@@ -108,7 +108,7 @@ main {
   overflow: auto;
 }
 .wrapper .wrapper > * {
-  transform: scale(0.6);
+  transform: scale(0.61);
   transform-origin: 0 0;
 }
 .matchview {
