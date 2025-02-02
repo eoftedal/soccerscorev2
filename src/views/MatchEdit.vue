@@ -2,7 +2,7 @@
 import { useMatchStore } from "@/stores/matches";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { type Period, type TeamData } from "../types";
+import { type Period } from "../types";
 import UpDown from "./UpDown.vue";
 import { getTotal, swapSides, getPossession } from "../match";
 import { setActive, setInactive } from "./buttonUtil";

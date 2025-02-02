@@ -17,6 +17,8 @@ import {
   getShotAccuracy,
   getPasses,
   getMatchPasses,
+  getPassAcc,
+  getMatchPassAcc,
 } from "../match";
 import { computed, ref } from "vue";
 
@@ -67,26 +69,6 @@ function chunk(data: number[], chunkSize: number = 2) {
     result.push(data.slice(i, i + chunkSize));
   }
   return result;
-}
-
-function getAllTouches(period: Period): [number, number] {
-  return [
-    period.home.touches.length + period.home.corners.length + period.home.freekicks.length,
-    period.away.touches.length + period.away.corners.length + period.away.freekicks.length,
-  ];
-}
-function getPassAcc(period: Period): [number, number] {
-  const allTouches = getAllTouches(period);
-  const allPasses = getPasses(period);
-  return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
-}
-
-function getMatchPassAcc(match: Match): [number, number] {
-  const allTouches = match.periods
-    .map((p) => getAllTouches(p))
-    .reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
-  const allPasses = getMatchPasses(match);
-  return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
 }
 
 function getLongestString(period: Period): [number, number] {

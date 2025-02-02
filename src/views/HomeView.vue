@@ -29,6 +29,9 @@ const notFinished = computed(() => {
 const finished = computed(() => {
   return sorted.value.filter((m) => m.state == "finished");
 });
+function formatDate(date: string) {
+  return date.split("-").join(".");
+}
 </script>
 
 <template>
@@ -37,7 +40,7 @@ const finished = computed(() => {
     <ul>
       <li v-for="m in notFinished" v-bind:key="m.id">
         <RouterLink :to="{ name: 'edit', params: { id: m.id } }">
-          {{ m.date }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
+          {{ formatDate(m.date) }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
         </RouterLink>
       </li>
     </ul>
@@ -46,7 +49,7 @@ const finished = computed(() => {
     <ul>
       <li v-for="m in finished" v-bind:key="m.id">
         <RouterLink :to="{ name: 'view', params: { id: m.id } }">
-          {{ m.date }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
+          {{ formatDate(m.date) }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
           {{ score(m) }}
         </RouterLink>
       </li>
@@ -57,5 +60,13 @@ const finished = computed(() => {
 <style scoped>
 main {
   margin: 2em;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  li {
+    margin: 0.5em 0;
+  }
 }
 </style>

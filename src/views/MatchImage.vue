@@ -6,7 +6,14 @@ import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { type Match } from "@/types";
 import GrassImage from "../assets/grass.png";
-import { getMatchPasses, getMatchPossession, getMatchShots, getTotal, goalScorers } from "@/match";
+import {
+  getMatchPassAcc,
+  getMatchPasses,
+  getMatchPossession,
+  getMatchShots,
+  getTotal,
+  goalScorers,
+} from "@/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 
 const route = useRoute();
@@ -65,37 +72,14 @@ const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time + ":00.000Z");
 });
 
-const homeGoalScorers = computed(() => {
-  if (!state.match) return [];
-  return goalScorers(state.match, "home");
-});
-const awayGoalScorers = computed(() => {
-  if (!state.match) return [];
-  return goalScorers(state.match, "away");
-});
+const homeGoalScorers = computed(() => (state.match ? goalScorers(state.match, "home") : []));
+const awayGoalScorers = computed(() => (state.match ? goalScorers(state.match, "away") : []));
 
-const possession = computed(() => {
-  if (!state.match) return [0, 0, 0, 0];
-  return getMatchPossession(state.match);
-});
+const possession = computed(() => (state.match ? getMatchPossession(state.match) : [0, 0, 0, 0]));
 
-const allTouchesHomeCount = computed(() => {
-  if (!state.match) return 1;
-  return state.match.periods
-    .map((x) => x.home.touches.length + x.home.corners.length + x.home.freekicks.length)
-    .reduce((a, b) => a + b, 0);
-});
-const allTouchesAwayCount = computed(() => {
-  if (!state.match) return 1;
-  return state.match.periods
-    .map((x) => x.away.touches.length + x.away.corners.length + x.away.freekicks.length)
-    .reduce((a, b) => a + b, 0);
-});
+const passAcc = computed(() => (state.match ? getMatchPassAcc(state.match) : [0, 0]));
 
-const passes = computed(() => {
-  if (!state.match) return [0, 0];
-  return getMatchPasses(state.match);
-});
+const passes = computed(() => (state.match ? getMatchPasses(state.match) : [0, 0]));
 
 const imageTitle = computed(() => {
   return `image.png`;
@@ -206,9 +190,9 @@ fetch(GrassImage)
             <td>{{ msToTimeString(possession[3]) }}</td>
           </tr>
           <tr class="stat" v-if="!state.hidePasses">
-            <td>{{ ((passes[0] / allTouchesHomeCount) * 100).toFixed(1) }}%</td>
+            <td>{{ passAcc[0].toFixed(1) }}%</td>
             <td colspan="3">Pass.sikk.</td>
-            <td>{{ ((passes[1] / allTouchesAwayCount) * 100).toFixed(1) }}%</td>
+            <td>{{ passAcc[1].toFixed(1) }}%</td>
           </tr>
           <tr class="stat" v-if="!state.hidePasses">
             <td>{{ passes[0] }}</td>
