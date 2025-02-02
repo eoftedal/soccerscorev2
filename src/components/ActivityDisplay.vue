@@ -273,6 +273,11 @@ input[type="range"] {
 .columns {
   display: flex;
 }
+
+.columns .column:first-child {
+  background: #fff;
+  position: sticky;
+}
 .column {
   display: flex;
   flex-direction: column;

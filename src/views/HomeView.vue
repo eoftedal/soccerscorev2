@@ -39,22 +39,33 @@ function formatDate(date: string) {
   <main>
     <h2>New matches</h2>
     <ul class="matchList">
-      <li v-for="m in notFinished" v-bind:key="m.id">
-        <RouterLink :to="{ name: 'edit', params: { id: m.id } }">
-          {{ formatDate(m.date) }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
-        </RouterLink>
-        <TagList :tags="m.tags" />
+      <li
+        v-for="m in notFinished"
+        v-bind:key="m.id"
+        @click="router.push({ name: 'edit', params: { id: m.id } })"
+      >
+        <div class="date">{{ formatDate(m.date) }} <TagList :tags="m.tags" /></div>
+        <div class="scoring">
+          <div class="home">{{ m.homeTeam }}</div>
+          <div class="score">-</div>
+          <div class="away">{{ m.awayTeam }}</div>
+        </div>
       </li>
     </ul>
     <button @click="newMatch()">Add new match</button>
     <h2>Finished matches</h2>
     <ul class="matchList">
-      <li v-for="m in finished" v-bind:key="m.id">
-        <RouterLink :to="{ name: 'view', params: { id: m.id } }">
-          {{ formatDate(m.date) }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
-          {{ score(m) }}
-        </RouterLink>
-        <TagList :tags="m.tags" />
+      <li
+        v-for="m in finished"
+        v-bind:key="m.id"
+        @click="router.push({ name: 'view', params: { id: m.id } })"
+      >
+        <div class="date">{{ formatDate(m.date) }} <TagList :tags="m.tags" /></div>
+        <div class="scoring">
+          <div class="home">{{ m.homeTeam }}</div>
+          <div class="score">{{ score(m) }}</div>
+          <div class="away">{{ m.awayTeam }}</div>
+        </div>
       </li>
     </ul>
     <button @click="router.push({ name: 'export' })">Export/import matches</button>
@@ -64,12 +75,33 @@ function formatDate(date: string) {
 main {
   margin: 2em;
 }
+.date {
+  display: flex;
+  justify-content: space-between;
+  font-size: 80%;
+}
+.scoring {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  .home {
+    text-align: right;
+  }
+  .score {
+    font-weight: bold;
+    padding: 0 0.5em;
+  }
+}
 ul.matchList {
   margin: 0;
   padding: 0;
   list-style-type: none;
   li {
-    margin: 0.5em 0;
+    margin: 0.25em 0;
+    padding: 0.25em 0;
+    border-bottom: 1px solid #ddd;
+    &:first-child {
+      border-top: 1px solid #ddd;
+    }
   }
 }
 </style>

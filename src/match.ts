@@ -164,7 +164,7 @@ export function goalScorers(match: Match, side: "home" | "away") {
     p[side].goals.forEach((x) => {
       let elapsed = i * m.periodLength;
       if (i > 1) {
-        elapsed = 2 * m.periodLength + (i - 1) * m.extraPeriodLength;
+        elapsed = 2 * m.periodLength + (i - 2) * m.extraPeriodLength;
       }
       const goalTime = Math.ceil((x[0] - p.start) / 60000) + elapsed;
       const name = x[1] || "Unknown";

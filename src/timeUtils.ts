@@ -10,6 +10,7 @@ export function formatScoringTime(
   periodDuration: number,
   extraPeriodLength: number,
 ): string {
+  console.log(time, period, periodDuration, extraPeriodLength);
   let periodEnds = (period + 1) * periodDuration;
   if (period > 1) {
     periodEnds = 2 * periodDuration + (period - 1) * extraPeriodLength;
