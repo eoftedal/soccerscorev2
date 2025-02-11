@@ -127,4 +127,30 @@ describe("should calculate possession", () => {
     expect(result[2]).toBe(4000);
     expect(result[3]).toBe(5000);
   });
+
+  it("should work with goal events", () => {
+    const period: Period = {
+      start: 0,
+      stop: 10000,
+      home: {
+        ...emptyPeriod.home,
+        goals: [[2000, "PlayerA"]],
+        touches: [
+          [0, 0],
+          [1000, 0],
+          [3000, 0],
+        ],
+      },
+      away: {
+        ...emptyPeriod.away,
+        touches: [
+          [5000, 0],
+          [10000, 0],
+        ],
+      },
+    };
+    const result = getPossession(period);
+    expect(result[2]).toBe(4000);
+    expect(result[3]).toBe(5000);
+  });
 });

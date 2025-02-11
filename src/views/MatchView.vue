@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers } from "@/match";
@@ -87,7 +87,7 @@ function download() {
       </h2>
     </header>
     <div class="activity">
-      <div class="wrapper">
+      <div class="wrapper" ref="wrapperOuter">
         <ActivityDisplay :match="match" />
       </div>
     </div>
@@ -107,9 +107,15 @@ main {
   width: calc(100%);
   overflow: auto;
 }
+.activity > .wrapper {
+  width: 100%;
+}
+.wrapper .wrapper {
+  width: 100%;
+}
 .wrapper .wrapper > * {
   transform: scale(0.61);
-  transform-origin: 0 0;
+  transform-origin: 0% 0;
 }
 .matchview {
   width: 100%;

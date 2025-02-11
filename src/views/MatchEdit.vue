@@ -49,7 +49,6 @@ onUnmounted(() => {
 
 const state = reactive({
   holdStart: undefined as undefined | number,
-  time: Date.now() as number,
   saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
   periodEvents: [] as [number, TouchType, SideType | "N"][],
   promptDialog: {
@@ -67,18 +66,21 @@ if (match) {
       if (!state.saveTimeout) {
         state.saveTimeout = setTimeout(() => {
           saveMatch(m);
+          console.log(new Date().toISOString() + ": Saved match");
           state.saveTimeout = undefined;
         }, 2000);
       }
-      saveMatch(m);
+      //saveMatch(m);
     },
     { deep: true },
   );
 }
 
+const gameClock = ref<number>(Date.now());
+
 setInterval(() => {
   if (!openPeriod.value) return;
-  state.time = Date.now();
+  gameClock.value = Date.now();
 }, 500);
 
 function newPeriod() {
@@ -177,9 +179,9 @@ function removeEvent(
 }
 
 function addGoal(period: Period, team: "home" | "away") {
+  const t = Date.now();
   const name = prompt("Scorer");
   if (name == null || name == undefined) return;
-  const t = Date.now();
   period[team].goals.push([t, name]);
 }
 function removeGoal(period: Period, team: "home" | "away") {
@@ -187,7 +189,7 @@ function removeGoal(period: Period, team: "home" | "away") {
 }
 const periodTime = computed(() => {
   if (!openPeriod.value) return "";
-  const elapsed = state.time - openPeriod.value.start;
+  const elapsed = gameClock.value - openPeriod.value.start;
   const minutes = Math.floor(elapsed / 60000);
   const seconds = Math.floor((elapsed - minutes * 60000) / 1000);
   return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
@@ -197,6 +199,7 @@ function confirmEnd() {
   if (!openPeriod.value) return;
   if (!confirm("Stop the current period?")) return;
   openPeriod.value.stop = Date.now();
+  if (match) saveMatch(match);
 }
 const homePasses = computed(() => {
   return state.periodEvents.filter((x, i) => {
@@ -293,6 +296,22 @@ function removeTag(tag: string) {
   match.tags = match.tags?.filter((x) => x != tag);
 }
 const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
+
+function isOutOfPlay() {
+  if (
+    state.periodEvents.slice(-1)[0] == undefined ||
+    state.periodEvents.slice(-1)[0][1] == "outofplay"
+  ) {
+    return true;
+  }
+  const lastTouchEvent = state.periodEvents.slice(-1)[0];
+  const lastGoal = (openPeriod.value?.home.goals ?? [])
+    .concat(openPeriod.value?.away.goals ?? [])
+    .sort((a, b) => a[0] - b[0])
+    .slice(-1)[0];
+  if (lastGoal == undefined) return false;
+  return lastGoal[0] > lastTouchEvent[0];
+}
 </script>
 
 <template>
@@ -505,9 +524,7 @@ const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
           v-if="openPeriod"
           @click="addOutOfPlayEvent"
           :class="{
-            active:
-              state.periodEvents.slice(-1)[0] == undefined ||
-              state.periodEvents.slice(-1)[0][1] == 'outofplay',
+            active: isOutOfPlay(),
           }"
           class="wide"
         >

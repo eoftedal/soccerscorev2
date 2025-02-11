@@ -1,3 +1,9 @@
+type GoalScorer = string;
+export type Timestamp = number;
+export type Delta = number;
+export type MatchEvent = Timestamp;
+export type MatchEventWithDelta = [Timestamp, Delta];
+
 export type Match = {
   id: string;
   location: string;
@@ -18,12 +24,12 @@ export type Period = {
   home: TeamData;
   away: TeamData;
   outOfPlay?: Array<MatchEvent>;
-  start: number;
-  stop: number | undefined;
+  start: Timestamp;
+  stop: Timestamp | undefined;
 };
 
 export type TeamData = {
-  goals: Array<[MatchEvent, string]>;
+  goals: Array<[MatchEvent, GoalScorer]>;
   shots: Array<MatchEvent>;
   offsides?: Array<MatchEvent>;
   touches: Array<MatchEventWithDelta>;
@@ -33,5 +39,3 @@ export type TeamData = {
   yellowCards: Array<MatchEvent>;
   redCards: Array<MatchEvent>;
 };
-type MatchEvent = number;
-type MatchEventWithDelta = [number, number];

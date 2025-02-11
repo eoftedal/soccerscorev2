@@ -1,4 +1,4 @@
-import type { Match, Period, TeamData } from "./types";
+import type { Match, MatchEventWithDelta, Period, TeamData } from "./types";
 
 export enum EventType {
   Touch,
@@ -7,25 +7,35 @@ export enum EventType {
   Penalty,
   Freekick,
   OutOfPlay,
+  Goal,
 }
 
 type Side = "H" | "A" | "N";
 
-function getAllTeamEvents(data: TeamData): Array<[[number, number], EventType]> {
+function getAllTeamEvents(
+  data: TeamData,
+  includeGoals?: boolean,
+): Array<[MatchEventWithDelta, EventType]> {
   return data.touches
-    .map((x) => [x, EventType.Touch] as [[number, number], EventType])
+    .map((x) => [x, EventType.Touch] as [MatchEventWithDelta, EventType])
     .concat(data.corners.map((x) => [x, EventType.Corner]))
     .concat(data.freekicks.map((x) => [x, EventType.Freekick]))
-    .concat(data.penalties.map((x) => [x, EventType.Penalty]));
+    .concat(data.penalties.map((x) => [x, EventType.Penalty]))
+    .concat(includeGoals ? data.goals.map((x) => [[x[0], 0], EventType.Goal]) : []);
 }
 
-export function getAllEventsSorted(period: Period): Array<[Side, [number, number], EventType]> {
-  const homeEvents: Array<[Side, [number, number], EventType]> = getAllTeamEvents(period.home).map(
-    (x) => ["H", ...x],
-  );
-  const awayEvents: Array<[Side, [number, number], EventType]> = getAllTeamEvents(period.away).map(
-    (x) => ["A", ...x],
-  );
+export function getAllEventsSorted(
+  period: Period,
+  includeGoals?: boolean,
+): Array<[Side, MatchEventWithDelta, EventType]> {
+  const homeEvents: Array<[Side, MatchEventWithDelta, EventType]> = getAllTeamEvents(
+    period.home,
+    includeGoals,
+  ).map((x) => ["H", ...x]);
+  const awayEvents: Array<[Side, MatchEventWithDelta, EventType]> = getAllTeamEvents(
+    period.away,
+    includeGoals,
+  ).map((x) => ["A", ...x]);
   const allEvents = homeEvents
     .concat(awayEvents)
     .concat(period.outOfPlay?.map((x) => ["N", [x, 0], EventType.OutOfPlay]) ?? []);
@@ -33,8 +43,8 @@ export function getAllEventsSorted(period: Period): Array<[Side, [number, number
   return allEvents;
 }
 
-export function getPossession(period: Period): [number, number, number, number] {
-  const allEvents = getAllEventsSorted(period);
+export function getPossession(period: Period): [Percentage, Percentage, TotalTime, TotalTime] {
+  const allEvents = getAllEventsSorted(period, true);
   const possession = [0, 0];
   let previous = -1;
   let previousT = "";
@@ -49,6 +59,9 @@ export function getPossession(period: Period): [number, number, number, number] 
     }
     previous = x[1][0];
     previousT = x[0];
+    if (x[2] == EventType.Goal) {
+      previousT = "N";
+    }
   });
   const total = possession[0] + possession[1];
   if (total == 0) return [0, 0, 0, 0];
@@ -59,7 +72,10 @@ export function getPossession(period: Period): [number, number, number, number] 
     possession[1],
   ];
 }
-export function getMatchPossession(match: Match): [number, number, number, number] {
+
+type Percentage = number;
+type TotalTime = number;
+export function getMatchPossession(match: Match): [Percentage, Percentage, TotalTime, TotalTime] {
   const periods = match.periods.map(getPossession);
   const total = periods.reduce((acc, x) => [acc[0] + x[2], acc[1] + x[3]], [0, 0]);
   return [
@@ -109,7 +125,11 @@ export function getPassStrings(
   ];
 }
 
-export function getMatchAveragePassStrings(match: Match): [number, number] {
+type HomeStat = number;
+type AwayStat = number;
+type TeamStat = [HomeStat, AwayStat];
+
+export function getMatchAveragePassStrings(match: Match): TeamStat {
   const data = match.periods
     .map((p) => getPassStrings(p))
     .map((x) => [x[4], x[5]])
@@ -179,13 +199,13 @@ export function goalScorers(match: Match, side: "home" | "away") {
   return all;
 }
 
-export function getShots(period: Period): [number, number] {
+export function getShots(period: Period): TeamStat {
   return [
     period.home.shots.length + period.home.goals.length + period.home.penalties.length,
     period.away.shots.length + period.away.goals.length + period.away.penalties.length,
   ];
 }
-export function getShotAccuracy(period: Period): [number, number] {
+export function getShotAccuracy(period: Period): TeamStat {
   const shots = getShots(period);
   const goals = [period.home.goals.length, period.away.goals.length];
   return [
@@ -194,10 +214,10 @@ export function getShotAccuracy(period: Period): [number, number] {
   ];
 }
 
-export function getMatchShots(match: Match): [number, number] {
+export function getMatchShots(match: Match): TeamStat {
   return match.periods.map(getShots).reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
 }
-export function getMatchShotAccuracy(match: Match): [number, number] {
+export function getMatchShotAccuracy(match: Match): TeamStat {
   const shots = getMatchShots(match);
   const goals = match.periods
     .map((x) => [x.home.goals.length, x.away.goals.length])
@@ -207,7 +227,7 @@ export function getMatchShotAccuracy(match: Match): [number, number] {
     shots[1] == 0 ? 0 : (goals[1] / shots[1]) * 100,
   ];
 }
-export function getPasses(period: Period): [number, number] {
+export function getPasses(period: Period): TeamStat {
   const allEvents = getAllEventsSorted(period);
   let prev: Side | undefined = undefined;
   const passes: [number, number] = [0, 0];
@@ -219,24 +239,24 @@ export function getPasses(period: Period): [number, number] {
   });
   return passes;
 }
-export function getMatchPasses(match: Match): [number, number] {
+export function getMatchPasses(match: Match): TeamStat {
   const strings = match.periods.map(getPasses);
   return [strings.reduce((a, b) => a + b[0], 0), strings.reduce((a, b) => a + b[1], 0)];
 }
 
-export function getAllTouches(period: Period): [number, number] {
+export function getAllTouches(period: Period): TeamStat {
   return [
     period.home.touches.length + period.home.corners.length + period.home.freekicks.length,
     period.away.touches.length + period.away.corners.length + period.away.freekicks.length,
   ];
 }
-export function getPassAcc(period: Period): [number, number] {
+export function getPassAcc(period: Period): TeamStat {
   const allTouches = getAllTouches(period);
   const allPasses = getPasses(period);
   return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
 }
 
-export function getMatchPassAcc(match: Match): [number, number] {
+export function getMatchPassAcc(match: Match): TeamStat {
   const allTouches = match.periods
     .map((p) => getAllTouches(p))
     .reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
