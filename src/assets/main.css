@@ -38,6 +38,7 @@ a.linkButton {
   padding: 0.5em;
   font-size: 13.33333333px;
 }
-button:disabled {
+button:disabled,
+a.disabled {
   background: var(--color-border);
 }

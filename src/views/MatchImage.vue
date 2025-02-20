@@ -116,7 +116,11 @@ fetch(GrassImage)
         {{ state.hidePasses ? "Show passes" : "Hide passes" }}
       </button>
 
-      <a v-if="dataUrl" class="linkButton" :href="dataUrl" :download="imageTitle" type="image/png"
+      <a
+        :class="{ linkButton: true, disabled: dataUrl == '' }"
+        :href="dataUrl"
+        :download="imageTitle"
+        type="image/png"
         >Download image</a
       >
     </div>
