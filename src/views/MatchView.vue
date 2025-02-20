@@ -147,4 +147,10 @@ h3 {
   display: flex;
   justify-content: space-between;
 }
+.buttons button {
+  width: 30%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
 </style>

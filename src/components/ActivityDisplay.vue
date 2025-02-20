@@ -290,7 +290,7 @@ input[type="range"] {
 }
 
 .columns .column:first-child {
-  background: #fff;
+  background: var(--color-bg);
   position: sticky;
 }
 .column {

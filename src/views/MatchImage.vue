@@ -108,19 +108,20 @@ fetch(GrassImage)
 </script>
 <template>
   <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
-    <button @click="state.hidePossession = !state.hidePossession">
-      {{ state.hidePossession ? "Show possession" : "Hide possession" }}
-    </button>
-    <button @click="state.hidePasses = !state.hidePasses">
-      {{ state.hidePasses ? "Show passes" : "Hide passes" }}
-    </button>
+    <div class="buttonRow">
+      <button @click="state.hidePossession = !state.hidePossession">
+        {{ state.hidePossession ? "Show possession" : "Hide possession" }}
+      </button>
+      <button @click="state.hidePasses = !state.hidePasses">
+        {{ state.hidePasses ? "Show passes" : "Hide passes" }}
+      </button>
 
-    <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
-
-    <div v-if="dataUrl != ''">
+      <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
       <a v-if="dataUrl" class="linkButton" :href="dataUrl" :download="imageTitle" type="image/png"
         >Download image</a
       >
+    </div>
+    <div v-if="dataUrl != ''">
       {{ dataUrl.length }} {{ state.grass.length }} {{ counter }}
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->
@@ -266,6 +267,17 @@ fetch(GrassImage)
   background-size: cover;
   font-size: 30px;
 }
+.buttonRow {
+  display: flex;
+  max-height: 3em;
+  justify-content: space-between;
+}
+.buttonRow > * {
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
 table {
   width: 100%;
   color: #fff;
