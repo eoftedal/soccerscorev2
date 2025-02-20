@@ -24,12 +24,12 @@ const { getMatch } = useMatchStore();
 
 const state = reactive({
   match: getMatch(id) as Match,
-  data: "",
   msg: "",
   hidePossession: false,
   hidePasses: false,
   grass: "",
 });
+const dataUrl = ref("");
 
 const matchbg = ref(undefined as undefined | HTMLDivElement);
 
@@ -45,7 +45,7 @@ watch(
 );
 
 function download() {
-  state.data = "";
+  dataUrl.value = "";
   //if (state.data == "") return;
   console.log("Loading image...");
   document.body.scrollTo(0, 0);
@@ -56,11 +56,11 @@ function download() {
   requestAnimationFrame(() => {
     const node = document.querySelector("div.match") as HTMLElement;
     toPng(node)
-      .then(function (dataUrl: string) {
+      .then(function (data: string) {
         //if (!blob) return alert("error");
         //saveAs(blob, 'match.png')
-        if (dataUrl.length < 500000) return setTimeout(() => download(), 500);
-        state.data = dataUrl;
+        if (data.length < 500000) return setTimeout(() => download(), 500);
+        dataUrl.value = data;
       })
       .catch(function (error: Error) {
         console.error("oops, something went wrong!", error);
@@ -88,7 +88,14 @@ const imageTitle = computed(() => {
 fetch(GrassImage)
   .then((response) => response.blob())
   .then((blob) => {
-    console.log(blob.type);
+    console.log(blob.type, "reading blob...");
+    /*const reader = new FileReader();
+    reader.onload = function () {
+      console.log("Data URL created");
+      state.grass = reader.result as string;
+      requestAnimationFrame(() => download());
+    };
+    reader.readAsDataURL(blob);*/
     state.grass = URL.createObjectURL(blob);
     download();
   });
@@ -102,23 +109,18 @@ fetch(GrassImage)
       {{ state.hidePasses ? "Show passes" : "Hide passes" }}
     </button>
 
-    <div v-if="state.data == ''" class="loader">Forbereder... Vennligst vent</div>
+    <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
 
-    <div v-if="state.data != ''">
-      <a
-        v-if="state.data"
-        class="linkButton"
-        :href="state.data"
-        :download="imageTitle"
-        type="image/png"
+    <div v-if="dataUrl != ''">
+      <a v-if="dataUrl" class="linkButton" :href="dataUrl" :download="imageTitle" type="image/png"
         >Download image</a
       >
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->
       <!--p>{{ state.data.length }}</p-->
-      <img :src="state.data" />
+      <img :src="dataUrl" />
     </div>
-    <div class="match" ref="matchbg" v-if="state.data == ''">
+    <div class="match" ref="matchbg" v-if="dataUrl == ''">
       <table>
         <tbody>
           <tr class="date">
