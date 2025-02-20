@@ -89,15 +89,15 @@ fetch(GrassImage)
   .then((response) => response.blob())
   .then((blob) => {
     console.log(blob.type, "reading blob...");
-    /*const reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function () {
       console.log("Data URL created");
       state.grass = reader.result as string;
       requestAnimationFrame(() => download());
     };
-    reader.readAsDataURL(blob);*/
-    state.grass = URL.createObjectURL(blob);
-    download();
+    reader.readAsDataURL(blob);
+    //state.grass = URL.createObjectURL(blob);
+    //download();
   });
 </script>
 <template>
