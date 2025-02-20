@@ -30,6 +30,7 @@ const state = reactive({
   grass: "",
 });
 const dataUrl = ref("");
+const counter = ref(0);
 
 const matchbg = ref(undefined as undefined | HTMLDivElement);
 
@@ -37,15 +38,20 @@ document.body.scrollTo(0, 0);
 
 watch(
   () => state.hidePasses,
-  () => download(),
+  () => download(true),
 );
 watch(
   () => state.hidePossession,
-  () => download(),
+  () => download(true),
 );
 
-function download() {
+function download(restartCounter = false) {
   dataUrl.value = "";
+  if (restartCounter) {
+    counter.value = 0;
+  } else {
+    counter.value++;
+  }
   //if (state.data == "") return;
   console.log("Loading image...");
   document.body.scrollTo(0, 0);
@@ -59,7 +65,7 @@ function download() {
       .then(function (data: string) {
         //if (!blob) return alert("error");
         //saveAs(blob, 'match.png')
-        if (data.length < 500000) return setTimeout(() => download(), 500);
+        if (data.length < 600000) return setTimeout(() => download(), 500);
         dataUrl.value = data;
       })
       .catch(function (error: Error) {
@@ -115,6 +121,7 @@ fetch(GrassImage)
       <a v-if="dataUrl" class="linkButton" :href="dataUrl" :download="imageTitle" type="image/png"
         >Download image</a
       >
+      {{ dataUrl.length }} {{ state.grass.length }} {{ counter }}
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->
       <!--p>{{ state.data.length }}</p-->
