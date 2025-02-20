@@ -110,13 +110,6 @@ main {
 .activity > .wrapper {
   width: 100%;
 }
-.wrapper .wrapper {
-  width: 100%;
-}
-.wrapper .wrapper > * {
-  transform: scale(0.61);
-  transform-origin: 0% 0;
-}
 .matchview {
   width: 100%;
   display: grid;

@@ -680,12 +680,9 @@ div.big .plus .num {
 }
 .activityScrollWrapper {
   width: 100%;
-  overflow: auto;
 }
 .activityWrapper {
-  margin-left: 1em;
-  transform-origin: 0 0;
-  transform: scale(0.8);
+  margin-top: 1em;
 }
 
 button {

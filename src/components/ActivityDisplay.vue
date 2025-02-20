@@ -79,36 +79,45 @@ function getLongestStringMatch(match: Match): [number, number] {
   const passStrings = getMatchPassStrings(match);
   return [passStrings[0].length - 1, passStrings[1].length - 1];
 }
+const sizeDivider = computed(() => {
+  if (props.match.periods.length > 3) {
+    return "calc(100vw/52)";
+  } else if (props.match.periods.length > 2) {
+    return "calc(100vw/42)";
+  }
+  return "calc(100vw/36)";
+});
 </script>
 
 <template>
-  <div class="wrapper">
-    <!--input type="range" v-model="window" min="1" max="50" step="1" /-->
-    <div class="columns">
-      <div class="column">
-        <svg></svg>
-        <div class="row">Goals</div>
-        <div class="row">Shots</div>
-        <div class="row">Shots %</div>
-        <div class="row">Corners</div>
-        <div class="row">Off-sides</div>
-        <div class="row">Free kicks</div>
-        <div class="row">Penalties</div>
-        <div class="row">Possession</div>
-        <div class="row">Poss.time</div>
-        <div class="row">Touches</div>
-        <div class="row">Pass %</div>
-        <div class="row">Passes</div>
-        <div class="row">3-strings</div>
-        <div class="row">5-strings</div>
-        <div class="row">7-strings</div>
-        <div class="row">Longest string</div>
-        <div class="row">Avg string</div>
-        <div class="row">Yellow cards</div>
-        <div class="row">Red cards</div>
-      </div>
-      <div class="column" v-for="(p, i) of periodPaths" v-bind:key="i">
-        <!--svg height="100" width="100">
+  <div class="outerWrapper">
+    <div class="innerWrapper" :style="{ fontSize: sizeDivider }">
+      <!--input type="range" v-model="window" min="1" max="50" step="1" /-->
+      <div class="columns">
+        <div class="column">
+          <svg></svg>
+          <div class="row">Goals</div>
+          <div class="row">Shots</div>
+          <div class="row">Shots %</div>
+          <div class="row">Corners</div>
+          <div class="row">Off-sides</div>
+          <div class="row">Free kicks</div>
+          <div class="row">Penalties</div>
+          <div class="row">Possession</div>
+          <div class="row">Poss.time</div>
+          <div class="row">Touches</div>
+          <div class="row">Pass %</div>
+          <div class="row">Passes</div>
+          <div class="row">3-strings</div>
+          <div class="row">5-strings</div>
+          <div class="row">7-strings</div>
+          <div class="row">Longest string</div>
+          <div class="row">Avg string</div>
+          <div class="row">Yellow cards</div>
+          <div class="row">Red cards</div>
+        </div>
+        <div class="column" v-for="(p, i) of periodPaths" v-bind:key="i">
+          <!--svg height="100" width="100">
           <line x1="0" y1="50" x2="100" y2="50" stroke="black" fill="black" />
           <path :d="p[0]" fill="red" />
           <line
@@ -140,127 +149,133 @@ function getLongestStringMatch(match: Match): [number, number] {
             &#x26BD;
           </text>
         </svg-->
-        <PeriodChart :period="p[3]" :invert="!props.match.homeTeam.includes('Stabæk')" />
-        <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
-        <ActivityRow :values="getShots(p[3])" />
-        <ActivityRow
-          :values="getShotAccuracy(p[3])"
-          :formatter="(n) => n.toFixed(1)"
-          :percentage="true"
-        />
-        <ActivityRow :values="[p[3].home.corners.length, p[3].away.corners.length]" />
-        <ActivityRow :values="[p[3].home.offsides?.length ?? 0, p[3].away.offsides?.length ?? 0]" />
-        <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
-        <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
-        <ActivityRow
-          :values="firstTwo(getPossession(p[3]))"
-          :percentage="true"
-          :formatter="(n) => n.toFixed(1)"
-        />
-        <ActivityRow
-          :values="firstTwo(chunk(getPossession(p[3]))[1])"
-          :formatter="msToTimeString"
-        />
-        <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
-        <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
-        <ActivityRow :values="getPasses(p[3])" />
-        <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
+          <PeriodChart :period="p[3]" :invert="!props.match.homeTeam.includes('Stabæk')" />
+          <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
+          <ActivityRow :values="getShots(p[3])" />
           <ActivityRow
-            :values="
-              firstTwo(
-                getPassStrings(p[3])
-                  .slice(0, 2)
-                  .map((x) => (x as number[])[l]),
-              )
-            "
+            :values="getShotAccuracy(p[3])"
+            :formatter="(n) => n.toFixed(1)"
+            :percentage="true"
           />
-        </template>
-        <ActivityRow :values="getLongestString(p[3])" />
-        <ActivityRow
-          :values="getPassStrings(p[3]).slice(2, 4) as [number, number]"
-          :formatter="(n) => n.toFixed(1)"
-        />
-        <ActivityRow :values="[p[3].home.yellowCards.length, p[3].away.yellowCards.length]" />
-        <ActivityRow :values="[p[3].home.redCards.length, p[3].away.redCards.length]" />
-      </div>
+          <ActivityRow :values="[p[3].home.corners.length, p[3].away.corners.length]" />
+          <ActivityRow
+            :values="[p[3].home.offsides?.length ?? 0, p[3].away.offsides?.length ?? 0]"
+          />
+          <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
+          <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
+          <ActivityRow
+            :values="firstTwo(getPossession(p[3]))"
+            :percentage="true"
+            :formatter="(n) => n.toFixed(1)"
+          />
+          <ActivityRow
+            :values="firstTwo(chunk(getPossession(p[3]))[1])"
+            :formatter="msToTimeString"
+          />
+          <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
+          <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
+          <ActivityRow :values="getPasses(p[3])" />
+          <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
+            <ActivityRow
+              :values="
+                firstTwo(
+                  getPassStrings(p[3])
+                    .slice(0, 2)
+                    .map((x) => (x as number[])[l]),
+                )
+              "
+            />
+          </template>
+          <ActivityRow :values="getLongestString(p[3])" />
+          <ActivityRow
+            :values="getPassStrings(p[3]).slice(2, 4) as [number, number]"
+            :formatter="(n) => n.toFixed(1)"
+          />
+          <ActivityRow :values="[p[3].home.yellowCards.length, p[3].away.yellowCards.length]" />
+          <ActivityRow :values="[p[3].home.redCards.length, p[3].away.redCards.length]" />
+        </div>
 
-      <!-- Total -->
-      <div class="column">
-        <svg height="100" width="100"></svg>
-        <ActivityRow
-          :values="[getTotal(props.match, 'home', 'goals'), getTotal(props.match, 'away', 'goals')]"
-        />
-        <ActivityRow :values="getMatchShots(props.match)" />
-        <ActivityRow
-          :values="getMatchShotAccuracy(props.match)"
-          :formatter="(n) => n.toFixed(1)"
-          percentage
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'corners'),
-            getTotal(props.match, 'away', 'corners'),
-          ]"
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'offsides'),
-            getTotal(props.match, 'away', 'offsides'),
-          ]"
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'freekicks'),
-            getTotal(props.match, 'away', 'freekicks'),
-          ]"
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'penalties'),
-            getTotal(props.match, 'away', 'penalties'),
-          ]"
-        />
-        <ActivityRow
-          :values="firstTwo(getMatchPossession(props.match))"
-          :percentage="true"
-          :formatter="(n) => n.toFixed(1)"
-        />
-        <ActivityRow
-          :values="firstTwo(chunk(getMatchPossession(props.match))[1])"
-          :formatter="msToTimeString"
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'touches'),
-            getTotal(props.match, 'away', 'touches'),
-          ]"
-        />
-        <ActivityRow
-          :values="getMatchPassAcc(props.match)"
-          percentage
-          :formatter="(n) => n.toFixed(1)"
-        />
-        <ActivityRow :values="getMatchPasses(props.match)" />
-        <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
-          <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
-        </template>
-        <ActivityRow :values="getLongestStringMatch(props.match)" />
-        <ActivityRow
-          :values="getMatchAveragePassStrings(props.match)"
-          :formatter="(n) => n.toFixed(1)"
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'yellowCards'),
-            getTotal(props.match, 'away', 'yellowCards'),
-          ]"
-        />
-        <ActivityRow
-          :values="[
-            getTotal(props.match, 'home', 'redCards'),
-            getTotal(props.match, 'away', 'redCards'),
-          ]"
-        />
+        <!-- Total -->
+        <div class="column">
+          <svg height="100" width="100"></svg>
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'goals'),
+              getTotal(props.match, 'away', 'goals'),
+            ]"
+          />
+          <ActivityRow :values="getMatchShots(props.match)" />
+          <ActivityRow
+            :values="getMatchShotAccuracy(props.match)"
+            :formatter="(n) => n.toFixed(1)"
+            percentage
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'corners'),
+              getTotal(props.match, 'away', 'corners'),
+            ]"
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'offsides'),
+              getTotal(props.match, 'away', 'offsides'),
+            ]"
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'freekicks'),
+              getTotal(props.match, 'away', 'freekicks'),
+            ]"
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'penalties'),
+              getTotal(props.match, 'away', 'penalties'),
+            ]"
+          />
+          <ActivityRow
+            :values="firstTwo(getMatchPossession(props.match))"
+            :percentage="true"
+            :formatter="(n) => n.toFixed(1)"
+          />
+          <ActivityRow
+            :values="firstTwo(chunk(getMatchPossession(props.match))[1])"
+            :formatter="msToTimeString"
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'touches'),
+              getTotal(props.match, 'away', 'touches'),
+            ]"
+          />
+          <ActivityRow
+            :values="getMatchPassAcc(props.match)"
+            percentage
+            :formatter="(n) => n.toFixed(1)"
+          />
+          <ActivityRow :values="getMatchPasses(props.match)" />
+          <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
+            <ActivityRow :values="firstTwo(getMatchPassStrings(props.match).map((x) => x[l]))" />
+          </template>
+          <ActivityRow :values="getLongestStringMatch(props.match)" />
+          <ActivityRow
+            :values="getMatchAveragePassStrings(props.match)"
+            :formatter="(n) => n.toFixed(1)"
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'yellowCards'),
+              getTotal(props.match, 'away', 'yellowCards'),
+            ]"
+          />
+          <ActivityRow
+            :values="[
+              getTotal(props.match, 'home', 'redCards'),
+              getTotal(props.match, 'away', 'redCards'),
+            ]"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -300,26 +315,36 @@ input[type="range"] {
   border-left: none;
 }
 
-svg,
-.placeholder {
-  width: 120px;
-  height: 120px;
-}
-.row {
+.outerWrapper {
   width: 100%;
   display: flex;
-  min-width: 120px;
+  overflow-x: auto;
+  justify-content: space-around;
+  margin-bottom: 2em;
+}
+
+.innerWrapper {
+  display: inline-block;
+  width: auto;
+}
+
+svg,
+.placeholder {
+  height: 8em;
+}
+svg,
+.placeholder,
+.row {
+  width: 8em;
+  overflow: hidden;
+}
+.row {
+  display: flex;
 }
 .row span {
   text-align: right;
-  width: 100%;
-  padding: 0px 3px;
-}
-.row span:last-child {
-  margin-right: 2px;
-}
-.row span:first-child {
-  margin-left: 2px;
+  width: 50%;
+  padding: 0px 2px;
 }
 .row span:nth-child(2) {
   text-align: left;
