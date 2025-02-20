@@ -85,10 +85,9 @@ function saveImportMatches() {
     <h2>Import matches</h2>
     <div>
       <input type="file" @change="handleFileUpload" accept="application/json" />
-      <ul v-if="importMatches.length > 0">
+      <ul class="import" v-if="importMatches.length > 0">
         <li v-for="m in importMatches" v-bind:key="m.id">
-          {{ m.date }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
-          {{ score(m) }}
+          <div>{{ m.date }} {{ m.time }} {{ m.homeTeam }} - {{ m.awayTeam }} {{ score(m) }}</div>
         </li>
       </ul>
       <button v-if="importMatches.length > 0" @click="saveImportMatches()">Import</button>
@@ -97,17 +96,32 @@ function saveImportMatches() {
     <ul class="export">
       <li v-for="m in finished" v-bind:key="m.id">
         <input type="checkbox" @change="toggleSelected(m)" :checked="state.selected.has(m.id)" />
-        {{ m.date }} {{ m.time }} - {{ m.homeTeam }} - {{ m.awayTeam }}
-        {{ score(m) }}
+        <div @click="toggleSelected(m)">
+          {{ m.date }} - {{ m.homeTeam }} - {{ m.awayTeam }} {{ score(m) }}
+        </div>
       </li>
     </ul>
-    <button @click="selectAll()">Select all</button>
-    <button @click="download()">Download</button>
+    <div class="buttons">
+      <button @click="selectAll()">Select all</button>
+      <button @click="download()" :disabled="state.selected.size == 0">Download</button>
+    </div>
   </main>
 </template>
 <style scoped>
 main {
   margin: 2em;
+}
+.buttons {
+  display: flex;
+}
+li {
+  display: flex;
+}
+li:has(input:checked) {
+  background-color: var(--color-background-mute);
+}
+ul.import {
+  padding-left: 0;
 }
 ul.export {
   margin-left: 0;

@@ -358,17 +358,17 @@ function isOutOfPlay() {
           <option>7v7</option>
         </select>
       </div>
-      <div class="form">
+      <div class="form slider">
         <label>Period duration:</label>
         {{ match.periodLength }} min
         <input type="range" v-model="match.periodLength" min="10" max="45" />
       </div>
-      <div class="form">
+      <div class="form slider">
         <label>Extra-period:</label>
         {{ match.extraPeriodLength }} min
         <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
       </div>
-      <div class="form">
+      <div class="form tags">
         <label>Tags:</label>
         <input type="text" @keydown.enter.prevent="addTag($event.target as HTMLInputElement)" />
         <div>
@@ -726,6 +726,32 @@ button {
 div.mid {
   width: 1em;
 }
+div.form {
+  display: flex;
+}
+div.form > * {
+  margin-left: 0.1em;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: inline-block;
+  align-items: center;
+  align-content: center;
+}
+div.form > input {
+  height: 1.8em;
+}
+div.form.slider,
+div.form.tags {
+  display: block;
+}
+div.form.tags > div {
+  margin-left: 7.9em;
+}
+div.form > button {
+  height: 2.2em;
+  margin-top: -1.1em;
+}
+
 .pause .form label {
   width: 8em;
   display: inline-block;
