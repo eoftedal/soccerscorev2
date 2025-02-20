@@ -116,7 +116,6 @@ fetch(GrassImage)
         {{ state.hidePasses ? "Show passes" : "Hide passes" }}
       </button>
 
-      <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
       <a v-if="dataUrl" class="linkButton" :href="dataUrl" :download="imageTitle" type="image/png"
         >Download image</a
       >
@@ -128,6 +127,7 @@ fetch(GrassImage)
       <!--p>{{ state.data.length }}</p-->
       <img :src="dataUrl" />
     </div>
+    <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
     <div class="match" ref="matchbg" v-if="dataUrl == ''">
       <table>
         <tbody>
