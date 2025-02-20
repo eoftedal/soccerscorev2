@@ -2,8 +2,10 @@
 import { useMatchStore } from "@/stores/matches";
 import { computed } from "vue";
 import { type Match } from "@/types";
-import { RouterLink, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
+
+const buildDate = import.meta.env.VITE_BUILD_DATE;
 
 const router = useRouter();
 
@@ -32,6 +34,9 @@ const finished = computed(() => {
 });
 function formatDate(date: string) {
   return date.split("-").join(".");
+}
+function reload() {
+  location.href = ".?" + new Date().getTime();
 }
 </script>
 
@@ -69,6 +74,7 @@ function formatDate(date: string) {
       </li>
     </ul>
     <button @click="router.push({ name: 'export' })">Export/import matches</button>
+    <footer @click="reload()">Version: {{ buildDate }}</footer>
   </main>
 </template>
 <style scoped>
@@ -103,5 +109,10 @@ ul.matchList {
       border-top: 1px solid #ddd;
     }
   }
+}
+footer {
+  margin-top: 2em;
+  font-size: 80%;
+  text-align: center;
 }
 </style>
