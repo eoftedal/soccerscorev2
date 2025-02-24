@@ -2,7 +2,9 @@ type GoalScorer = string;
 export type Timestamp = number;
 export type Delta = number;
 export type MatchEvent = Timestamp;
+export type UpField = number;
 export type MatchEventWithDelta = [Timestamp, Delta];
+export type FirstTouchEvent = [Timestamp, Delta, UpField?];
 
 export type Match = {
   id: string;
@@ -32,7 +34,7 @@ export type TeamData = {
   goals: Array<[MatchEvent, GoalScorer]>;
   shots: Array<MatchEvent>;
   offsides?: Array<MatchEvent>;
-  touches: Array<MatchEventWithDelta>;
+  touches: Array<FirstTouchEvent>;
   corners: Array<MatchEventWithDelta>;
   freekicks: Array<MatchEventWithDelta>;
   penalties: Array<MatchEventWithDelta>;

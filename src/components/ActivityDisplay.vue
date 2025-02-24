@@ -350,6 +350,6 @@ svg,
   text-align: left;
 }
 .row span:first-child {
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--color-border-hover);
 }
 </style>

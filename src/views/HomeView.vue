@@ -104,9 +104,9 @@ ul.matchList {
   li {
     margin: 0.25em 0;
     padding: 0.25em 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--color-border);
     &:first-child {
-      border-top: 1px solid #ddd;
+      border-top: 1px solid var(--color-border);
     }
   }
 }

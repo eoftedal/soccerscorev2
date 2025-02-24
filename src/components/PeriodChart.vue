@@ -85,7 +85,7 @@ const chartData = computed(() => {
       y2="50"
       g
       fill="none"
-      stroke="black"
+      stroke="currentColor"
     />
     <text v-for="(g, i) in chartData.homeGoals" v-bind:key="i" :x="g" y="10" text-anchor="middle">
       &#x26BD;
@@ -99,7 +99,7 @@ const chartData = computed(() => {
       y2="50"
       g
       fill="none"
-      stroke="black"
+      stroke="currentColor"
     />
     <text v-for="(g, i) in chartData.awayGoals" v-bind:key="i" :x="g" y="90" text-anchor="middle">
       &#x26BD;

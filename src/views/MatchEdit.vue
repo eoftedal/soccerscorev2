@@ -49,6 +49,7 @@ onUnmounted(() => {
 
 const state = reactive({
   holdStart: undefined as undefined | number,
+  holdPoint: undefined as undefined | number,
   saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
   periodEvents: [] as [number, TouchType, SideType | "N"][],
   promptDialog: {
@@ -127,8 +128,10 @@ const openPeriod = computed(() => {
 });
 function addTouch(period: Period, team: SideType) {
   const t = Date.now();
-  period[team].touches.push([t, state.holdStart ? t - state.holdStart : 0]);
+  const point = state.holdPoint;
+  period[team].touches.push([t, state.holdStart ? t - state.holdStart : 0, point]);
   state.holdStart = undefined;
+  state.holdPoint = undefined;
   state.periodEvents.push([t, "touches", team]);
 }
 function removeTouch(period: Period, team: SideType) {
@@ -311,6 +314,16 @@ function isOutOfPlay() {
     .slice(-1)[0];
   if (lastGoal == undefined) return false;
   return lastGoal[0] > lastTouchEvent[0];
+}
+function beginTouch(event: TouchEvent) {
+  state.holdStart = Date.now();
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  state.holdPoint = (event.touches[0].clientY - rect.top) / rect.height;
+  setActive(event);
+}
+function finishTouch(event: TouchEvent, side: "home" | "away") {
+  if (openPeriod.value) addTouch(openPeriod.value, side);
+  setInactive(event);
 }
 </script>
 
@@ -534,14 +547,8 @@ function isOutOfPlay() {
       <div class="big button">
         <button
           class="plus"
-          @touchstart.prevent="
-            state.holdStart = Date.now();
-            setActive($event);
-          "
-          @touchend.prevent="
-            addTouch(openPeriod, 'home');
-            setInactive($event);
-          "
+          @touchstart.prevent="beginTouch($event)"
+          @touchend.prevent="finishTouch($event, 'home')"
         >
           <span>First touch</span>
           <span class="num">{{ openPeriod.home.touches.length }}</span>
@@ -570,14 +577,8 @@ function isOutOfPlay() {
       <div class="big button right">
         <button
           class="plus"
-          @touchstart.prevent="
-            state.holdStart = Date.now();
-            setActive($event);
-          "
-          @touchend.prevent="
-            addTouch(openPeriod, 'away');
-            setInactive($event);
-          "
+          @touchstart.prevent="beginTouch($event)"
+          @touchend.prevent="finishTouch($event, 'away')"
         >
           <span>First touch</span>
           <span class="num">{{ openPeriod.away.touches.length }}</span>
@@ -694,6 +695,10 @@ button {
   height: 5.5vh;
   justify-content: space-between;
 }
+button span {
+  pointer-events: none;
+}
+
 .button button {
   min-width: 10vw;
   display: flex;

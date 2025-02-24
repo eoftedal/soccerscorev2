@@ -5,7 +5,8 @@ import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { type Match } from "@/types";
-import GrassImage from "../assets/grass.png";
+//import GrassImage from "../assets/grass.png";
+import GrassImage2 from "../assets/grass.avif";
 import {
   getMatchPassAcc,
   getMatchPasses,
@@ -91,7 +92,8 @@ const imageTitle = computed(() => {
   return `image.png`;
 });
 
-fetch(GrassImage)
+//fetch(GrassImage)
+fetch(GrassImage2)
   .then((response) => response.blob())
   .then((blob) => {
     console.log(blob.type, "reading blob...");
@@ -125,7 +127,8 @@ fetch(GrassImage)
       >
     </div>
     <div v-if="dataUrl != ''">
-      {{ dataUrl.length }} {{ state.grass.length }} {{ counter }}
+      {{ ((dataUrl.length * 3) / 4 / (1024 * 1024)).toFixed(1) }} MB
+      {{ ((state.grass.length * 3) / 4 / (1024 * 1024)).toFixed(1) }} MB {{ counter }}
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->
       <!--p>{{ state.data.length }}</p-->
