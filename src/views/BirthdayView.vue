@@ -7,9 +7,10 @@ const frame = ref<HTMLDivElement | null>(null);
 const state = reactive({
   imageSrc: null as string | null,
   name: "",
-  dl: "",
   title: "Stabæk Akademi 2012",
 });
+const downloadableImage = ref<string | null>(null);
+const count = ref(0);
 
 function toDataURL(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -31,15 +32,20 @@ const onFileChange = (event: Event) => {
     });
   }
 };
-function generateImage() {
-  let count = 0;
+function generateImage(ix = 1) {
+  count.value = ix;
   requestAnimationFrame(() => {
     if (frame.value == null) return;
     toPng(frame.value).then((dataUrl) => {
       console.log("data", dataUrl.length);
-      state.dl = dataUrl;
+      if (dataUrl.length < (state.imageSrc?.length ?? 1) * 0.8) {
+        console.log("Image too small, retrying");
+        generateImage(ix + 1);
+        return;
+      }
+      downloadableImage.value = dataUrl;
     });
-    if (count++ < 3) setTimeout(() => generateImage(), 500);
+    //if (count++ < 3) setTimeout(() => generateImage(), 500);
   });
 }
 </script>
@@ -48,12 +54,22 @@ function generateImage() {
   <input type="text" v-model="state.name" placeholder="Navn" />
   <input type="text" v-model="state.title" placeholder="Tittel" />
   <button @click="() => generateImage()">Generate image</button>
-  {{ state.imageSrc?.slice(0, 40) }}
-  <a v-if="state.dl" class="linkButton" :href="state.dl" type="image/png" download="image.png"
+  <div v-if="state.imageSrc">
+    {{ ((state.imageSrc?.length ?? 0) / (1024 * 1024)).toFixed(1) }}MB
+    <span v-if="downloadableImage"
+      >{{ ((downloadableImage?.length ?? 0) / (1024 * 1024)).toFixed(1) }}MB {{ count }}</span
+    >
+  </div>
+  <a
+    v-if="downloadableImage"
+    class="linkButton"
+    :href="downloadableImage"
+    type="image/png"
+    download="image.png"
     >Download</a
   >
   <br />
-  <img v-if="state.dl" :src="state.dl" alt="Generated image" width="100px" />
+  <img v-if="downloadableImage" :src="downloadableImage" alt="Generated image" width="100px" />
   <div class="frame" ref="frame">
     <div class="frame-inner">
       <div
