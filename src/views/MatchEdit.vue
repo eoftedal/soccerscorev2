@@ -349,7 +349,7 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
       <div class="form">
         <label>Away:</label>
         <input type="text" v-model="match.awayTeam" />
-        <button @click="swapSides(match)">Swap home/away</button>
+        <button @click="swapSides(match)" class="swap">Swap home/away</button>
       </div>
       <div class="form">
         <label>Date:</label>
@@ -753,7 +753,9 @@ div.form.tags > div {
   margin-left: 7.9em;
 }
 div.form > button {
-  height: 2.2em;
+  height: 2.4em;
+  display: flex;
+  vertical-align: middle;
   margin-top: -1.1em;
 }
 
