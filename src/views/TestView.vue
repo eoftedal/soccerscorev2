@@ -3,8 +3,8 @@ import { reactive } from "vue";
 
 const state = reactive({
   orientationGranted: "",
-  startGamma: null as number | null,
-  gammaDiff: 0,
+  start: null as number | null,
+  diff: 0,
 });
 
 function go() {
@@ -25,12 +25,26 @@ function go() {
   }
 }
 function handlOrientation(event: DeviceOrientationEvent) {
-  if (event.gamma === null) return;
-  if (state.startGamma == null) {
-    state.startGamma = event.gamma;
-    return;
+  let compassHeading: number | undefined;
+
+  // If available (iOS), use the dedicated compass heading
+  if ("webkitCompassHeading" in event && event.webkitCompassHeading !== undefined) {
+    compassHeading = event.webkitCompassHeading as number;
   }
-  state.gammaDiff = event.gamma - state.startGamma;
+  // Otherwise, if we have an absolute value, use alpha.
+  else if (event.absolute === true && event.alpha !== null) {
+    // Depending on the device, alpha may need conversion.
+    // Here we assume alpha is measured relative to magnetic north.
+    compassHeading = event.alpha;
+  }
+
+  if (compassHeading !== undefined) {
+    if (state.start === null) {
+      state.start = compassHeading;
+    } else {
+      state.diff = compassHeading - state.start;
+    }
+  }
 }
 </script>
 <template>
@@ -39,6 +53,6 @@ function handlOrientation(event: DeviceOrientationEvent) {
     {{ state.orientationGranted }}
   </div>
   <div>
-    {{ state.gammaDiff }}
+    {{ state.diff }}
   </div>
 </template>
