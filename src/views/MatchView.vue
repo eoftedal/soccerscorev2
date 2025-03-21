@@ -64,7 +64,8 @@ function download() {
               .map(
                 (x) =>
                   formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) +
-                  "'",
+                  "'" +
+                  x[2],
               )
               .join(", ")
           }}
@@ -79,7 +80,8 @@ function download() {
               .map(
                 (x) =>
                   formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) +
-                  "'",
+                  "'" +
+                  x[2],
               )
               .join(", ")
           }}

@@ -6,16 +6,13 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "click", tag: string): void;
 }>();
-console.log("TagList", props.tags);
 const tags = ref(props.tags ?? []);
 watch(
   () => props.tags,
   (newVal) => {
-    console.log("Tags updated", newVal);
     if (newVal) tags.value = newVal;
   },
 );
-console.log(tags);
 </script>
 <template>
   <div class="tag-list">

@@ -5,7 +5,6 @@ import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { type Match } from "@/types";
-//import GrassImage from "../assets/grass.png";
 import GrassImage2 from "../assets/grass.avif";
 import {
   getMatchPassAcc,
@@ -92,7 +91,6 @@ const imageTitle = computed(() => {
   return `image.png`;
 });
 
-//fetch(GrassImage)
 fetch(GrassImage2)
   .then((response) => response.blob())
   .then((blob) => {
@@ -104,8 +102,6 @@ fetch(GrassImage2)
       requestAnimationFrame(() => download());
     };
     reader.readAsDataURL(blob);
-    //state.grass = URL.createObjectURL(blob);
-    //download();
   });
 </script>
 <template>
@@ -161,7 +157,9 @@ fetch(GrassImage2)
                           x[1],
                           state.match.periodLength,
                           state.match.extraPeriodLength,
-                        ) + "'",
+                        ) +
+                        "'" +
+                        x[2],
                     )
                     .join(", ")
                 }}
@@ -180,7 +178,9 @@ fetch(GrassImage2)
                           x[1],
                           state.match.periodLength,
                           state.match.extraPeriodLength,
-                        ) + "'",
+                        ) +
+                        "'" +
+                        x[2],
                     )
                     .join(", ")
                 }}
@@ -195,7 +195,25 @@ fetch(GrassImage2)
               </div>
             </td>
           </tr>
-
+          <!--tr v-if="!state.hidePossession">
+            <td colspan="5">
+              <div class="baran">
+                <div
+                  class="dark"
+                  :style="{ clipPath: 'inset(0 ' + (100 - possession[0]) + '% 0 0)' }"
+                >
+                  <span> {{ possession[0].toFixed(1) }}% </span>
+                  <span>Possession</span>
+                  <span> {{ possession[1].toFixed(1) }}% </span>
+                </div>
+                <div class="light">
+                  <span> {{ possession[0].toFixed(1) }}% </span>
+                  <span>Possession</span>
+                  <span> {{ possession[1].toFixed(1) }}% </span>
+                </div>
+              </div>
+            </td>
+          </tr-->
           <tr class="stat" v-if="!state.hidePossession">
             <td>{{ possession[0].toFixed(1) }}%</td>
             <td colspan="3">Possession</td>
@@ -378,6 +396,29 @@ img {
 td.bars {
   width: 100%;
 }
+div.baran {
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+  * > div {
+    border-radius: 0.5em;
+    padding: 0 0.5em;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    color: #000;
+    &.dark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      background: rgb(0, 102, 255);
+      color: #fff;
+    }
+  }
+}
+
 div.bars {
   width: 80%;
   margin: 0 auto;

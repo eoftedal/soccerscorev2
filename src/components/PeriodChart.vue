@@ -9,6 +9,7 @@ const props = defineProps<{
 }>();
 const chartData = computed(() => {
   const events = getAllEventsSorted(props.period);
+  if (events.length == 0) return { lines: [], homeGoals: [], awayGoals: [] };
   const startTime = events[0][1][0];
   const endTime = events[events.length - 1][1][0];
   const totalTime = endTime - startTime;

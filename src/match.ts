@@ -179,17 +179,22 @@ export function swapSides(match: Match) {
 export function goalScorers(match: Match, side: "home" | "away") {
   const m = match;
   if (!m) return [];
-  const result = {} as Record<string, [number, number][]>;
+  const result = {} as Record<string, [number, number, string][]>;
+
   match.periods.forEach((p, i) => {
+    const allEvents = getAllEventsSorted(p, false);
     p[side].goals.forEach((x) => {
+      const eventsBefore = allEvents.filter((y) => y[1][0] < x[0] && y[2] != EventType.OutOfPlay);
       let elapsed = i * m.periodLength;
       if (i > 1) {
         elapsed = 2 * m.periodLength + (i - 2) * m.extraPeriodLength;
       }
+      const prevEvent = eventsBefore[eventsBefore.length - 1];
       const goalTime = Math.ceil((x[0] - p.start) / 60000) + elapsed;
       const name = x[1] || "Unknown";
       result[name] = result[name] ?? [];
-      result[name].push([goalTime, i]);
+      const tag = prevEvent[2] == EventType.Penalty ? " (pen)" : "";
+      result[name].push([goalTime, i, tag]);
     });
   });
   const all = Object.entries(result);

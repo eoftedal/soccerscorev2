@@ -4,9 +4,11 @@ import ExportView from "../views/ExportView.vue";
 import MatchView from "@/views/MatchView.vue";
 import MatchEdit from "@/views/MatchEdit.vue";
 import MatchImage from "@/views/MatchImage.vue";
+import TestView from "@/views/TestView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
+
   routes: [
     {
       path: "/",
@@ -37,6 +39,11 @@ const router = createRouter({
       path: "/birthday",
       name: "birthday",
       component: () => import("../views/BirthdayView.vue"),
+    },
+    {
+      path: "/test",
+      name: "test",
+      component: TestView,
     },
   ],
 });

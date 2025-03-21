@@ -57,6 +57,10 @@ const state = reactive({
     data: "",
     onOk: undefined as undefined | (() => void),
   },
+  confirm: {
+    title: "",
+    onOk: undefined as undefined | (() => void),
+  },
 });
 
 if (match) {
@@ -86,40 +90,49 @@ setInterval(() => {
 
 function newPeriod() {
   if (!match) return;
-  if (!confirm("Start new period?")) return;
-  state.periodEvents = [];
-  match.periods.push({
-    start: new Date().getTime(),
-    stop: undefined,
-    outOfPlay: [],
-    home: {
-      touches: [],
-      goals: [],
-      corners: [],
-      shots: [],
-      freekicks: [],
-      penalties: [],
-      redCards: [],
-      yellowCards: [],
-      offsides: [],
-    },
-    away: {
-      touches: [],
-      goals: [],
-      corners: [],
-      shots: [],
-      freekicks: [],
-      penalties: [],
-      redCards: [],
-      yellowCards: [],
-      offsides: [],
-    },
-  });
+  if (!confirmModal.value) return;
+  state.confirm.title = "Start new period?";
+  state.confirm.onOk = () => {
+    state.periodEvents = [];
+    match.periods.push({
+      start: new Date().getTime(),
+      stop: undefined,
+      outOfPlay: [],
+      home: {
+        touches: [],
+        goals: [],
+        corners: [],
+        shots: [],
+        freekicks: [],
+        penalties: [],
+        redCards: [],
+        yellowCards: [],
+        offsides: [],
+      },
+      away: {
+        touches: [],
+        goals: [],
+        corners: [],
+        shots: [],
+        freekicks: [],
+        penalties: [],
+        redCards: [],
+        yellowCards: [],
+        offsides: [],
+      },
+    });
+  };
+  confirmModal.value?.open();
 }
 function endMatch() {
-  if (!match || !confirm("Are you sure you want to end the match?")) return;
-  match.state = "finished";
-  router.replace({ name: "view", params: { id: match.id } });
+  if (!match) return;
+  if (!confirmModal.value) return;
+  state.confirm.title = "End match?";
+  state.confirm.onOk = () => {
+    match.state = "finished";
+    router.replace({ name: "view", params: { id: match.id } });
+  };
+  confirmModal.value?.open();
 }
 
 const openPeriod = computed(() => {
@@ -183,9 +196,16 @@ function removeEvent(
 
 function addGoal(period: Period, team: "home" | "away") {
   const t = Date.now();
-  const name = prompt("Scorer");
-  if (name == null || name == undefined) return;
-  period[team].goals.push([t, name]);
+  //const name = prompt("Scorer");
+  if (!state.promptDialog) return;
+  state.promptDialog.title = "Scorer";
+  state.promptDialog.data = "";
+  state.promptDialog.onOk = () => {
+    const name = state.promptDialog.data;
+    if (name == null || name == undefined) return;
+    period[team].goals.push([t, name]);
+  };
+  promptModal.value?.open();
 }
 function removeGoal(period: Period, team: "home" | "away") {
   period[team].goals.pop();
@@ -200,9 +220,14 @@ const periodTime = computed(() => {
 
 function confirmEnd() {
   if (!openPeriod.value) return;
-  if (!confirm("Stop the current period?")) return;
-  openPeriod.value.stop = Date.now();
-  if (match) saveMatch(match);
+  //if (!confirm("Stop the current period?")) return;
+  state.confirm.title = "Stop the current period?";
+  const period = openPeriod.value;
+  state.confirm.onOk = () => {
+    period.stop = Date.now();
+    if (match) saveMatch(match);
+  };
+  confirmModal.value?.open();
 }
 const homePasses = computed(() => {
   return state.periodEvents.filter((x, i) => {
@@ -262,23 +287,27 @@ const goalEventsMatch = computed(() => {
 });
 
 function changeName(e: [number, string]) {
-  const name = prompt("Scorer", e[1]);
+  /*const name = prompt("Scorer", e[1]);
   if (name == null || name == undefined) return;
-  e[1] = name;
-  /*state.promptDialog.title = "Scorer";
+  e[1] = name;*/
+  state.promptDialog.title = "Scorer";
   state.promptDialog.data = e[1];
   state.promptDialog.onOk = () => {
     e[1] = state.promptDialog.data;
   };
-  modal.value?.open();*/
+  promptModal.value?.open();
 }
 function swapGoalSide(e: [number, string], side: "home" | "away", period: Period) {
   const team: "homeTeam" | "awayTeam" = side == "home" ? "awayTeam" : "homeTeam";
-  if (!confirm("Move goal to " + match?.[team] + " ?")) return;
-  const ix = period[side].goals.indexOf(e);
-  if (ix == undefined || ix == -1) return;
-  period[side].goals.splice(ix, 1);
-  period[side == "home" ? "away" : "home"].goals.push(e);
+  //if (!confirm("Move goal to " + match?.[team] + " ?")) return;
+  state.confirm.title = "Move goal to " + match?.[team] + " ?";
+  state.confirm.onOk = () => {
+    const ix = period[side].goals.indexOf(e);
+    if (ix == undefined || ix == -1) return;
+    period[side].goals.splice(ix, 1);
+    period[side == "home" ? "away" : "home"].goals.push(e);
+  };
+  confirmModal.value?.open();
 }
 function addOutOfPlayEvent() {
   if (!openPeriod.value) return;
@@ -298,7 +327,8 @@ function removeTag(tag: string) {
   if (!match) return;
   match.tags = match.tags?.filter((x) => x != tag);
 }
-const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
+const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
+const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 
 function isOutOfPlay() {
   if (
@@ -316,6 +346,7 @@ function isOutOfPlay() {
   return lastGoal[0] > lastTouchEvent[0];
 }
 function beginTouch(event: TouchEvent) {
+  //
   state.holdStart = Date.now();
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
   state.holdPoint = (event.touches[0].clientY - rect.top) / rect.height;
@@ -325,6 +356,13 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
   if (openPeriod.value) addTouch(openPeriod.value, side);
   setInactive(event);
 }
+/*const nese = computed(() => {
+  const v = Object.keys(window)
+    .filter((k) => k.includes("Wakelock"))
+    .map((k) => k + ":" + typeof (window as any)[k].postMessage("disable"))
+    .join(",");
+  return v;
+});*/
 </script>
 
 <template>
@@ -345,11 +383,11 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
       <div class="form">
         <label>Home:</label>
         <input type="text" v-model="match.homeTeam" />
+        <button @click="swapSides(match)" class="swap">Swap sides</button>
       </div>
       <div class="form">
         <label>Away:</label>
         <input type="text" v-model="match.awayTeam" />
-        <button @click="swapSides(match)" class="swap">Swap home/away</button>
       </div>
       <div class="form">
         <label>Date:</label>
@@ -617,11 +655,18 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
   {{ lockState && !lockState.released ? "Wakelock is active" : "Wakelock not active" }}
   <ModalDialog
     v-if="match"
-    ref="modal"
+    ref="promptModal"
     @ok="state.promptDialog.onOk ? state.promptDialog.onOk() : undefined"
   >
     {{ state.promptDialog.title }}
     <input type="text" v-model="state.promptDialog.data" />
+  </ModalDialog>
+  <ModalDialog
+    v-if="match"
+    ref="confirmModal"
+    @ok="state.confirm.onOk ? state.confirm.onOk() : undefined"
+  >
+    {{ state.confirm.title }}
   </ModalDialog>
 </template>
 <style>
@@ -756,7 +801,6 @@ div.form > button {
   height: 2.4em;
   display: flex;
   vertical-align: middle;
-  margin-top: -1.1em;
 }
 
 .pause .form label {

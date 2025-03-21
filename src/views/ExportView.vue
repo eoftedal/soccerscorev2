@@ -40,7 +40,8 @@ function toggleSelected(match: Match) {
 function download() {
   const data = JSON.stringify(Array.from(state.selected.values()));
   const file = new Blob([data], { type: "application/json" });
-  saveBlob(file, "data.json");
+  const date = new Date().toISOString().split("T")[0];
+  saveBlob(file, `soccerscorev2-export-${date}.json`);
 }
 function selectAll() {
   for (const m of finished.value) {
@@ -93,6 +94,7 @@ function saveImportMatches() {
       <button v-if="importMatches.length > 0" @click="saveImportMatches()">Import</button>
     </div>
     <h2>Export matches</h2>
+
     <ul class="export">
       <li v-for="m in finished" v-bind:key="m.id">
         <input type="checkbox" @change="toggleSelected(m)" :checked="state.selected.has(m.id)" />

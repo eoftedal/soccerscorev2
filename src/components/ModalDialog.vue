@@ -27,18 +27,18 @@ defineExpose({
         <button
           @click="
             dialog?.close();
-            emit('close');
-          "
-        >
-          Cancel
-        </button>
-        <button
-          @click="
-            dialog?.close();
             emit('ok');
           "
         >
           Ok
+        </button>
+        <button
+          @click="
+            dialog?.close();
+            emit('close');
+          "
+        >
+          Cancel
         </button>
         <slot name="actions" />
       </div>
@@ -50,26 +50,34 @@ defineExpose({
   position: fixed;
   top: 0;
   left: 0;
-  width: 120%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
+  max-height: 100vh;
+  max-width: 100vw;
 }
 .modal::backdrop {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
-.model[open] {
+.modal[open] {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .modal .box {
   background-color: #fff;
-  padding: 1em;
+  padding: 2em;
+  width: 90%;
 }
 .modal .modal-actions {
+  margin-top: 1em;
   display: flex;
   justify-content: space-between;
 }
 .modal .modal-actions button {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 </style>
