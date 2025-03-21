@@ -3,6 +3,8 @@ import { reactive } from "vue";
 
 const state = reactive({
   orientationGranted: "",
+  startGamma: null as number | null,
+  gammaDiff: 0,
 });
 
 function go() {
@@ -14,18 +16,30 @@ function go() {
       .then((permissionState: string) => {
         state.orientationGranted = permissionState;
         if (permissionState === "granted") {
-          window.addEventListener("deviceorientation", () => {});
+          window.addEventListener("deviceorientation", handlOrientation);
         }
       })
       .catch(console.error);
   } else {
-    window.addEventListener("deviceorientation", () => {});
+    window.addEventListener("deviceorientation", handlOrientation);
   }
+}
+function handlOrientation(event: DeviceOrientationEvent) {
+  if (event.gamma === null) return;
+  if (state.startGamma == null) {
+    state.startGamma = event.gamma;
+    return;
+  }
+  state.gammaDiff = event.gamma - state.startGamma;
+  console.log(diff);
 }
 </script>
 <template>
   <button @click="go">Request orientation permission</button>
   <div>
     {{ state.orientationGranted }}
+  </div>
+  <div>
+    {{ state.gammaDiff }}
   </div>
 </template>
