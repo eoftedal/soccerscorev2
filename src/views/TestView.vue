@@ -31,7 +31,6 @@ function handlOrientation(event: DeviceOrientationEvent) {
     return;
   }
   state.gammaDiff = event.gamma - state.startGamma;
-  console.log(diff);
 }
 </script>
 <template>
