@@ -410,12 +410,12 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
         </select>
       </div>
       <div class="form slider">
-        <label>Period duration:</label>
+        <label>Half time:</label>
         {{ match.periodLength }} min
         <input type="range" v-model="match.periodLength" min="10" max="45" />
       </div>
       <div class="form slider">
-        <label>Extra-period:</label>
+        <label>Extra time:</label>
         {{ match.extraPeriodLength }} min
         <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
       </div>
@@ -804,7 +804,7 @@ div.form > button {
 }
 
 .pause .form label {
-  width: 8em;
+  width: 6em;
   display: inline-block;
 }
 div.wide {
