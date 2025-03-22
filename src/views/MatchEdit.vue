@@ -422,7 +422,7 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
       <div class="form tags">
         <label>Tags:</label>
         <input type="text" @keydown.enter.prevent="addTag($event.target as HTMLInputElement)" />
-        <div>
+        <div class="tags">
           <TagList :tags="match.tags" @click="removeTag" />
         </div>
       </div>
@@ -795,7 +795,7 @@ div.form.tags {
   display: block;
 }
 div.form.tags > div {
-  margin-left: 7.9em;
+  margin-left: 5.4em;
 }
 div.form > button {
   height: 2.4em;
