@@ -804,7 +804,7 @@ div.form > button {
 }
 
 .pause .form label {
-  width: 6em;
+  width: 5.5em;
   display: inline-block;
 }
 div.wide {
