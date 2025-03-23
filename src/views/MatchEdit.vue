@@ -411,12 +411,12 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
       </div>
       <div class="form slider">
         <label>Half time:</label>
-        {{ match.periodLength }} min
+        <span>{{ match.periodLength }} min</span>
         <input type="range" v-model="match.periodLength" min="10" max="45" />
       </div>
       <div class="form slider">
         <label>Extra time:</label>
-        {{ match.extraPeriodLength }} min
+        <span>{{ match.extraPeriodLength }} min</span>
         <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
       </div>
       <div class="form tags">
@@ -783,6 +783,7 @@ div.mid {
 }
 div.form {
   display: flex;
+  width: 100%;
 }
 div.form > * {
   margin-left: 0.5em;
@@ -795,19 +796,32 @@ div.form > * {
 div.form > input {
   height: 1.8em;
 }
+div.form > input[type="text"] {
+  width: 42%;
+}
 
 div.form.tags {
   display: block;
 }
+div.from.slider label {
+  width: 5.5em;
+  display: inline-block;
+}
 div.form.slider {
   display: flex;
+}
+div.form.slider span {
+  width: 3.5em;
+  text-align: right;
+  display: inline-block;
 }
 div.form.slider input {
   margin-left: 1em;
   accent-color: var(--button-color);
+  width: 40%;
 }
 div.form.tags > div {
-  margin-left: 5.4em;
+  margin-left: 6.27em;
 }
 div.form > button {
   height: 2.4em;
