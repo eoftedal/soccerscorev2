@@ -79,5 +79,11 @@ defineExpose({
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-left: 0.5em;
+  padding: 1em 0.5em;
 }
+.modal .modal-actions button:first-child {
+  margin-left: 0;
+}
+
 </style>
