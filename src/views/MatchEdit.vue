@@ -673,7 +673,7 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
 .goalEvents h2 {
   text-align: center;
   font-size: 100%;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-border);
 }
 .goalEvents {
   padding: 0.5em;
@@ -773,7 +773,7 @@ button span {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5em;
+  padding: 0.5em 0.5em 0em 0.5em;
 }
 .toolbar button {
   padding: 1em;
@@ -785,7 +785,7 @@ div.form {
   display: flex;
 }
 div.form > * {
-  margin-left: 0.1em;
+  margin-left: 0.5em;
   flex-grow: 0;
   flex-shrink: 0;
   display: inline-block;
@@ -795,9 +795,16 @@ div.form > * {
 div.form > input {
   height: 1.8em;
 }
-div.form.slider,
+
 div.form.tags {
   display: block;
+}
+div.form.slider {
+  display: flex;
+}
+div.form.slider input {
+  margin-left: 1em;
+  accent-color: var(--button-color);
 }
 div.form.tags > div {
   margin-left: 5.4em;
