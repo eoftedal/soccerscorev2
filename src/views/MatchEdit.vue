@@ -706,6 +706,11 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
   width: 3.5em;
   text-align: center;
 }
+.match header button {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

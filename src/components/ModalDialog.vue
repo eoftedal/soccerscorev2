@@ -66,9 +66,10 @@ defineExpose({
   align-items: center;
 }
 .modal .box {
-  background-color: #fff;
+  background-color: var(--color-background);
   padding: 2em;
   width: 90%;
+  color: var(--color-text);
 }
 .modal .modal-actions {
   margin-top: 1em;
@@ -85,5 +86,4 @@ defineExpose({
 .modal .modal-actions button:first-child {
   margin-left: 0;
 }
-
 </style>

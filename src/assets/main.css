@@ -4,7 +4,7 @@ a,
 a:hover,
 a:active,
 a:visited {
-  color: #36d;
+  color: var(--button-color);
 }
 
 input,
@@ -17,9 +17,9 @@ select {
 
 button,
 a.linkButton {
-  border-radius: 5px;
-  background-color: #36d;
-  color: #fff;
+  border-radius: 0.75em;
+  background-color: var(--button-color);
+  color: var(--button-text);
   border: 1px solid var(--color-background);
   padding-top: 0.5em;
   padding-bottom: 0.5em;
@@ -29,9 +29,9 @@ button:active,
 button.active,
 a.linkButton:active,
 a.linkButton.active {
-  border-color: #36d;
-  color: #36d;
-  background-color: #fff;
+  border-color: var(--button-color);
+  color: var(--button-color);
+  background-color: var(--color-background-soft);
 }
 a.linkButton {
   display: inline-block;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 import { type Match } from "@/types";
 import { useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
@@ -10,6 +10,9 @@ const buildDate = import.meta.env.VITE_BUILD_DATE;
 const router = useRouter();
 
 const { matches, newMatch } = useMatchStore();
+const state = reactive({
+  search: "",
+});
 
 function score(match: Match) {
   if (match.state == "not_started") return "";
@@ -30,13 +33,21 @@ const notFinished = computed(() => {
   return sorted.value.filter((m) => m.state != "finished");
 });
 const finished = computed(() => {
-  return sorted.value.filter((m) => m.state == "finished");
+  return sorted.value.filter((m) => m.state == "finished").filter(isMatch);
 });
 function formatDate(date: string) {
   return date.split("-").join(".");
 }
 function reload() {
   location.href = ".?" + new Date().getTime();
+}
+
+function isMatch(m: Match) {
+  return (
+    m.homeTeam.toLowerCase().includes(state.search.toLowerCase()) ||
+    m.awayTeam.toLowerCase().includes(state.search.toLowerCase()) ||
+    m.tags?.some((t) => t.toLowerCase().includes(state.search.toLowerCase()))
+  );
 }
 </script>
 
@@ -59,6 +70,7 @@ function reload() {
     </ul>
     <button @click="newMatch()">Add new match</button>
     <h2>Finished matches</h2>
+    <input type="text" placeholder="Search" class="search" v-model="state.search" />
     <ul class="matchList">
       <li
         v-for="m in finished"
@@ -114,5 +126,8 @@ footer {
   margin-top: 2em;
   font-size: 80%;
   text-align: center;
+}
+input.search {
+  width: 100%;
 }
 </style>
