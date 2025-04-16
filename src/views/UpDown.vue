@@ -47,3 +47,10 @@ function remove() {
     </button>
   </div>
 </template>
+
+<style scoped>
+button {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+</style>

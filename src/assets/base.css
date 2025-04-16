@@ -21,7 +21,7 @@
   --vt-c-text-dark-2: rgba(255, 239, 208, 0.64);
 
   --button-color-light: #36d;
-  --button-color-dark: rgb(255, 178, 60);
+  --button-color-dark: rgb(220, 152, 0);
 }
 
 /* semantic color variables for this project */
@@ -40,11 +40,12 @@
 
   --button-color: var(--button-color-light);
   --button-text: #fff;
+  --input-backround: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
+    --color-background: rgb(0, 62, 128);
     --color-background-soft: var(--vt-c-black-soft);
     --color-background-mute: var(--vt-c-black-mute);
 
@@ -56,6 +57,8 @@
 
     --button-color: var(--button-color-dark);
     --button-text: #000;
+
+    --input-backround: rgba(0,0,0,0.5);
   }
 }
 @font-face {
@@ -107,4 +110,11 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+input[type=text],
+input[type=date],
+input[type=time],
+select
+{
+  background: var(--input-backround);
 }

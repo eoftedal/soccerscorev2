@@ -356,13 +356,10 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
   if (openPeriod.value) addTouch(openPeriod.value, side);
   setInactive(event);
 }
-/*const nese = computed(() => {
-  const v = Object.keys(window)
-    .filter((k) => k.includes("Wakelock"))
-    .map((k) => k + ":" + typeof (window as any)[k].postMessage("disable"))
-    .join(",");
-  return v;
-});*/
+const currentPossession = computed(() => {
+  if (isOutOfPlay()) return null;
+  return state.periodEvents.slice(-1)[0][2];
+})
 </script>
 
 <template>
@@ -447,7 +444,11 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
       </div>
     </div>
 
-    <div class="grid" v-if="openPeriod">
+    <div :class="{
+        grid: true,
+        homePossession: currentPossession == 'home',
+        awayPossession: currentPossession == 'away'
+      }" v-if="openPeriod">
       <UpDown
         @add="addEvent(openPeriod, 'home', 'redCards')"
         @remove="removeEvent(openPeriod, 'home', 'redCards')"
@@ -575,14 +576,14 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
           v-if="openPeriod"
           @click="addOutOfPlayEvent"
           :class="{
-            active: isOutOfPlay(),
+            wide: true,
+            active: isOutOfPlay()
           }"
-          class="wide"
         >
           <div>Out of play</div>
         </button>
       </div>
-      <div class="big button">
+      <div class="big button left">
         <button
           class="plus"
           @touchstart.prevent="beginTouch($event)"
@@ -716,7 +717,7 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
   grid-template-columns: 1fr auto 1fr;
 }
 div.big {
-  height: 41vh;
+  height: 38vh;
   width: 100%;
 }
 div.big .plus {
@@ -838,10 +839,18 @@ div.wide {
   grid-column-end: 4;
   vertical-align: middle;
   text-align: center;
-  button {
-    height: 5.5vh;
-    width: 100%;
-    display: inline-block;
-  }
 }
+div.wide button {
+  height: 8.5vh;
+  width: 100%;
+  display: inline-block;
+}
+
+.homePossession .button.big.left button.plus:not(.active) {
+  background: linear-gradient(to bottom, var(--color-text) 0px, var(--color-text) 8px, var(--button-color) 8px, var(--button-color) 100%);
+}
+.awayPossession .button.big.right button.plus:not(.active) {
+  background: linear-gradient(to bottom, var(--color-text) 0px, var(--color-text) 8px, var(--button-color) 8px, var(--button-color) 100%);
+}
+
 </style>
