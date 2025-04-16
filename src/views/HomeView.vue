@@ -60,7 +60,7 @@ function isMatch(m: Match) {
         v-bind:key="m.id"
         @click="router.push({ name: 'edit', params: { id: m.id } })"
       >
-        <div class="date">{{ formatDate(m.date) }} <TagList :tags="m.tags" /></div>
+        <div class="date">{{ formatDate(m.date) }} {{ m.time }}<TagList :tags="m.tags" /></div>
         <div class="scoring">
           <div class="home">{{ m.homeTeam }}</div>
           <div class="score">-</div>
@@ -77,7 +77,7 @@ function isMatch(m: Match) {
         v-bind:key="m.id"
         @click="router.push({ name: 'view', params: { id: m.id } })"
       >
-        <div class="date">{{ formatDate(m.date) }} <TagList :tags="m.tags" /></div>
+        <div class="date">{{ formatDate(m.date) }} {{ m.time }}<TagList :tags="m.tags" /></div>
         <div class="scoring">
           <div class="home">{{ m.homeTeam }}</div>
           <div class="score">{{ score(m) }}</div>
