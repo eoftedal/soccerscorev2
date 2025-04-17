@@ -97,24 +97,27 @@ export function getPassStrings(
   let count = 0;
   let previous = "";
   const result = [[], []] as [number[], number[]];
-  const strings: { H: [number, number]; A: [number, number]; N: [number, number] } = {
+  const strings: { H: [number, number]; A: [number, number] } = {
     H: [0, 0],
     A: [0, 0],
-    N: [0, 0],
   };
   allEvents.forEach((x) => {
     if (previous == x[0] && x[2] == EventType.Touch) {
       count++;
       result[x[0] == "H" ? 0 : 1][count] = (result[x[0] == "H" ? 0 : 1][count] ?? 0) + 1;
     } else {
-      if (count > 0) {
-        strings[x[0]][0] += count;
-        strings[x[0]][1]++;
+      if (count > 0 && (previous == "H" || previous == "A")) {
+        strings[previous][0] += count;
+        strings[previous][1]++;
       }
       count = 0;
     }
     previous = x[0];
   });
+  if (count > 0 && (previous == "H" || previous == "A")) {
+    strings[previous][0] += count;
+    strings[previous][1]++;
+  }
   return [
     result[0],
     result[1],
