@@ -61,6 +61,7 @@ const state = reactive({
     title: "",
     onOk: undefined as undefined | (() => void),
   },
+  outOfPlayHold: false as boolean
 });
 
 if (match) {
@@ -331,6 +332,7 @@ const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 
 function isOutOfPlay() {
+  if (state.outOfPlayHold) return true;
   if (
     state.periodEvents.slice(-1)[0] == undefined ||
     state.periodEvents.slice(-1)[0][1] == "outofplay"
@@ -345,14 +347,21 @@ function isOutOfPlay() {
   if (lastGoal == undefined) return false;
   return lastGoal[0] > lastTouchEvent[0];
 }
+const timeout = {
+  pointer: null as null | number
+}
+
 function beginTouch(event: TouchEvent) {
   //
+  timeout.pointer = setTimeout(()=> {state.outOfPlayHold = true}, 600);
   state.holdStart = Date.now();
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
   state.holdPoint = (event.touches[0].clientY - rect.top) / rect.height;
   setActive(event);
 }
 function finishTouch(event: TouchEvent, side: "home" | "away") {
+  if (timeout.pointer != null) clearTimeout(timeout.pointer);
+  state.outOfPlayHold = false;
   if (openPeriod.value) addTouch(openPeriod.value, side);
   setInactive(event);
 }
@@ -484,6 +493,8 @@ const currentPossession = computed(() => {
       <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'penalties', t, d)"
         @remove="removeEvent(openPeriod, 'home', 'penalties')"
+        @hold-start="state.outOfPlayHold = true"
+        @hold-end="state.outOfPlayHold = false"
       >
         Penalties
         <span>{{ openPeriod.home.penalties.length }}</span>
@@ -492,6 +503,8 @@ const currentPossession = computed(() => {
       <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'penalties', t, d)"
         @remove="removeEvent(openPeriod, 'away', 'penalties')"
+        @hold-start="state.outOfPlayHold = true"
+        @hold-end="state.outOfPlayHold = false"
       >
         Penalties
         <span>{{ openPeriod.away.penalties.length }}</span>
@@ -500,6 +513,8 @@ const currentPossession = computed(() => {
       <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'corners', t, d)"
         @remove="removeEvent(openPeriod, 'home', 'corners')"
+        @hold-start="state.outOfPlayHold = true"
+        @hold-end="state.outOfPlayHold = false"
       >
         Corners
         <span>{{ openPeriod.home.corners.length }}</span>
@@ -508,6 +523,8 @@ const currentPossession = computed(() => {
       <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'corners', t, d)"
         @remove="removeEvent(openPeriod, 'away', 'corners')"
+        @hold-start="state.outOfPlayHold = true"
+        @hold-end="state.outOfPlayHold = false"
       >
         Corners
         <span>{{ openPeriod.away.corners.length }}</span>
@@ -532,6 +549,8 @@ const currentPossession = computed(() => {
       <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'freekicks', t, d)"
         @remove="removeEvent(openPeriod, 'home', 'freekicks')"
+        @hold-start="state.outOfPlayHold = true"
+        @hold-end="state.outOfPlayHold = false"
       >
         Free kicks
         <span>{{ openPeriod.home.freekicks.length }}</span>
@@ -540,6 +559,9 @@ const currentPossession = computed(() => {
       <UpDown
         @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'freekicks', t, d)"
         @remove="removeEvent(openPeriod, 'away', 'freekicks')"
+        @hold-start="state.outOfPlayHold = true"
+        @hold-end="state.outOfPlayHold = false"
+
       >
         Free kicks
         <span>{{ openPeriod.away.freekicks.length }}</span>

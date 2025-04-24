@@ -5,6 +5,8 @@ import { setActive, setInactive } from "./buttonUtil";
 const emit = defineEmits<{
   (e: "add", time: number, delta: number): void;
   (e: "remove"): void;
+  (e: "holdStart", start: number): void;
+  (e: "holdEnd", start: number, end: number): void;
 }>();
 const state = reactive({
   holdStart: undefined as undefined | number,
@@ -13,6 +15,7 @@ const state = reactive({
 function add() {
   const t = Date.now();
   const delta = state.holdStart ? t - state.holdStart : 0;
+  emit("holdEnd", state.holdStart ?? t, t);
   emit("add", t, delta);
   state.holdStart = undefined;
 }
@@ -26,6 +29,7 @@ function remove() {
       class="plus"
       @touchstart.prevent="
         state.holdStart = Date.now();
+        emit('holdStart', state.holdStart);
         setActive($event);
       "
       @touchend.prevent="

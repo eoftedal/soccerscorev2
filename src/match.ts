@@ -90,6 +90,10 @@ export function getTotal(match: Match, team: "home" | "away", stat: keyof TeamDa
   return match.periods.reduce((acc, x) => acc + (x[team][stat] ?? []).length, 0);
 }
 
+/**
+ * 
+ * @returns strings home, strings away, avg home, avg away, strings and passes home, strings and passes away 
+ */
 export function getPassStrings(
   period: Period,
 ): [number[], number[], number, number, [number, number], [number, number]] {
@@ -119,12 +123,12 @@ export function getPassStrings(
     strings[previous][1]++;
   }
   return [
-    result[0],
-    result[1],
-    strings.H[1] == 0 ? 0 : strings.H[0] / strings.H[1],
-    strings.A[1] == 0 ? 0 : strings.A[0] / strings.A[1],
-    strings.H,
-    strings.A,
+    result[0], //array of strings home
+    result[1], //array of strings away
+    strings.H[1] == 0 ? 0 : strings.H[0] / strings.H[1], //avg string home
+    strings.A[1] == 0 ? 0 : strings.A[0] / strings.A[1], //avg string away
+    strings.H, // [passes, strings]
+    strings.A, // [passes, strings]
   ];
 }
 
