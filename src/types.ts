@@ -1,24 +1,34 @@
-type GoalScorer = string;
-export type Timestamp = number;
-export type Delta = number;
+declare const __brand: unique symbol;
+type BrandedNumber<T> = number & {[__brand]: T };
+type BrandedString<T> = string & {[__brand]: T };
+export type GoalScorer = BrandedString<"GoalScorer">;
+
+export type Timestamp = BrandedNumber<"timestamp">;
+export type Delta = BrandedNumber<"delta">;
 export type MatchEvent = Timestamp;
-export type UpField = number;
+export type UpField = BrandedNumber<"upfield">;
 export type MatchEventWithDelta = [Timestamp, Delta];
-export type FirstTouchEvent = [Timestamp, Delta, UpField?];
+export type FirstTouchEvent = [Timestamp, Delta];
+export type TeamName = BrandedString<"team name">;
+export type DateString = BrandedString<"date">;
+export type TimeString = BrandedString<"time">;
+export type PeriodNumber = BrandedNumber<"period">;
+export type PeriodLength = BrandedNumber<"periodLength">;
+export type ExtraPeriodLength= BrandedNumber<"extraPeriodLength">;
 
 export type Match = {
   id: string;
   location: string;
-  date: string;
-  time: string;
-  homeTeam: string;
-  awayTeam: string;
+  date: DateString;
+  time: TimeString;
+  homeTeam: TeamName;
+  awayTeam: TeamName;
   gameType: string;
   state: "not_started" | "paused" | "in_progress" | "finished";
-  currentPeriod: number;
+  currentPeriod: PeriodNumber;
   periods: Period[];
-  periodLength: number;
-  extraPeriodLength: number;
+  periodLength: PeriodLength;
+  extraPeriodLength: ExtraPeriodLength;
   tags?: string[];
 };
 

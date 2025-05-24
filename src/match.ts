@@ -1,4 +1,4 @@
-import type { Match, MatchEventWithDelta, Period, TeamData } from "./types";
+import type { Delta, Match, MatchEventWithDelta, Period, TeamData } from "./types";
 
 export enum EventType {
   Touch,
@@ -21,7 +21,7 @@ function getAllTeamEvents(
     .concat(data.corners.map((x) => [x, EventType.Corner]))
     .concat(data.freekicks.map((x) => [x, EventType.Freekick]))
     .concat(data.penalties.map((x) => [x, EventType.Penalty]))
-    .concat(includeGoals ? data.goals.map((x) => [[x[0], 0], EventType.Goal]) : []);
+    .concat(includeGoals ? data.goals.map((x) => [[x[0], 0 as Delta], EventType.Goal]) : []);
 }
 
 export function getAllEventsSorted(
@@ -38,7 +38,7 @@ export function getAllEventsSorted(
   ).map((x) => ["A", ...x]);
   const allEvents = homeEvents
     .concat(awayEvents)
-    .concat(period.outOfPlay?.map((x) => ["N", [x, 0], EventType.OutOfPlay]) ?? []);
+    .concat(period.outOfPlay?.map((x) => ["N", [x, 0 as Delta], EventType.OutOfPlay]) ?? []);
   allEvents.sort((a, b) => a[1][0] - b[1][0]);
   return allEvents;
 }
@@ -72,6 +72,8 @@ export function getPossession(period: Period): [Percentage, Percentage, TotalTim
     possession[1],
   ];
 }
+
+
 
 type Percentage = number;
 type TotalTime = number;

@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { setActive, setInactive } from "./buttonUtil";
+import type { Delta, Timestamp } from "@/types";
+import { delta, now } from "@/timeUtils";
 
 const emit = defineEmits<{
-  (e: "add", time: number, delta: number): void;
+  (e: "add", time: Timestamp, delta: Delta): void;
   (e: "remove"): void;
-  (e: "holdStart", start: number): void;
-  (e: "holdEnd", start: number, end: number): void;
+  (e: "holdStart", start: Timestamp): void;
+  (e: "holdEnd", start: Timestamp, end: Timestamp): void;
 }>();
 const state = reactive({
-  holdStart: undefined as undefined | number,
+  holdStart: undefined as undefined | Timestamp,
 });
 
 function add() {
-  const t = Date.now();
-  const delta = state.holdStart ? t - state.holdStart : 0;
+  const t = now();
+  const d = delta(t, state.holdStart);
   emit("holdEnd", state.holdStart ?? t, t);
-  emit("add", t, delta);
+  emit("add", t, d);
   state.holdStart = undefined;
 }
 function remove() {
@@ -28,7 +30,7 @@ function remove() {
     <button
       class="plus"
       @touchstart.prevent="
-        state.holdStart = Date.now();
+        state.holdStart = now();
         emit('holdStart', state.holdStart);
         setActive($event);
       "

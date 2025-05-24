@@ -1,21 +1,21 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { Match, Period } from "@/types";
+import type { DateString, Delta, ExtraPeriodLength, GoalScorer, Match, Period, PeriodLength, PeriodNumber, TeamData, TeamName, Timestamp, TimeString } from "@/types";
 
 function generateDemoMatch2(): Match {
   const start = new Date("2024-06-04T19:00:00").toISOString();
   const m: Match = {
     id: "2",
     location: "Nadderud kunstgress",
-    date: start.split("T")[0],
-    time: start.split("T")[1].split(":").slice(0, 2).join(":"),
-    homeTeam: "Stabæk",
-    awayTeam: "Bortelag",
+    date: start.split("T")[0] as DateString,
+    time: start.split("T")[1].split(":").slice(0, 2).join(":") as TimeString,
+    homeTeam: "Stabæk" as TeamName,
+    awayTeam: "Bortelag" as TeamName,
     gameType: "11v11",
     state: "not_started",
-    currentPeriod: 1,
-    periodLength: 35,
-    extraPeriodLength: 10,
+    currentPeriod: 1 as PeriodNumber,
+    periodLength: 35 as PeriodLength,
+    extraPeriodLength: 10 as ExtraPeriodLength,
     periods: [],
   };
   return m;
@@ -26,15 +26,15 @@ function generateDemoMatch(): Match {
   const m: Match = {
     id: "1",
     location: "Nadderud kunstgress",
-    date: start.split("T")[0],
-    time: start.split("T")[1].split(":").slice(0, 2).join(":"),
-    homeTeam: "Stabæk",
-    awayTeam: "Demo",
+    date: start.split("T")[0] as DateString,
+    time: start.split("T")[1].split(":").slice(0, 2).join(":") as TimeString,
+    homeTeam: "Stabæk" as TeamName,
+    awayTeam: "Demo" as TeamName,
     gameType: "11v11",
     state: "finished",
-    currentPeriod: 1,
-    periodLength: 35,
-    extraPeriodLength: 10,
+    currentPeriod: 1 as PeriodNumber,
+    periodLength: 35 as PeriodLength,
+    extraPeriodLength: 10 as ExtraPeriodLength,
     periods: [],
   };
   const s = new Date(start).getTime();
@@ -62,12 +62,12 @@ function generateDemoMatch(): Match {
         yellowCards: [],
         redCards: [],
       },
-      start: s + i * (35 + 5) * 60 * 1000,
-      stop: s + i * (35 + 5) * 60 * 1000 + 35 * 60 * 1000,
+      start: s + i * (35 + 5) * 60 * 1000 as Timestamp,
+      stop: s + i * (35 + 5) * 60 * 1000 + 35 * 60 * 1000 as Timestamp,
     };
     let last = 0;
     for (let j = 0; j < events; j++) {
-      const eventTime = Math.floor(period.start + (j * 35 * 60 * 1000) / events);
+      const eventTime = Math.floor(period.start + (j * 35 * 60 * 1000) / events) as Timestamp;
       const event = Math.random();
       const t = Math.random();
       let team = period.home;
@@ -78,18 +78,18 @@ function generateDemoMatch(): Match {
       if (event < 0.005) {
         const player = ["PlayerA", "PlayerB"][Math.floor(Math.random() * 2)];
 
-        team.goals.push([eventTime, player]);
+        team.goals.push([eventTime, player as GoalScorer]);
       } else if (event >= 0.005 && event < 0.04) {
         team.shots.push(eventTime);
       } else if (event >= 0.04 && event < 0.06) {
-        team.corners.push([eventTime, 0]);
+        team.corners.push([eventTime, 0 as Delta]);
       } else {
-        team.touches.push([eventTime, 0]);
+        team.touches.push([eventTime, 0 as Delta]);
       }
     }
     return period;
   });
-  m.periods[0].home.goals.push([m.periods[0].start + (m.periodLength + 1) * 60 * 1000, "PlayerA"]);
+  m.periods[0].home.goals.push([m.periods[0].start + (m.periodLength + 1) * 60 * 1000 as Timestamp, "PlayerA" as GoalScorer]);
   console.log(m);
   return m;
 }
@@ -110,7 +110,7 @@ export const useMatchStore = defineStore("match", () => {
     if (data) {
       const match = JSON.parse(data) as Match;
       if (!match.gameType) match.gameType = "9v9";
-      if (!match.extraPeriodLength) match.extraPeriodLength = 10;
+      if (!match.extraPeriodLength) match.extraPeriodLength = 10 as ExtraPeriodLength;
       matches.value.push(match);
     }
   });
@@ -120,7 +120,7 @@ export const useMatchStore = defineStore("match", () => {
     if (data) {
       const m = JSON.parse(data) as Match;
       if (!m.gameType) m.gameType = "9v9";
-      if (!m.extraPeriodLength) m.extraPeriodLength = 10;
+      if (!m.extraPeriodLength) m.extraPeriodLength = 10 as ExtraPeriodLength;
       if (!m.tags) m.tags = [];
       return m;
     }
@@ -128,6 +128,7 @@ export const useMatchStore = defineStore("match", () => {
   }
 
   function saveMatch(match: Match) {
+    console.log("Dey see me saving", match.date);
     if (!matchIndex.value.includes(match.id)) {
       matchIndex.value.push(match.id);
       window.localStorage.setItem("matchIndex", JSON.stringify(matchIndex.value));
@@ -138,17 +139,17 @@ export const useMatchStore = defineStore("match", () => {
   function newMatch() {
     matches.value.push({
       id: new Date().getTime().toString(),
-      homeTeam: "Stabæk",
-      awayTeam: "Motstander",
+      homeTeam: "Stabæk" as TeamName,
+      awayTeam: "Motstander" as TeamName,
       gameType: "11v11",
-      currentPeriod: -1,
+      currentPeriod: -1 as PeriodNumber,
       periods: [],
-      date: new Date().toISOString().split("T")[0],
-      time: new Date().toLocaleTimeString().split(":").slice(0, 2).join(":"),
+      date: new Date().toISOString().split("T")[0] as DateString,
+      time: new Date().toLocaleTimeString().split(":").slice(0, 2).join(":") as TimeString,
       location: "Nadderud kunstgress",
       state: "not_started",
-      periodLength: 35,
-      extraPeriodLength: 10,
+      periodLength: 35 as PeriodLength,
+      extraPeriodLength: 10 as ExtraPeriodLength,
       tags: [],
     });
   }

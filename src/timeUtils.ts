@@ -1,7 +1,16 @@
+import type { Delta, Timestamp } from "./types";
+
 export function msToTimeString(ms: number) {
   const minutes = Math.floor(ms / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+export function now() : Timestamp {
+  return Date.now() as Timestamp;
+}
+export function delta(t: Timestamp, holdStart?: Timestamp) : Delta {
+  return (holdStart ? t - holdStart : 0) as Delta;
 }
 
 export function formatScoringTime(

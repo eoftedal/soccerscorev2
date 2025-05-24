@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { EventType, getAllEventsSorted } from "@/match";
-import type { Period } from "@/types";
+import type { Period, Timestamp } from "@/types";
 import { computed } from "vue";
 
 const props = defineProps<{
@@ -48,7 +48,7 @@ const chartData = computed(() => {
     lines.push([x, 49, x, 49 - 50 * (times[0] / slotTime), 2]);
     lines.push([x, 51, x, 51 + 50 * (times[1] / slotTime), 2]);
     x += 2;
-    time += slotTime;
+    time = (time + slotTime) as Timestamp;
   }
 
   const homeGoals = props.period.home.goals.map((x) => {

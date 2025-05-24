@@ -2,12 +2,12 @@
 import { useMatchStore } from "@/stores/matches";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { type Period } from "../types";
+import { type Delta, type GoalScorer, type Period, type Timestamp } from "../types";
 import UpDown from "./UpDown.vue";
 import { getTotal, swapSides, getPossession } from "../match";
 import { setActive, setInactive } from "./buttonUtil";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
-import { msToTimeString } from "../timeUtils";
+import { delta, msToTimeString, now } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
 
@@ -48,8 +48,7 @@ onUnmounted(() => {
 });
 
 const state = reactive({
-  holdStart: undefined as undefined | number,
-  holdPoint: undefined as undefined | number,
+  holdStart: undefined as undefined | Timestamp,
   saveTimeout: undefined as undefined | ReturnType<typeof setTimeout>,
   periodEvents: [] as [number, TouchType, SideType | "N"][],
   promptDialog: {
@@ -96,7 +95,7 @@ function newPeriod() {
   state.confirm.onOk = () => {
     state.periodEvents = [];
     match.periods.push({
-      start: new Date().getTime(),
+      start: now(),
       stop: undefined,
       outOfPlay: [],
       home: {
@@ -140,12 +139,13 @@ const openPeriod = computed(() => {
   if (!match) return;
   return match.periods.find((p) => !p.stop);
 });
+
+
+
 function addTouch(period: Period, team: SideType) {
-  const t = Date.now();
-  const point = state.holdPoint;
-  period[team].touches.push([t, state.holdStart ? t - state.holdStart : 0, point]);
+  const t = now();
+  period[team].touches.push([t, delta(t, state.holdStart)]);
   state.holdStart = undefined;
-  state.holdPoint = undefined;
   state.periodEvents.push([t, "touches", team]);
 }
 function removeTouch(period: Period, team: SideType) {
@@ -163,8 +163,8 @@ function addEventWithDelta(
   period: Period | undefined,
   team: "home" | "away",
   key: "corners" | "freekicks" | "penalties",
-  time: number,
-  delta: number,
+  time: Timestamp,
+  delta: Delta,
 ) {
   if (!period) return;
   period[team][key].push([time, delta]);
@@ -178,7 +178,7 @@ function addEvent(
   if (period[team][key] == undefined) {
     period[team][key] = [];
   }
-  period[team][key]!.push(Date.now());
+  period[team][key]!.push(now());
 }
 function removeEvent(
   period: Period,
@@ -196,7 +196,7 @@ function removeEvent(
 }
 
 function addGoal(period: Period, team: "home" | "away") {
-  const t = Date.now();
+  const t = now();
   //const name = prompt("Scorer");
   if (!state.promptDialog) return;
   state.promptDialog.title = "Scorer";
@@ -204,7 +204,7 @@ function addGoal(period: Period, team: "home" | "away") {
   state.promptDialog.onOk = () => {
     const name = state.promptDialog.data;
     if (name == null || name == undefined) return;
-    period[team].goals.push([t, name]);
+    period[team].goals.push([t, name as GoalScorer]);
   };
   promptModal.value?.open();
 }
@@ -225,7 +225,7 @@ function confirmEnd() {
   state.confirm.title = "Stop the current period?";
   const period = openPeriod.value;
   state.confirm.onOk = () => {
-    period.stop = Date.now();
+    period.stop = now();
     if (match) saveMatch(match);
   };
   confirmModal.value?.open();
@@ -298,7 +298,7 @@ function changeName(e: [number, string]) {
   };
   promptModal.value?.open();
 }
-function swapGoalSide(e: [number, string], side: "home" | "away", period: Period) {
+function swapGoalSide(e: [Timestamp, GoalScorer], side: "home" | "away", period: Period) {
   const team: "homeTeam" | "awayTeam" = side == "home" ? "awayTeam" : "homeTeam";
   //if (!confirm("Move goal to " + match?.[team] + " ?")) return;
   state.confirm.title = "Move goal to " + match?.[team] + " ?";
@@ -313,7 +313,7 @@ function swapGoalSide(e: [number, string], side: "home" | "away", period: Period
 function addOutOfPlayEvent() {
   if (!openPeriod.value) return;
   openPeriod.value.outOfPlay = openPeriod.value.outOfPlay ?? [];
-  const t = Date.now();
+  const t = now();
   openPeriod.value.outOfPlay.push(t);
   state.periodEvents.push([t, "outofplay", "N"]);
 }
@@ -354,9 +354,7 @@ const timeout = {
 function beginTouch(event: TouchEvent) {
   //
   timeout.pointer = setTimeout(()=> {state.outOfPlayHold = true}, 600);
-  state.holdStart = Date.now();
-  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-  state.holdPoint = (event.touches[0].clientY - rect.top) / rect.height;
+  state.holdStart = now();
   setActive(event);
 }
 function finishTouch(event: TouchEvent, side: "home" | "away") {
@@ -448,7 +446,7 @@ const currentPossession = computed(() => {
             ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
             {{ e[0][1] }}</span
           >
-          <button @click.prevent="swapGoalSide(e[0], e[1], e[2])">Switch team</button>
+          <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">Switch team</button>
         </div>
       </div>
     </div>
@@ -671,7 +669,7 @@ const currentPossession = computed(() => {
           ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
           {{ e[0][1] }}</span
         >
-        <button @click.prevent="swapGoalSide(e[0], e[1], e[2])">Switch team</button>
+        <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">Switch team</button>
       </div>
     </div>
   </div>
@@ -821,6 +819,9 @@ div.form > input {
 }
 div.form > input[type="text"] {
   width: 42%;
+}
+div.form > input[type="date"] {
+  width: 66%;
 }
 
 div.form.tags {

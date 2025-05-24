@@ -1,9 +1,12 @@
-import { Period } from "../src/types";
+import { MatchEventWithDelta, Period, Timestamp } from "../src/types";
 import { getPasses, getPassStrings } from "../src/match";
+function asTimeseries(data: Array<[number, number]>) {
+  return data as Array<MatchEventWithDelta>;
+}
 
 const emptyPeriod: Period = {
-  start: 0,
-  stop: 10000,
+  start: 0 as Timestamp,
+  stop: 10000 as Timestamp,
   home: {
     touches: [],
     corners: [],
@@ -29,22 +32,22 @@ const emptyPeriod: Period = {
 describe("should calculate possession", () => {
   it("should work with normal events", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
           [1000, 0],
           [3000, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
-        touches: [
+        touches: asTimeseries([
           [5000, 0],
           [10000, 0],
-        ],
+        ]),
       },
     };
     const result = getPasses(period);
@@ -54,23 +57,23 @@ describe("should calculate possession", () => {
 
   it("should work with out of play", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
-      outOfPlay: [2000],
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
+      outOfPlay: [2000 as Timestamp],
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
           [1000, 0],
           [3000, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
-        touches: [
+        touches: asTimeseries([
           [5000, 0],
           [10000, 0],
-        ],
+        ]),
       },
     };
     const result = getPasses(period);
@@ -82,14 +85,14 @@ describe("should calculate possession", () => {
 describe("should calculate strings", () => {
   it("should be zero for 0 or 1 touch", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
-      outOfPlay: [2000],
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
+      outOfPlay: [2000 as Timestamp],
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
@@ -106,15 +109,15 @@ describe("should calculate strings", () => {
   });
   it("should be 1 for a single pass", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
-      outOfPlay: [2000],
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
+      outOfPlay: [2000 as Timestamp],
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
           [500, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
@@ -133,18 +136,18 @@ describe("should calculate strings", () => {
 
   it("should be 1.5 for a 2 and a 1", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
-      outOfPlay: [2000],
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
+      outOfPlay: [2000 as Timestamp],
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
           [500, 0],
           [2100, 0],
           [3000, 0],
           [4000, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
@@ -162,26 +165,26 @@ describe("should calculate strings", () => {
   });
   it("should be 2 for a 1 and 3 string", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
       outOfPlay: [],
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
           [500, 0],
           [2100, 0],
           [3000, 0],
           [4000, 0],
           [5000, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
-        touches: [
+        touches: asTimeseries([
           [700,0],
           [1000,0]
-        ],
+        ]),
       },
     };
     const x = getPassStrings(period);
@@ -194,24 +197,24 @@ describe("should calculate strings", () => {
   });
   it("should count interceptions", () => {
     const period: Period = {
-      start: 0,
-      stop: 10000,
+      start: 0 as Timestamp,
+      stop: 10000 as Timestamp,
       outOfPlay: [],
       home: {
         ...emptyPeriod.home,
-        touches: [
+        touches: asTimeseries([
           [0, 0],
           [500, 0],
           [1000, 0],
           [1200, 0],
-        ],
+        ]),
       },
       away: {
         ...emptyPeriod.away,
-        touches: [
+        touches: asTimeseries([
           [1100,0],
           [1300,0]
-        ],
+        ]),
       },
     };
     const x = getPassStrings(period);
