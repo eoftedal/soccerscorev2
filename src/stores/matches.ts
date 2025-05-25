@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { DateString, Delta, ExtraPeriodLength, GoalScorer, Match, Period, PeriodLength, PeriodNumber, TeamData, TeamName, Timestamp, TimeString } from "@/types";
+import type { DateString, Delta, ExtraPeriodLength, GoalScorer, Match, Period, PeriodLength, PeriodNumber, TeamName, Timestamp, TimeString } from "@/types";
 
 function generateDemoMatch2(): Match {
   const start = new Date("2024-06-04T19:00:00").toISOString();

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers } from "@/match";
