@@ -3,7 +3,7 @@ import { useMatchStore } from "@/stores/matches";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
-import { goalScorers } from "@/match";
+import { goalScorers, getPenaltyScore } from "@/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
 
@@ -38,6 +38,7 @@ function download() {
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
 }
+
 </script>
 
 <template>
@@ -56,6 +57,9 @@ function download() {
         <span class="goals">{{ awayGoals.length }}</span>
         <span>{{ match.awayTeam }}</span>
       </h1>
+      <div class="penalties" v-if="match.penaltyRound">
+        Pen {{ getPenaltyScore(match)?.join('-') }}
+      </div>
       <h2 class="home">
         <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
           {{ n }}
@@ -104,6 +108,14 @@ function download() {
 main {
   margin: 0.5em;
 }
+
+.penalties {
+  width: 100%;
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+
 .activity {
   margin-top: 2em;
   width: calc(100%);

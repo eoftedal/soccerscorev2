@@ -92,6 +92,20 @@ export function getTotal(match: Match, team: "home" | "away", stat: keyof TeamDa
   return match.periods.reduce((acc, x) => acc + (x[team][stat] ?? []).length, 0);
 }
 
+export function getGoals(match: Match, team: "home" | "away") : number {
+  const penaltyGoals = match?.penaltyRound?.events?.map(x => x[team == "home" ? 0 : 1]).filter(x => x[0]).length ?? 0;
+  return match.periods.reduce((acc, x) => acc + (x[team].goals ?? []).length, 0) + penaltyGoals;
+}
+
+export function getPenaltyScore(match: Match) {
+  console.log(match);
+  if (!match.penaltyRound) return undefined;
+  return [
+    match.penaltyRound.events.filter(x => x[0][0]).length,
+    match.penaltyRound.events.filter(x => x[1][0]).length,
+  ];
+}
+
 /**
  * 
  * @returns strings home, strings away, avg home, avg away, strings and passes home, strings and passes away 

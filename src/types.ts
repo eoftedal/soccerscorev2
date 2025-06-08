@@ -16,6 +16,7 @@ export type PeriodNumber = BrandedNumber<"period">;
 export type PeriodLength = BrandedNumber<"periodLength">;
 export type ExtraPeriodLength= BrandedNumber<"extraPeriodLength">;
 
+
 export type Match = {
   id: string;
   location: string;
@@ -30,6 +31,7 @@ export type Match = {
   periodLength: PeriodLength;
   extraPeriodLength: ExtraPeriodLength;
   tags?: string[];
+  penaltyRound?: PenaltyRound;
 };
 
 export type Period = {
@@ -39,6 +41,11 @@ export type Period = {
   start: Timestamp;
   stop: Timestamp | undefined;
 };
+
+export type PenaltyRound = {
+  start: "home" | "away"
+  events: Array<[[boolean, GoalScorer],[boolean, GoalScorer]]>;
+}
 
 export type TeamData = {
   goals: Array<[MatchEvent, GoalScorer]>;

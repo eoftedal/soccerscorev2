@@ -3,12 +3,13 @@ import { useMatchStore } from "@/stores/matches";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type GoalScorer, type Period, type Timestamp } from "../types";
-import { getTotal, swapSides } from "../match";
+import { getGoals, swapSides } from "../match";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
 import { now } from "@/timeUtils";
 import PeriodPane from "./PeriodPane.vue";
+import PenaltyRound from "./PenaltyRound.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -58,7 +59,8 @@ const state = reactive({
     title: "",
     onOk: undefined as undefined | (() => void),
   },
-  outOfPlayHold: false as boolean
+  outOfPlayHold: false as boolean,
+  showPenalties: false as boolean,
 });
 
 if (match) {
@@ -122,6 +124,22 @@ function newPeriod() {
   };
   confirmModal.value?.open();
 }
+function showPenalties() {
+  if (!match) return;
+  if (match.penaltyRound) {
+    state.showPenalties = true;
+    return;
+  }
+  if (!confirmModal.value) return;
+  state.confirm.title = "Add penalty round?";
+  state.confirm.onOk = () => {
+    match.penaltyRound = match.penaltyRound ?? { start: "home", events: []};
+    state.showPenalties = true;
+  };
+  confirmModal.value?.open();
+}
+
+
 function endMatch() {
   if (!match) return;
   if (!confirmModal.value) return;
@@ -242,15 +260,20 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <span class="time" v-if="openPeriod">{{ periodTime }}</span>
         <button v-if="openPeriod" @click="confirmEnd">End period</button>
         <span v-if="!openPeriod"
-          >{{ getTotal(match, "home", "goals") }} - {{ getTotal(match, "away", "goals") }}</span
+          >{{ getGoals(match, "home") }} - {{ getGoals(match, "away") }}</span
         >
       </h1>
       <h1>{{ match.awayTeam }}</h1>
     </header>
 
     <PeriodPane :open-period="openPeriod" v-if="openPeriod" />
+    <PenaltyRound 
+      :penaltyRound="match.penaltyRound" 
+      v-if="match.penaltyRound && state.showPenalties" 
+      @close="state.showPenalties = false"
+    />
 
-    <div class="pause" v-if="match.periods.length == 0 || match.periods.every((x) => x.stop)">
+    <div class="pause" v-if="(match.periods.length == 0 || match.periods.every((x) => x.stop)) && !state.showPenalties">
       <div class="form team">
         <label>Home:</label>
         <input type="text" v-model="match.homeTeam" />
@@ -299,6 +322,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
       <div class="toolbar">
         <button @click="newPeriod()">Start new period</button>
+        <button @click="showPenalties()">{{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties</button>
         <button @click="endMatch()">End match</button>
       </div>
       <div class="activityScrollWrapper">
@@ -408,6 +432,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   text-align: center;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 div.form {

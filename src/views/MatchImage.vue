@@ -13,6 +13,7 @@ import {
   getMatchShots,
   getTotal,
   goalScorers,
+  getPenaltyScore
 } from "@/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 
@@ -128,7 +129,7 @@ fetch(GrassImage2)
       <!--p>Hvis backgrunnsbildet mangler, trykk her: <button :style="{height: '2em'}" @click="download()">Prøv igjen</button>
       </p-->
       <!--p>{{ state.data.length }}</p-->
-      <img :src="dataUrl" />
+      <img :src="dataUrl" alt="image" />
     </div>
     <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
     <div class="match" ref="matchbg" v-if="dataUrl == ''">
@@ -137,12 +138,15 @@ fetch(GrassImage2)
           <tr class="date">
             <td colspan="5"><DateView :time="dt.getTime()" /><br />{{ state.match.location }}</td>
           </tr>
-          <tr class="teams">
+          <tr :class="{ teams: true, hasPenalties: state.match.penaltyRound }">
             <td>{{ state.match.homeTeam }}</td>
             <td>{{ getTotal(state.match, "home", "goals") }}</td>
             <td>-</td>
             <td>{{ getTotal(state.match, "away", "goals") }}</td>
             <td>{{ state.match.awayTeam }}</td>
+          </tr>
+          <tr v-if="state.match.penaltyRound" class="penalties">
+            <td colspan=5>Pen {{ getPenaltyScore(state.match)?.join('-') }}</td>
           </tr>
           <tr class="scorers">
             <td colspan="2">
@@ -321,9 +325,22 @@ tr.teams {
   height: 1.5em;
 }
 tr.teams td {
-  border-bottom: 2px solid #fff;
   padding-bottom: 0.5em;
 }
+
+tr.teams.hasPenalties td {
+  padding-bottom: 0em;
+}
+
+tr.penalties td {
+  text-align: center;
+  font-size: 90%;
+  padding: 0em 0em 0.5em 0em;
+}
+tr.scorers td {
+  border-top: 2px solid #fff;
+}
+
 tr.teams :nth-child(2),
 tr.teams :nth-child(4) {
   width: 2em;

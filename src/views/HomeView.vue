@@ -4,6 +4,7 @@ import { computed, reactive } from "vue";
 import { type Match } from "@/types";
 import { useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
+import { getGoals } from "../match";
 
 const buildDate = import.meta.env.VITE_BUILD_DATE;
 
@@ -16,9 +17,7 @@ const state = reactive({
 
 function score(match: Match) {
   if (match.state == "not_started") return "";
-  return match.periods
-    .reduce((c, p) => [c[0] + p.home.goals.length, c[1] + p.away.goals.length], [0, 0])
-    .join(" - ");
+  return getGoals(match, "home") + " - " + getGoals(match, "away")
 }
 
 const sorted = computed(() => {

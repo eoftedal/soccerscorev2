@@ -145,13 +145,14 @@ export const useMatchStore = defineStore("match", () => {
       currentPeriod: -1 as PeriodNumber,
       periods: [],
       date: new Date().toISOString().split("T")[0] as DateString,
-      time: new Date().toLocaleTimeString().split(":").slice(0, 2).join(":") as TimeString,
+      time: new Date().toTimeString().split(":").slice(0, 2).join(":") as TimeString,
       location: "Nadderud kunstgress",
       state: "not_started",
       periodLength: 35 as PeriodLength,
       extraPeriodLength: 10 as ExtraPeriodLength,
       tags: [],
     });
+    console.log(matches);
   }
 
   return { matches, newMatch, saveMatch, getMatch };
