@@ -52,15 +52,19 @@ const chartData = computed(() => {
   }
 
   const homeGoals = props.period.home.goals.map((x) => {
-    const t = ((x[0] - startTime) / totalTime) * 100;
-    return t;
+    return ((x[0] - startTime) / totalTime) * 100;
   });
   const awayGoals = props.period.away.goals.map((x) => {
-    const t = ((x[0] - startTime) / totalTime) * 100;
-    return t;
+    return ((x[0] - startTime) / totalTime) * 100;
+  });
+  const homeRedCards = props.period.home.redCards.map((x) => {
+    return ((x - startTime) / totalTime) * 100;
+  });
+  const awayRedCards = props.period.away.redCards.map((x) => {
+    return ((x - startTime) / totalTime) * 100;
   });
 
-  return { lines, homeGoals, awayGoals };
+  return { lines, homeGoals, awayGoals, homeRedCards, awayRedCards };
 });
 </script>
 
@@ -77,6 +81,37 @@ const chartData = computed(() => {
       :stroke="i % 2 == (props.invert ? 1 : 0) ? '#88f' : '#0d0'"
       :stroke-width="line[4]"
     />
+
+    <line
+      v-for="(g, i) in chartData.homeRedCards"
+      v-bind:key="i"
+      :x1="g"
+      :x2="g"
+      y1="10"
+      y2="50"
+      g
+      fill="none"
+      stroke="currentColor"
+    />
+    <rect v-for="(g, i) in chartData.homeRedCards" v-bind:key="i" :x="g-4" y="0" width="8" height="12"
+      fill="red"
+    />
+
+    <line
+      v-for="(g, i) in chartData.awayRedCards"
+      v-bind:key="i"
+      :x1="g"
+      :x2="g"
+      y1="90"
+      y2="50"
+      g
+      fill="none"
+      stroke="currentColor"
+    />
+    <rect v-for="(g, i) in chartData.awayRedCards" v-bind:key="i" :x="g-4" y="85" width="8" height="12"
+      fill="red"
+    />
+
     <line
       v-for="(g, i) in chartData.homeGoals"
       v-bind:key="i"
@@ -105,5 +140,12 @@ const chartData = computed(() => {
     <text v-for="(g, i) in chartData.awayGoals" v-bind:key="i" :x="g" y="90" text-anchor="middle">
       &#x26BD;
     </text>
+
+
+
+  
+
+
+
   </svg>
 </template>

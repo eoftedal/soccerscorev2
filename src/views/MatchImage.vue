@@ -199,25 +199,6 @@ fetch(GrassImage2)
               </div>
             </td>
           </tr>
-          <!--tr v-if="!state.hidePossession">
-            <td colspan="5">
-              <div class="baran">
-                <div
-                  class="dark"
-                  :style="{ clipPath: 'inset(0 ' + (100 - possession[0]) + '% 0 0)' }"
-                >
-                  <span> {{ possession[0].toFixed(1) }}% </span>
-                  <span>Possession</span>
-                  <span> {{ possession[1].toFixed(1) }}% </span>
-                </div>
-                <div class="light">
-                  <span> {{ possession[0].toFixed(1) }}% </span>
-                  <span>Possession</span>
-                  <span> {{ possession[1].toFixed(1) }}% </span>
-                </div>
-              </div>
-            </td>
-          </tr-->
           <tr class="stat" v-if="!state.hidePossession">
             <td>{{ possession[0].toFixed(1) }}%</td>
             <td colspan="3">Possession</td>
@@ -261,15 +242,27 @@ fetch(GrassImage2)
             <td>{{ getTotal(state.match, "away", "penalties") }}</td>
           </tr>
 
-          <tr class="stat">
-            <td>{{ getTotal(state.match, "home", "yellowCards") }}</td>
+          <tr class="stat cards">
+            <td>
+              <div class="card yellow" v-for="x in getTotal(state.match, 'home', 'yellowCards')" v-bind:key="x"></div>
+              <div v-if="getTotal(state.match, 'home', 'yellowCards') == 0">-</div>
+            </td>
             <td colspan="3">Gule kort</td>
-            <td>{{ getTotal(state.match, "away", "yellowCards") }}</td>
+            <td>
+              <div class="card yellow" v-for="x in getTotal(state.match, 'away', 'yellowCards')" v-bind:key="x"></div>
+              <div v-if="getTotal(state.match, 'away', 'yellowCards') == 0">-</div>
+            </td>
           </tr>
-          <tr class="stat">
-            <td>{{ getTotal(state.match, "home", "redCards") }}</td>
+          <tr class="stat cards">
+            <td>
+              <div class="card red" v-for="x in getTotal(state.match, 'home', 'redCards')" v-bind:key="x"></div>
+              <div v-if="getTotal(state.match, 'home', 'redCards') == 0">-</div>
+            </td>
             <td colspan="3">Røde kort</td>
-            <td>{{ getTotal(state.match, "away", "redCards") }}</td>
+            <td>
+              <div class="card red" v-for="x in getTotal(state.match, 'away', 'redCards')" v-bind:key="x"></div>
+              <div v-if="getTotal(state.match, 'away', 'redCards') == 0">-</div>
+            </td>
           </tr>
 
           <tr class="filler">
@@ -467,6 +460,35 @@ div.bars {
   }
   div:nth-child(2) {
     background: #fff;
+  }
+}
+.card {
+  display: inline-block;
+  width: 0.75em;
+  height: 1.2em;
+  &.red {
+    background: red;
+  }
+  &.yellow {
+    background: yellow;
+  }
+}
+.cards td:has(.card) {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  .card {
+    margin-left: 0px;
+    margin-right: 4px;;
+  }
+  
+  &:first-child {
+    justify-content: end;
+    .card {
+      margin-left: 4px;
+      margin-right: 0px;;
+    }
   }
 }
 </style>
