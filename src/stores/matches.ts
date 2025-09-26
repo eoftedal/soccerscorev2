@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { DateString, Delta, ExtraPeriodLength, GoalScorer, Match, Period, PeriodLength, PeriodNumber, TeamName, Timestamp, TimeString } from "@/types";
+import { CUTOFF } from "@/match";
 
 function generateDemoMatch2(): Match {
   const start = new Date("2024-06-04T19:00:00").toISOString();
@@ -40,7 +41,7 @@ function generateDemoMatch(): Match {
   const s = new Date(start).getTime();
   console.log(s);
   m.periods = [0, 1].map((i) => {
-    const events = Math.floor(Math.random() * 100 + 600);
+    const events = Math.floor(Math.random() * 100 + CUTOFF);
     const period: Period = {
       home: {
         goals: [],

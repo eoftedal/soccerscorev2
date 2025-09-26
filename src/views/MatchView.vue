@@ -58,37 +58,33 @@ function download() {
         <span>{{ match.awayTeam }}</span>
       </h1>
       <div class="penalties" v-if="match.penaltyRound">
-        Pen {{ getPenaltyScore(match)?.join('-') }}
+        <div class="teamPenalties"><span v-for="(e,i) in match.penaltyRound.events" :key="i" :class="{goal: e[0][0]}"></span></div>
+        <div>Pen {{ getPenaltyScore(match)?.join('-') }}</div>
+        <div class="teamPenalties"><span v-for="(e,i) in match.penaltyRound.events" :key="i" :class="{goal: e[1][0]}"></span></div>
       </div>
       <h2 class="home">
         <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
           {{ n }}
-          {{
-            times
-              .map(
-                (x) =>
-                  formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) +
-                  "'" +
-                  x[2],
-              )
-              .join(", ")
-          }}
+          <span v-for="(x,i) in times" :key="i">
+            {{ 
+              formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) 
+            }}'<span class="buildup">{{ x[3] }}</span>{{ 
+              i < times.length -1 ? ", " : "" 
+            }}
+          </span>
         </div>
       </h2>
       <div></div>
       <h2 class="away">
         <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
           {{ n }}
-          {{
-            times
-              .map(
-                (x) =>
-                  formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) +
-                  "'" +
-                  x[2],
-              )
-              .join(", ")
-          }}
+          <span v-for="(x,i) in times" :key="i">
+            {{ 
+              formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) 
+            }}'<span class="buildup">{{ x[3] }}</span>{{ 
+              i < times.length -1 ? ", " : "" 
+            }}
+          </span>
         </div>
       </h2>
     </header>
@@ -166,5 +162,27 @@ h3 {
   text-align: center;
   align-items: center;
   justify-content: center;
+}
+.penalties {
+  display: flex;
+  justify-content: center;
+}
+.teamPenalties span {
+  display: inline-block;
+  background: red;
+  height: 0.6em;
+  width: 0.6em;
+  border-radius: 50%;
+  margin: 0px 1px;
+}
+.teamPenalties span.goal {
+  background: green;
+}
+.penalties > div {
+  margin: 0em 0.25em;
+}
+span.buildup {
+  color: #999;
+  font-size: 70%;
 }
 </style>

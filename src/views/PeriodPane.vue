@@ -2,7 +2,7 @@
 import { computed, reactive, ref, watch } from "vue";
 import { type Delta, type GoalScorer, type Period, type Timestamp } from "../types";
 import UpDown from "./UpDown.vue";
-import { getPossession } from "../match";
+import { CUTOFF, getPossession } from "../match";
 import { setActive, setInactive } from "./buttonUtil";
 import { delta, msToTimeString, now } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";
@@ -143,7 +143,7 @@ const timeout = {
 
 function beginTouch(event: TouchEvent) {
   //
-  timeout.pointer = setTimeout(()=> {state.outOfPlayHold = true}, 600);
+  timeout.pointer = setTimeout(()=> {state.outOfPlayHold = true}, CUTOFF);
   state.holdStart = now();
   setActive(event);
 }
