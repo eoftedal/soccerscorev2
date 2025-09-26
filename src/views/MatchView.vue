@@ -68,7 +68,7 @@ function download() {
           <span v-for="(x,i) in times" :key="i">
             {{ 
               formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) 
-            }}'<span class="buildup">{{ x[3] }}</span>{{ 
+            }}'{{x[2]}}<span class="buildup">{{ x[3] }}</span>{{ 
               i < times.length -1 ? ", " : "" 
             }}
           </span>
@@ -81,7 +81,7 @@ function download() {
           <span v-for="(x,i) in times" :key="i">
             {{ 
               formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) 
-            }}'<span class="buildup">{{ x[3] }}</span>{{ 
+            }}'{{x[2]}}<span class="buildup">{{ x[3] }}</span>{{ 
               i < times.length -1 ? ", " : "" 
             }}
           </span>
