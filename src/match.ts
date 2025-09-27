@@ -214,17 +214,16 @@ export function goalScorers(match: Match, side: "home" | "away") {
         eventsBefore.pop();
       }
       const sameSideEvents = [];
-      for (let i = eventsBefore.length - 1; i >= 0; i--) {
-        if ((eventsBefore[i][0] == "H" && side == "home") || eventsBefore[i][0] == "A" && side == "away") {
-          if (eventsBefore[i][2] == EventType.Shot) continue;
-          sameSideEvents.push(eventsBefore[i]);
-          if (eventsBefore[i][1][1] >= CUTOFF) break;
-          if (eventsBefore[i][2] != EventType.Touch) break;
+      for (let j = eventsBefore.length - 1; j >= 0; j--) {
+        if ((eventsBefore[j][0] == "H" && side == "home") || (eventsBefore[j][0] == "A" && side == "away")) {
+          if (eventsBefore[j][2] == EventType.Shot) continue;
+          sameSideEvents.push(eventsBefore[j]);
+          if (eventsBefore[j][1][1] >= CUTOFF) break;
+          if (eventsBefore[j][2] != EventType.Touch) break;
         } else {
           break;
         }
       }
-      console.log(sameSideEvents);
       let elapsed = i * m.periodLength;
       if (i > 1) {
         elapsed = 2 * m.periodLength + (i - 2) * m.extraPeriodLength;
@@ -234,7 +233,8 @@ export function goalScorers(match: Match, side: "home" | "away") {
       const name = x[1] || "Unknown";
       result[name] = result[name] ?? [];
       const tag = prevEvent[2] == EventType.Penalty ? " (pen)" : "";
-      result[name].push([goalTime, i, tag, sameSideEvents.length]);
+      console.log(side, sameSideEvents, eventsBefore.slice(-14), goalTime, i, tag);
+      result[name].push([goalTime, i, tag, sameSideEvents.length - 1]);
     });
   });
   const all = Object.entries(result);
