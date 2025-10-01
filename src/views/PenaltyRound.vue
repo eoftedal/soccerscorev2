@@ -20,8 +20,8 @@ const state = reactive({
     <div class="top">
         Starting team:
         <select v-model="state.penaltyRound.start">
-            <option value="home">home</option>
-            <option value="away">away</option>
+            <option value="home">Home</option>
+            <option value="away">Away</option>
         </select>
     </div>
     <div v-for="(row,i) in state.penaltyRound.events" v-bind:key="i" :class="{penaltyRow: true, startAway: state.penaltyRound.start == 'away' }">
@@ -31,8 +31,8 @@ const state = reactive({
                 <input type="text"  v-model="row[0][1]" placeholder="Name">
             </div>
             <div class="row">
-                <input type="checkbox" v-model="row[1][0]">
                 <input type="text"  v-model="row[1][1]" placeholder="Name">
+                <input type="checkbox" v-model="row[1][0]">
             </div>
         </div>
     </div>
@@ -44,6 +44,12 @@ const state = reactive({
 </template>
 
 <style scoped>
+input[type='checkbox'] {
+    height: 2em;
+    width: 2em;
+    margin-right: 5px;
+    margin-left: 5px;
+}
 .top {
     margin-bottom: 1em;
     text-align: center;

@@ -5,12 +5,14 @@ import { type Match } from "@/types";
 import { useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
 import { getGoals } from "../match";
+import { storeToRefs } from "pinia";
 
 const buildDate = import.meta.env.VITE_BUILD_DATE;
 
 const router = useRouter();
 
-const { matches, newMatch } = useMatchStore();
+const { newMatch } = useMatchStore();
+const { matches } = storeToRefs(useMatchStore());
 const state = reactive({
   search: "",
 });
@@ -21,7 +23,7 @@ function score(match: Match) {
 }
 
 const sorted = computed(() => {
-  return matches.slice().sort((a, b) => {
+  return matches.value.slice().sort((a, b) => {
     return (
       new Date(b.date + "T" + b.time + ":00").getTime() -
       new Date(a.date + "T" + a.time + ":00").getTime()
