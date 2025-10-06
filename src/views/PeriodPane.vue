@@ -116,6 +116,11 @@ function removeGoal(period: Period, team: "home" | "away") {
 }
 
 function addOutOfPlayEvent() {
+  if (state.periodEvents[state.periodEvents.length - 1]?.[1] == "outofplay") {
+    state.periodEvents.pop();
+    openPeriod.value.outOfPlay?.pop();
+    return;
+  }
   if (!openPeriod.value) return;
   openPeriod.value.outOfPlay = openPeriod.value.outOfPlay ?? [];
   const t = now();
@@ -143,7 +148,7 @@ const timeout = {
 
 function beginTouch(event: TouchEvent) {
   //
-  timeout.pointer = setTimeout(()=> {state.outOfPlayHold = true}, CUTOFF);
+  timeout.pointer = setTimeout(() => {state.outOfPlayHold = true}, CUTOFF);
   state.holdStart = now();
   setActive(event);
 }
@@ -350,7 +355,7 @@ const currentPossession = computed(() => {
             active: isOutOfPlay()
           }"
         >
-          <div>Out of play</div>
+          <div>{{ state.periodEvents[state.periodEvents.length -1]?.[1] == "outofplay" ? "Undo Out of play" : "Out of play" }}</div>
         </button>
       </div>
       <div class="big button left">

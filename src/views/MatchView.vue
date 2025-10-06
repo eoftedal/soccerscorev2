@@ -42,7 +42,6 @@ function download() {
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'home' }">Back to list</RouterLink>
   <main v-if="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }">
     <h3>{{ match.date }} {{ match.time }}</h3>
     <h3>{{ match.location }}</h3>
