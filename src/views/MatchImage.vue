@@ -13,7 +13,7 @@ import {
   getMatchShots,
   getTotal,
   goalScorers,
-  getPenaltyScore
+  getPenaltyScore,
 } from "@/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 
@@ -146,7 +146,7 @@ fetch(GrassImage2)
             <td>{{ state.match.awayTeam }}</td>
           </tr>
           <tr v-if="state.match.penaltyRound" class="penalties">
-            <td colspan=5>Pen {{ getPenaltyScore(state.match)?.join('-') }}</td>
+            <td colspan="5">Pen {{ getPenaltyScore(state.match)?.join("-") }}</td>
           </tr>
           <tr class="scorers">
             <td colspan="2">
@@ -244,23 +244,39 @@ fetch(GrassImage2)
 
           <tr class="stat cards">
             <td>
-              <div class="card yellow" v-for="x in getTotal(state.match, 'home', 'yellowCards')" v-bind:key="x"></div>
+              <div
+                class="card yellow"
+                v-for="x in getTotal(state.match, 'home', 'yellowCards')"
+                v-bind:key="x"
+              ></div>
               <div v-if="getTotal(state.match, 'home', 'yellowCards') == 0">-</div>
             </td>
             <td colspan="3">Gule kort</td>
             <td>
-              <div class="card yellow" v-for="x in getTotal(state.match, 'away', 'yellowCards')" v-bind:key="x"></div>
+              <div
+                class="card yellow"
+                v-for="x in getTotal(state.match, 'away', 'yellowCards')"
+                v-bind:key="x"
+              ></div>
               <div v-if="getTotal(state.match, 'away', 'yellowCards') == 0">-</div>
             </td>
           </tr>
           <tr class="stat cards">
             <td>
-              <div class="card red" v-for="x in getTotal(state.match, 'home', 'redCards')" v-bind:key="x"></div>
+              <div
+                class="card red"
+                v-for="x in getTotal(state.match, 'home', 'redCards')"
+                v-bind:key="x"
+              ></div>
               <div v-if="getTotal(state.match, 'home', 'redCards') == 0">-</div>
             </td>
             <td colspan="3">Røde kort</td>
             <td>
-              <div class="card red" v-for="x in getTotal(state.match, 'away', 'redCards')" v-bind:key="x"></div>
+              <div
+                class="card red"
+                v-for="x in getTotal(state.match, 'away', 'redCards')"
+                v-bind:key="x"
+              ></div>
               <div v-if="getTotal(state.match, 'away', 'redCards') == 0">-</div>
             </td>
           </tr>
@@ -480,14 +496,14 @@ div.bars {
   width: 100%;
   .card {
     margin-left: 0px;
-    margin-right: 4px;;
+    margin-right: 4px;
   }
-  
+
   &:first-child {
     justify-content: end;
     .card {
       margin-left: 4px;
-      margin-right: 0px;;
+      margin-right: 0px;
     }
   }
 }

@@ -1,6 +1,18 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { DateString, Delta, ExtraPeriodLength, GoalScorer, Match, Period, PeriodLength, PeriodNumber, TeamName, Timestamp, TimeString } from "@/types";
+import type {
+  DateString,
+  Delta,
+  ExtraPeriodLength,
+  GoalScorer,
+  Match,
+  Period,
+  PeriodLength,
+  PeriodNumber,
+  TeamName,
+  Timestamp,
+  TimeString,
+} from "@/types";
 import { CUTOFF } from "@/match";
 
 function generateDemoMatch2(): Match {
@@ -63,8 +75,8 @@ function generateDemoMatch(): Match {
         yellowCards: [],
         redCards: [],
       },
-      start: s + i * (35 + 5) * 60 * 1000 as Timestamp,
-      stop: s + i * (35 + 5) * 60 * 1000 + 35 * 60 * 1000 as Timestamp,
+      start: (s + i * (35 + 5) * 60 * 1000) as Timestamp,
+      stop: (s + i * (35 + 5) * 60 * 1000 + 35 * 60 * 1000) as Timestamp,
     };
     let last = 0;
     for (let j = 0; j < events; j++) {
@@ -90,7 +102,10 @@ function generateDemoMatch(): Match {
     }
     return period;
   });
-  m.periods[0].home.goals.push([m.periods[0].start + (m.periodLength + 1) * 60 * 1000 as Timestamp, "PlayerA" as GoalScorer]);
+  m.periods[0].home.goals.push([
+    (m.periods[0].start + (m.periodLength + 1) * 60 * 1000) as Timestamp,
+    "PlayerA" as GoalScorer,
+  ]);
   console.log(m);
   return m;
 }

@@ -133,12 +133,11 @@ function showPenalties() {
   if (!confirmModal.value) return;
   state.confirm.title = "Add penalty round?";
   state.confirm.onOk = () => {
-    match.penaltyRound = match.penaltyRound ?? { start: "home", events: []};
+    match.penaltyRound = match.penaltyRound ?? { start: "home", events: [] };
     state.showPenalties = true;
   };
   confirmModal.value?.open();
 }
-
 
 function endMatch() {
   if (!match) return;
@@ -155,11 +154,6 @@ const openPeriod = computed(() => {
   if (!match) return;
   return match.periods.find((p) => !p.stop);
 });
-
-
-
-
-
 
 const periodTime = computed(() => {
   if (!openPeriod.value) return "";
@@ -180,10 +174,6 @@ function confirmEnd() {
   };
   confirmModal.value?.open();
 }
-
-
-
-
 
 const goalEvents = computed(() => {
   if (!openPeriod.value) return [];
@@ -244,18 +234,15 @@ function removeTag(tag: string) {
 }
 const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
-
-
-
-
-
-
 </script>
 
 <template>
   <div v-if="match" class="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }">
     <header :class="{ pending: state.saveTimeout != undefined }">
-      <h1>{{ match.homeTeam }}</h1>
+      <h1>
+        <span class="goalHeader" v-if="openPeriod">{{ getGoals(match, "home") }}</span
+        >{{ match.homeTeam }}
+      </h1>
       <h1>
         <span class="time" v-if="openPeriod">{{ periodTime }}</span>
         <button v-if="openPeriod" @click="confirmEnd">End period</button>
@@ -263,17 +250,25 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
           >{{ getGoals(match, "home") }} - {{ getGoals(match, "away") }}</span
         >
       </h1>
-      <h1>{{ match.awayTeam }}</h1>
+      <h1>
+        <span class="goalHeader" v-if="openPeriod">{{ getGoals(match, "away") }}</span
+        >{{ match.awayTeam }}
+      </h1>
     </header>
 
     <PeriodPane :open-period="openPeriod" v-if="openPeriod" />
-    <PenaltyRound 
-      :penaltyRound="match.penaltyRound" 
-      v-if="match.penaltyRound && state.showPenalties" 
+    <PenaltyRound
+      :penaltyRound="match.penaltyRound"
+      v-if="match.penaltyRound && state.showPenalties"
       @close="state.showPenalties = false"
     />
 
-    <div class="pause" v-if="(match.periods.length == 0 || match.periods.every((x) => x.stop)) && !state.showPenalties">
+    <div
+      class="pause"
+      v-if="
+        (match.periods.length == 0 || match.periods.every((x) => x.stop)) && !state.showPenalties
+      "
+    >
       <div class="form team">
         <label>Home:</label>
         <input type="text" v-model="match.homeTeam" />
@@ -322,7 +317,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
       <div class="toolbar">
         <button @click="newPeriod()">Start new period</button>
-        <button @click="showPenalties()">{{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties</button>
+        <button @click="showPenalties()">
+          {{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties
+        </button>
         <button @click="endMatch()">End match</button>
       </div>
       <div class="activityScrollWrapper">
@@ -337,12 +334,13 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
             ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
             {{ e[0][1] }}</span
           >
-          <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">Switch team</button>
+          <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
+            Switch team
+          </button>
         </div>
       </div>
     </div>
 
-    
     <div class="goalEvents" v-if="openPeriod">
       <h2>Goals:</h2>
       <div v-for="(e, i) of goalEvents" v-bind:key="i" :class="e[1]">
@@ -350,7 +348,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
           ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
           {{ e[0][1] }}</span
         >
-        <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">Switch team</button>
+        <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
+          Switch team
+        </button>
       </div>
     </div>
   </div>
@@ -405,8 +405,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 }
 .match header .time {
   display: inline-block;
-  width: 3.5em;
+  width: 100%;
   text-align: center;
+  font-family: monospace;
 }
 .match header button {
   padding-left: 1em;
@@ -493,5 +494,27 @@ div.form > button {
 .pause .form label {
   width: 5.5em;
   display: inline-block;
+}
+h1 .goalHeader {
+  xposition: absolute;
+  float: left;
+  font-weight: bold;
+  shape-outside: margin-box;
+  display: block;
+  margin-right: 0.5em;
+}
+h1:first-child .goalHeader {
+  float: right;
+  xleft: auto;
+  xright: 5px;
+  xtop: 5px;
+  margin-right: 0;
+  margin-left: 0.5em;
+}
+header h1 {
+  position: relative;
+  display: flow-root;
+  word-break: break-word;
+  word-wrap: break-word;
 }
 </style>

@@ -6,10 +6,10 @@ export function msToTimeString(ms: number) {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-export function now() : Timestamp {
+export function now(): Timestamp {
   return Date.now() as Timestamp;
 }
-export function delta(t: Timestamp, holdStart?: Timestamp) : Delta {
+export function delta(t: Timestamp, holdStart?: Timestamp): Delta {
   return (holdStart ? t - holdStart : 0) as Delta;
 }
 

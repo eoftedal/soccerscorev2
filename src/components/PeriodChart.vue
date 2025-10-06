@@ -93,7 +93,13 @@ const chartData = computed(() => {
       fill="none"
       stroke="currentColor"
     />
-    <rect v-for="(g, i) in chartData.homeRedCards" v-bind:key="i" :x="g-4" y="0" width="8" height="12"
+    <rect
+      v-for="(g, i) in chartData.homeRedCards"
+      v-bind:key="i"
+      :x="g - 4"
+      y="0"
+      width="8"
+      height="12"
       fill="red"
     />
 
@@ -108,7 +114,13 @@ const chartData = computed(() => {
       fill="none"
       stroke="currentColor"
     />
-    <rect v-for="(g, i) in chartData.awayRedCards" v-bind:key="i" :x="g-4" y="85" width="8" height="12"
+    <rect
+      v-for="(g, i) in chartData.awayRedCards"
+      v-bind:key="i"
+      :x="g - 4"
+      y="85"
+      width="8"
+      height="12"
       fill="red"
     />
 
@@ -140,12 +152,5 @@ const chartData = computed(() => {
     <text v-for="(g, i) in chartData.awayGoals" v-bind:key="i" :x="g" y="90" text-anchor="middle">
       &#x26BD;
     </text>
-
-
-
-  
-
-
-
   </svg>
 </template>

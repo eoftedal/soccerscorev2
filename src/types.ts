@@ -1,6 +1,6 @@
 declare const __brand: unique symbol;
-type BrandedNumber<T> = number & {[__brand]: T };
-type BrandedString<T> = string & {[__brand]: T };
+type BrandedNumber<T> = number & { [__brand]: T };
+type BrandedString<T> = string & { [__brand]: T };
 export type GoalScorer = BrandedString<"GoalScorer">;
 
 export type Timestamp = BrandedNumber<"timestamp">;
@@ -14,8 +14,7 @@ export type DateString = BrandedString<"date">;
 export type TimeString = BrandedString<"time">;
 export type PeriodNumber = BrandedNumber<"period">;
 export type PeriodLength = BrandedNumber<"periodLength">;
-export type ExtraPeriodLength= BrandedNumber<"extraPeriodLength">;
-
+export type ExtraPeriodLength = BrandedNumber<"extraPeriodLength">;
 
 export type Match = {
   id: string;
@@ -43,9 +42,9 @@ export type Period = {
 };
 
 export type PenaltyRound = {
-  start: "home" | "away"
-  events: Array<[[boolean, GoalScorer],[boolean, GoalScorer]]>;
-}
+  start: "home" | "away";
+  events: Array<[[boolean, GoalScorer], [boolean, GoalScorer]]>;
+};
 
 export type TeamData = {
   goals: Array<[MatchEvent, GoalScorer]>;

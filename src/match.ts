@@ -75,8 +75,6 @@ export function getPossession(period: Period): [Percentage, Percentage, TotalTim
   ];
 }
 
-
-
 type Percentage = number;
 type TotalTime = number;
 export function getMatchPossession(match: Match): [Percentage, Percentage, TotalTime, TotalTime] {
@@ -94,8 +92,10 @@ export function getTotal(match: Match, team: "home" | "away", stat: keyof TeamDa
   return match.periods.reduce((acc, x) => acc + (x[team][stat] ?? []).length, 0);
 }
 
-export function getGoals(match: Match, team: "home" | "away") : number {
-  const penaltyGoals = match?.penaltyRound?.events?.map(x => x[team == "home" ? 0 : 1]).filter(x => x[0]).length ?? 0;
+export function getGoals(match: Match, team: "home" | "away"): number {
+  const penaltyGoals =
+    match?.penaltyRound?.events?.map((x) => x[team == "home" ? 0 : 1]).filter((x) => x[0]).length ??
+    0;
   return match.periods.reduce((acc, x) => acc + (x[team].goals ?? []).length, 0) + penaltyGoals;
 }
 
@@ -103,14 +103,14 @@ export function getPenaltyScore(match: Match) {
   console.log(match);
   if (!match.penaltyRound) return undefined;
   return [
-    match.penaltyRound.events.filter(x => x[0][0]).length,
-    match.penaltyRound.events.filter(x => x[1][0]).length,
+    match.penaltyRound.events.filter((x) => x[0][0]).length,
+    match.penaltyRound.events.filter((x) => x[1][0]).length,
   ];
 }
 
 /**
- * 
- * @returns strings home, strings away, avg home, avg away, strings and passes home, strings and passes away 
+ *
+ * @returns strings home, strings away, avg home, avg away, strings and passes home, strings and passes away
  */
 export function getPassStrings(
   period: Period,
@@ -210,12 +210,15 @@ export function goalScorers(match: Match, side: "home" | "away") {
     const allEvents = getAllEventsSorted(p, false);
     p[side].goals.forEach((x) => {
       const eventsBefore = allEvents.filter((y) => y[1][0] < x[0]);
-      if (eventsBefore[eventsBefore.length -1][2] == EventType.OutOfPlay) {
+      if (eventsBefore[eventsBefore.length - 1][2] == EventType.OutOfPlay) {
         eventsBefore.pop();
       }
       const sameSideEvents = [];
       for (let j = eventsBefore.length - 1; j >= 0; j--) {
-        if ((eventsBefore[j][0] == "H" && side == "home") || (eventsBefore[j][0] == "A" && side == "away")) {
+        if (
+          (eventsBefore[j][0] == "H" && side == "home") ||
+          (eventsBefore[j][0] == "A" && side == "away")
+        ) {
           if (eventsBefore[j][2] == EventType.Shot) continue;
           sameSideEvents.push(eventsBefore[j]);
           if (eventsBefore[j][1][1] >= CUTOFF) break;

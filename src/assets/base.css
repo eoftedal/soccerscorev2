@@ -58,7 +58,7 @@
     --button-color: var(--button-color-dark);
     --button-text: #000;
 
-    --input-backround: rgba(0,0,0,0.5);
+    --input-backround: rgba(0, 0, 0, 0.5);
   }
 }
 @font-face {
@@ -111,10 +111,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-input[type=text],
-input[type=date],
-input[type=time],
-select
-{
+input[type="text"],
+input[type="date"],
+input[type="time"],
+select {
   background: var(--input-backround);
 }

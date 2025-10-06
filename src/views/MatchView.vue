@@ -38,7 +38,6 @@ function download() {
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
 }
-
 </script>
 
 <template>
@@ -57,19 +56,30 @@ function download() {
         <span>{{ match.awayTeam }}</span>
       </h1>
       <div class="penalties" v-if="match.penaltyRound">
-        <div class="teamPenalties"><span v-for="(e,i) in match.penaltyRound.events" :key="i" :class="{goal: e[0][0]}"></span></div>
-        <div>Pen {{ getPenaltyScore(match)?.join('-') }}</div>
-        <div class="teamPenalties"><span v-for="(e,i) in match.penaltyRound.events" :key="i" :class="{goal: e[1][0]}"></span></div>
+        <div class="teamPenalties">
+          <span
+            v-for="(e, i) in match.penaltyRound.events"
+            :key="i"
+            :class="{ goal: e[0][0] }"
+          ></span>
+        </div>
+        <div>Pen {{ getPenaltyScore(match)?.join("-") }}</div>
+        <div class="teamPenalties">
+          <span
+            v-for="(e, i) in match.penaltyRound.events"
+            :key="i"
+            :class="{ goal: e[1][0] }"
+          ></span>
+        </div>
       </div>
       <h2 class="home">
         <div v-for="[n, times] in homeGoalScorers" v-bind:key="n">
           {{ n }}
-          <span v-for="(x,i) in times" :key="i">
-            {{ 
-              formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) 
-            }}'{{x[2]}}<span class="buildup">{{ x[3] }}</span>{{ 
-              i < times.length -1 ? ", " : "" 
-            }}
+          <span v-for="(x, i) in times" :key="i">
+            {{ formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) }}'{{
+              x[2]
+            }}<span class="buildup">{{ x[3] }}</span
+            >{{ i < times.length - 1 ? ", " : "" }}
           </span>
         </div>
       </h2>
@@ -77,12 +87,11 @@ function download() {
       <h2 class="away">
         <div v-for="[n, times] in awayGoalScorers" v-bind:key="n">
           {{ n }}
-          <span v-for="(x,i) in times" :key="i">
-            {{ 
-              formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) 
-            }}'{{x[2]}}<span class="buildup">{{ x[3] }}</span>{{ 
-              i < times.length -1 ? ", " : "" 
-            }}
+          <span v-for="(x, i) in times" :key="i">
+            {{ formatScoringTime(x[0], x[1], match!.periodLength, match!.extraPeriodLength) }}'{{
+              x[2]
+            }}<span class="buildup">{{ x[3] }}</span
+            >{{ i < times.length - 1 ? ", " : "" }}
           </span>
         </div>
       </h2>

@@ -13,37 +13,35 @@ type TouchType = (typeof touchTypes)[number];
 type SideType = (typeof side)[number];
 
 const props = defineProps<{
-    openPeriod: Period
+  openPeriod: Period;
 }>();
 
 const openPeriod = ref<Period>(props.openPeriod);
 
 watch(
-    () => props.openPeriod,
-    (value: Period) => {
-        openPeriod.value = value;
-    } 
+  () => props.openPeriod,
+  (value: Period) => {
+    openPeriod.value = value;
+  },
 );
 
-
 const state = reactive({
-    holdStart: undefined as undefined | Timestamp,
-    periodEvents: [] as [number, TouchType, SideType | "N"][],
-    outOfPlayHold: false as boolean,
-    promptDialog: {
-        title: "",
-        data: "",
-        onOk: undefined as undefined | (() => void),
-    },
-    confirm: {
-        title: "",
-        onOk: undefined as undefined | (() => void),
-    },
+  holdStart: undefined as undefined | Timestamp,
+  periodEvents: [] as [number, TouchType, SideType | "N"][],
+  outOfPlayHold: false as boolean,
+  promptDialog: {
+    title: "",
+    data: "",
+    onOk: undefined as undefined | (() => void),
+  },
+  confirm: {
+    title: "",
+    onOk: undefined as undefined | (() => void),
+  },
 });
 
 const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
-
 
 function isOutOfPlay() {
   if (state.outOfPlayHold) return true;
@@ -143,12 +141,14 @@ function getPassAcc(period: Period): [number, number] {
 }
 
 const timeout = {
-  pointer: null as null | number
+  pointer: null as null | number,
 };
 
 function beginTouch(event: TouchEvent) {
   //
-  timeout.pointer = setTimeout(() => {state.outOfPlayHold = true}, CUTOFF);
+  timeout.pointer = setTimeout(() => {
+    state.outOfPlayHold = true;
+  }, CUTOFF);
   state.holdStart = now();
   setActive(event);
 }
@@ -176,7 +176,6 @@ function removeTouch(period: Period, team: SideType) {
   }
 }
 
-
 const homePasses = computed(() => {
   return state.periodEvents.filter((x, i) => {
     if (x[1] != "touches" || x[2] != "home") return false;
@@ -202,236 +201,243 @@ const possession = computed(() => {
 const currentPossession = computed(() => {
   if (isOutOfPlay()) return null;
   return state.periodEvents.slice(-1)[0][2];
-})
-
+});
 </script>
 <template>
-    <div :class="{
-        grid: true,
-        homePossession: currentPossession == 'home',
-        awayPossession: currentPossession == 'away'
-      }" v-if="openPeriod">
-      <UpDown
-        @add="addEvent(openPeriod, 'home', 'redCards')"
-        @remove="removeEvent(openPeriod, 'home', 'redCards')"
-      >
-        Red cards
-        <span>{{ openPeriod.home.redCards.length }}</span>
-      </UpDown>
-      <div class="mid"></div>
-      <UpDown
-        @add="addEvent(openPeriod, 'away', 'redCards')"
-        @remove="removeEvent(openPeriod, 'away', 'redCards')"
-      >
-        Red cards
-        <span>{{ openPeriod.away.redCards.length }}</span>
-      </UpDown>
-
-      <UpDown
-        @add="addEvent(openPeriod, 'home', 'yellowCards')"
-        @remove="removeEvent(openPeriod, 'home', 'yellowCards')"
-      >
-        Yellow cards
-        <span>{{ openPeriod.home.yellowCards.length }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown
-        @add="addEvent(openPeriod, 'away', 'yellowCards')"
-        @remove="removeEvent(openPeriod, 'away', 'yellowCards')"
-      >
-        Yellow cards
-        <span>{{ openPeriod.away.yellowCards.length }}</span>
-      </UpDown>
-
-      <UpDown
-        @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'penalties', t, d)"
-        @remove="removeEvent(openPeriod, 'home', 'penalties')"
-        @hold-start="state.outOfPlayHold = true"
-        @hold-end="state.outOfPlayHold = false"
-      >
-        Penalties
-        <span>{{ openPeriod.home.penalties.length }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown
-        @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'penalties', t, d)"
-        @remove="removeEvent(openPeriod, 'away', 'penalties')"
-        @hold-start="state.outOfPlayHold = true"
-        @hold-end="state.outOfPlayHold = false"
-      >
-        Penalties
-        <span>{{ openPeriod.away.penalties.length }}</span>
-      </UpDown>
-
-      <UpDown
-        @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'corners', t, d)"
-        @remove="removeEvent(openPeriod, 'home', 'corners')"
-        @hold-start="state.outOfPlayHold = true"
-        @hold-end="state.outOfPlayHold = false"
-      >
-        Corners
-        <span>{{ openPeriod.home.corners.length }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown
-        @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'corners', t, d)"
-        @remove="removeEvent(openPeriod, 'away', 'corners')"
-        @hold-start="state.outOfPlayHold = true"
-        @hold-end="state.outOfPlayHold = false"
-      >
-        Corners
-        <span>{{ openPeriod.away.corners.length }}</span>
-      </UpDown>
-
-      <UpDown
-        @add="addEvent(openPeriod, 'home', 'offsides')"
-        @remove="removeEvent(openPeriod, 'home', 'offsides')"
-      >
-        Off-sides
-        <span>{{ openPeriod.home.offsides?.length ?? 0 }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown
-        @add="addEvent(openPeriod, 'away', 'offsides')"
-        @remove="removeEvent(openPeriod, 'away', 'offsides')"
-      >
-        Off-sides
-        <span>{{ openPeriod.away.offsides?.length ?? 0 }}</span>
-      </UpDown>
-
-      <UpDown
-        @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'freekicks', t, d)"
-        @remove="removeEvent(openPeriod, 'home', 'freekicks')"
-        @hold-start="state.outOfPlayHold = true"
-        @hold-end="state.outOfPlayHold = false"
-      >
-        Free kicks
-        <span>{{ openPeriod.home.freekicks.length }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown
-        @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'freekicks', t, d)"
-        @remove="removeEvent(openPeriod, 'away', 'freekicks')"
-        @hold-start="state.outOfPlayHold = true"
-        @hold-end="state.outOfPlayHold = false"
-
-      >
-        Free kicks
-        <span>{{ openPeriod.away.freekicks.length }}</span>
-      </UpDown>
-
-      <UpDown @add="addGoal(openPeriod, 'home')" @remove="removeGoal(openPeriod, 'home')">
-        Goals
-        <span>{{ openPeriod.home.goals.length }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown @add="addGoal(openPeriod, 'away')" @remove="removeGoal(openPeriod, 'away')">
-        Goals
-        <span>{{ openPeriod.away.goals.length }}</span>
-      </UpDown>
-
-      <UpDown
-        @add="addEvent(openPeriod, 'home', 'shots')"
-        @remove="removeEvent(openPeriod, 'home', 'shots')"
-      >
-        Shots
-        <span>{{ openPeriod.home.shots.length }}</span>
-      </UpDown>
-      <div></div>
-      <UpDown
-        @add="addEvent(openPeriod, 'away', 'shots')"
-        @remove="removeEvent(openPeriod, 'away', 'shots')"
-      >
-        Shots
-        <span>{{ openPeriod.away.shots.length }}</span>
-      </UpDown>
-
-      <div class="wide">
-        <button
-          v-if="openPeriod"
-          @click="addOutOfPlayEvent"
-          :class="{
-            wide: true,
-            active: isOutOfPlay()
-          }"
-        >
-          <div>{{ state.periodEvents[state.periodEvents.length -1]?.[1] == "outofplay" ? "Undo Out of play" : "Out of play" }}</div>
-        </button>
-      </div>
-      <div class="big button left">
-        <button
-          class="plus"
-          @touchstart.prevent="beginTouch($event)"
-          @touchend.prevent="finishTouch($event, 'home')"
-        >
-          <span>First touch</span>
-          <span class="num">{{ openPeriod.home.touches.length }}</span>
-
-          <span>Passes</span>
-          <span class="num">{{ homePasses }}</span>
-          <span>Pass acc</span>
-          <span class="num">{{ getPassAcc(openPeriod)[0].toFixed(1) }}%</span>
-          <span>Possession </span>
-          <span class="num">{{ possession[0].toFixed(1) }}%</span>
-          <span>Poss. time</span>
-          <span class="num">{{ msToTimeString(possession[2]) }}</span>
-        </button>
-        <button
-          class="minus"
-          @touchstart.prevent="setActive($event)"
-          @touchend.prevent="
-            setInactive($event);
-            removeTouch(openPeriod, 'home');
-          "
-        >
-          -
-        </button>
-      </div>
-      <div></div>
-      <div class="big button right">
-        <button
-          class="plus"
-          @touchstart.prevent="beginTouch($event)"
-          @touchend.prevent="finishTouch($event, 'away')"
-        >
-          <span>First touch</span>
-          <span class="num">{{ openPeriod.away.touches.length }}</span>
-          <span>Passes</span>
-          <span class="num">{{ awayPasses }}</span>
-          <span>Pass acc</span>
-          <span class="num">{{ getPassAcc(openPeriod)[1].toFixed(1) }}%</span>
-          <span>Possession</span>
-          <span class="num">{{ possession[1].toFixed(1) }}%</span>
-          <span>Poss. time</span>
-          <span class="num">{{ msToTimeString(possession[3]) }}</span>
-        </button>
-        <button
-          class="minus"
-          @touchstart.prevent="setActive($event)"
-          @touchend.prevent="
-            removeTouch(openPeriod, 'away');
-            setInactive($event);
-          "
-        >
-          -
-        </button>
-      </div>
-        <ModalDialog
+  <div
+    :class="{
+      grid: true,
+      homePossession: currentPossession == 'home',
+      awayPossession: currentPossession == 'away',
+    }"
     v-if="openPeriod"
-    ref="promptModal"
-    @ok="state.promptDialog.onOk ? state.promptDialog.onOk() : undefined"
   >
-    {{ state.promptDialog.title }}
-    <input type="text" v-model="state.promptDialog.data" />
-  </ModalDialog>
-  <ModalDialog
-    v-if="openPeriod"
-    ref="confirmModal"
-    @ok="state.confirm.onOk ? state.confirm.onOk() : undefined"
-  >
-    {{ state.confirm.title }}
-  </ModalDialog>
+    <UpDown
+      @add="addEvent(openPeriod, 'home', 'redCards')"
+      @remove="removeEvent(openPeriod, 'home', 'redCards')"
+    >
+      Red cards
+      <span>{{ openPeriod.home.redCards.length }}</span>
+    </UpDown>
+    <div class="mid"></div>
+    <UpDown
+      @add="addEvent(openPeriod, 'away', 'redCards')"
+      @remove="removeEvent(openPeriod, 'away', 'redCards')"
+    >
+      Red cards
+      <span>{{ openPeriod.away.redCards.length }}</span>
+    </UpDown>
+
+    <UpDown
+      @add="addEvent(openPeriod, 'home', 'yellowCards')"
+      @remove="removeEvent(openPeriod, 'home', 'yellowCards')"
+    >
+      Yellow cards
+      <span>{{ openPeriod.home.yellowCards.length }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown
+      @add="addEvent(openPeriod, 'away', 'yellowCards')"
+      @remove="removeEvent(openPeriod, 'away', 'yellowCards')"
+    >
+      Yellow cards
+      <span>{{ openPeriod.away.yellowCards.length }}</span>
+    </UpDown>
+
+    <UpDown
+      @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'penalties', t, d)"
+      @remove="removeEvent(openPeriod, 'home', 'penalties')"
+      @hold-start="state.outOfPlayHold = true"
+      @hold-end="state.outOfPlayHold = false"
+    >
+      Penalties
+      <span>{{ openPeriod.home.penalties.length }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown
+      @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'penalties', t, d)"
+      @remove="removeEvent(openPeriod, 'away', 'penalties')"
+      @hold-start="state.outOfPlayHold = true"
+      @hold-end="state.outOfPlayHold = false"
+    >
+      Penalties
+      <span>{{ openPeriod.away.penalties.length }}</span>
+    </UpDown>
+
+    <UpDown
+      @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'corners', t, d)"
+      @remove="removeEvent(openPeriod, 'home', 'corners')"
+      @hold-start="state.outOfPlayHold = true"
+      @hold-end="state.outOfPlayHold = false"
+    >
+      Corners
+      <span>{{ openPeriod.home.corners.length }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown
+      @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'corners', t, d)"
+      @remove="removeEvent(openPeriod, 'away', 'corners')"
+      @hold-start="state.outOfPlayHold = true"
+      @hold-end="state.outOfPlayHold = false"
+    >
+      Corners
+      <span>{{ openPeriod.away.corners.length }}</span>
+    </UpDown>
+
+    <UpDown
+      @add="addEvent(openPeriod, 'home', 'offsides')"
+      @remove="removeEvent(openPeriod, 'home', 'offsides')"
+    >
+      Off-sides
+      <span>{{ openPeriod.home.offsides?.length ?? 0 }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown
+      @add="addEvent(openPeriod, 'away', 'offsides')"
+      @remove="removeEvent(openPeriod, 'away', 'offsides')"
+    >
+      Off-sides
+      <span>{{ openPeriod.away.offsides?.length ?? 0 }}</span>
+    </UpDown>
+
+    <UpDown
+      @add="(t, d) => addEventWithDelta(openPeriod, 'home', 'freekicks', t, d)"
+      @remove="removeEvent(openPeriod, 'home', 'freekicks')"
+      @hold-start="state.outOfPlayHold = true"
+      @hold-end="state.outOfPlayHold = false"
+    >
+      Free kicks
+      <span>{{ openPeriod.home.freekicks.length }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown
+      @add="(t, d) => addEventWithDelta(openPeriod, 'away', 'freekicks', t, d)"
+      @remove="removeEvent(openPeriod, 'away', 'freekicks')"
+      @hold-start="state.outOfPlayHold = true"
+      @hold-end="state.outOfPlayHold = false"
+    >
+      Free kicks
+      <span>{{ openPeriod.away.freekicks.length }}</span>
+    </UpDown>
+
+    <UpDown @add="addGoal(openPeriod, 'home')" @remove="removeGoal(openPeriod, 'home')">
+      Goals
+      <span>{{ openPeriod.home.goals.length }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown @add="addGoal(openPeriod, 'away')" @remove="removeGoal(openPeriod, 'away')">
+      Goals
+      <span>{{ openPeriod.away.goals.length }}</span>
+    </UpDown>
+
+    <UpDown
+      @add="addEvent(openPeriod, 'home', 'shots')"
+      @remove="removeEvent(openPeriod, 'home', 'shots')"
+    >
+      Shots
+      <span>{{ openPeriod.home.shots.length }}</span>
+    </UpDown>
+    <div></div>
+    <UpDown
+      @add="addEvent(openPeriod, 'away', 'shots')"
+      @remove="removeEvent(openPeriod, 'away', 'shots')"
+    >
+      Shots
+      <span>{{ openPeriod.away.shots.length }}</span>
+    </UpDown>
+
+    <div class="wide">
+      <button
+        v-if="openPeriod"
+        @click="addOutOfPlayEvent"
+        :class="{
+          wide: true,
+          active: isOutOfPlay(),
+        }"
+      >
+        <div>
+          {{
+            state.periodEvents[state.periodEvents.length - 1]?.[1] == "outofplay"
+              ? "Undo Out of play"
+              : "Out of play"
+          }}
+        </div>
+      </button>
     </div>
+    <div class="big button left">
+      <button
+        class="plus"
+        @touchstart.prevent="beginTouch($event)"
+        @touchend.prevent="finishTouch($event, 'home')"
+      >
+        <span>First touch</span>
+        <span class="num">{{ openPeriod.home.touches.length }}</span>
+
+        <span>Passes</span>
+        <span class="num">{{ homePasses }}</span>
+        <span>Pass acc</span>
+        <span class="num">{{ getPassAcc(openPeriod)[0].toFixed(1) }}%</span>
+        <span>Possession </span>
+        <span class="num">{{ possession[0].toFixed(1) }}%</span>
+        <span>Poss. time</span>
+        <span class="num">{{ msToTimeString(possession[2]) }}</span>
+      </button>
+      <button
+        class="minus"
+        @touchstart.prevent="setActive($event)"
+        @touchend.prevent="
+          setInactive($event);
+          removeTouch(openPeriod, 'home');
+        "
+      >
+        -
+      </button>
+    </div>
+    <div></div>
+    <div class="big button right">
+      <button
+        class="plus"
+        @touchstart.prevent="beginTouch($event)"
+        @touchend.prevent="finishTouch($event, 'away')"
+      >
+        <span>First touch</span>
+        <span class="num">{{ openPeriod.away.touches.length }}</span>
+        <span>Passes</span>
+        <span class="num">{{ awayPasses }}</span>
+        <span>Pass acc</span>
+        <span class="num">{{ getPassAcc(openPeriod)[1].toFixed(1) }}%</span>
+        <span>Possession</span>
+        <span class="num">{{ possession[1].toFixed(1) }}%</span>
+        <span>Poss. time</span>
+        <span class="num">{{ msToTimeString(possession[3]) }}</span>
+      </button>
+      <button
+        class="minus"
+        @touchstart.prevent="setActive($event)"
+        @touchend.prevent="
+          removeTouch(openPeriod, 'away');
+          setInactive($event);
+        "
+      >
+        -
+      </button>
+    </div>
+    <ModalDialog
+      v-if="openPeriod"
+      ref="promptModal"
+      @ok="state.promptDialog.onOk ? state.promptDialog.onOk() : undefined"
+    >
+      {{ state.promptDialog.title }}
+      <input type="text" v-model="state.promptDialog.data" />
+    </ModalDialog>
+    <ModalDialog
+      v-if="openPeriod"
+      ref="confirmModal"
+      @ok="state.confirm.onOk ? state.confirm.onOk() : undefined"
+    >
+      {{ state.confirm.title }}
+    </ModalDialog>
+  </div>
 </template>
 <style>
 .grid {
@@ -489,10 +495,22 @@ button {
   display: inline-block;
 }
 .homePossession .button.big.left button.plus:not(.active) {
-  background: linear-gradient(to bottom, var(--color-text) 0px, var(--color-text) 8px, var(--button-color) 8px, var(--button-color) 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-text) 0px,
+    var(--color-text) 8px,
+    var(--button-color) 8px,
+    var(--button-color) 100%
+  );
 }
 .awayPossession .button.big.right button.plus:not(.active) {
-  background: linear-gradient(to bottom, var(--color-text) 0px, var(--color-text) 8px, var(--button-color) 8px, var(--button-color) 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-text) 0px,
+    var(--color-text) 8px,
+    var(--button-color) 8px,
+    var(--button-color) 100%
+  );
 }
 div.wide {
   grid-column-start: 1;

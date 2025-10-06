@@ -19,7 +19,7 @@ const state = reactive({
 
 function score(match: Match) {
   if (match.state == "not_started") return "";
-  return getGoals(match, "home") + " - " + getGoals(match, "away")
+  return getGoals(match, "home") + " - " + getGoals(match, "away");
 }
 
 const sorted = computed(() => {
