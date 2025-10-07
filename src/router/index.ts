@@ -5,6 +5,7 @@ import MatchView from "@/views/MatchView.vue";
 import MatchEdit from "@/views/MatchEdit.vue";
 import MatchImage from "@/views/MatchImage.vue";
 import TestView from "@/views/TestView.vue";
+import TeamView from "@/views/TeamView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,11 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/team/:id",
+      name: "team",
+      component: TeamView,
     },
     {
       path: "/export",
