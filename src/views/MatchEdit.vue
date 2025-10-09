@@ -496,7 +496,6 @@ div.form > button {
   display: inline-block;
 }
 h1 .goalHeader {
-  xposition: absolute;
   float: left;
   font-weight: bold;
   shape-outside: margin-box;
@@ -505,9 +504,6 @@ h1 .goalHeader {
 }
 h1:first-child .goalHeader {
   float: right;
-  xleft: auto;
-  xright: 5px;
-  xtop: 5px;
   margin-right: 0;
   margin-left: 0.5em;
 }

@@ -449,7 +449,6 @@ div.bars {
   width: 80%;
   margin: 0 auto;
   display: flex;
-  xjustify-content: space-around;
 
   div {
     height: 0.5em;

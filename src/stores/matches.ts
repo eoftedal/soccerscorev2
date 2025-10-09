@@ -2,17 +2,13 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type {
   DateString,
-  Delta,
   ExtraPeriodLength,
-  GoalScorer,
   Match,
-  Period,
   PeriodLength,
   PeriodNumber,
   Team,
   TeamId,
   TeamName,
-  Timestamp,
   TimeString,
 } from "@/types";
 
