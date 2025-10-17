@@ -1,28 +1,30 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 import { type Match, type TeamId } from "@/types";
 import { useRoute, useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
 import { getGoals } from "../match";
 import { storeToRefs } from "pinia";
-import ModalDialog from "../components/ModalDialog.vue";
 
 
 const router = useRouter();
 const route = useRoute();
 const teamId = route.params.id as TeamId;
+const isUnassigned = teamId === 'unassigned';
 
-const { newMatch, saveTeam } = useMatchStore();
+const { newMatch } = useMatchStore();
 const { matches, teams } = storeToRefs(useMatchStore());
 const state = reactive({
   search: "",
-  teamName: teams.value[teamId].name ?? ""
+  teamName: isUnassigned ? "Unassigned" : (teams.value[teamId]?.name ?? "")
 });
 
 watch(teams,
   (newVal) => {
-    state.teamName = newVal[teamId].name
+    if (!isUnassigned) {
+      state.teamName = newVal[teamId]?.name ?? ""
+    }
   }
 );
 
@@ -32,7 +34,11 @@ function score(match: Match) {
 }
 
 const sorted = computed(() => {
-  return matches.value.filter(m => m.belongsTo == teamId).slice().sort((a, b) => {
+  const filterFn = isUnassigned 
+    ? (m: Match) => !m.belongsTo
+    : (m: Match) => m.belongsTo == teamId;
+  
+  return matches.value.filter(filterFn).slice().sort((a, b) => {
     return (
       new Date(b.date + "T" + b.time + ":00").getTime() -
       new Date(a.date + "T" + a.time + ":00").getTime()
@@ -56,24 +62,16 @@ function isMatch(m: Match) {
     m.tags?.some((t) => t.toLowerCase().includes(state.search.toLowerCase()))
   );
 }
-function saveTeamName() {
-  const team = teams.value[teamId];
-  if (!team) return;
-  team.name = state.teamName;
-  saveTeam(team);
-}
-const changeTeamNameModal = ref<InstanceType<typeof ModalDialog> | null>(null);
-function openChangeTeamNameDialog() {
-  const team = teams.value[teamId];
-  if (!team) return;
-  state.teamName = team.name;
-  changeTeamNameModal.value?.open();
+function editTeam() {
+  if (!isUnassigned) {
+    router.push({ name: "team-edit", params: { id: teamId } });
+  }
 }
 </script>
 
 <template>
   <main>
-    <h1 @click="openChangeTeamNameDialog">{{ state.teamName }}</h1>
+    <h1 @click="editTeam" :class="{ clickable: !isUnassigned }">{{ state.teamName }}</h1>
     <h2>New matches</h2>
     <ul class="matchList">
       <li
@@ -89,7 +87,7 @@ function openChangeTeamNameDialog() {
         </div>
       </li>
     </ul>
-    <button @click="newMatch(teamId)">Add new match</button>
+    <button v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</button>
     <h2>Finished matches</h2>
     <input type="text" placeholder="Search" class="search" v-model="state.search" />
     <ul class="matchList">
@@ -106,15 +104,8 @@ function openChangeTeamNameDialog() {
         </div>
       </li>
     </ul>
-    <button @click="router.push({ name: 'export' })">Export/import matches</button>
+    <button @click="router.push({ name: 'export', params: { id: teamId } })">Export/import matches</button>
   </main>
-  <ModalDialog
-        ref="changeTeamNameModal"
-        @ok="saveTeamName"
-        >
-        <h2>Change team name</h2>
-    <input type="text" v-model="state.teamName" placeholder="Team name" />
-  </ModalDialog>
 </template>
 <style scoped>
 main {
@@ -152,5 +143,9 @@ ul.matchList {
 
 input.search {
   width: 100%;
+}
+
+h1.clickable {
+  cursor: pointer;
 }
 </style>

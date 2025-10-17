@@ -16,12 +16,33 @@ import {
   getPenaltyScore,
 } from "@/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
+import { storeToRefs } from "pinia";
 
 const route = useRoute();
 
 const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
 
 const { getMatch } = useMatchStore();
+const { teams } = storeToRefs(useMatchStore());
+
+const translations = {
+  possession: { NO: "Possession", EN: "Possession" },
+  possessionTime: { NO: "Poss. tid", EN: "Poss. time" },
+  passAccuracy: { NO: "Pass.sikk.", EN: "Pass acc." },
+  passes: { NO: "Pasninger", EN: "Passes" },
+  shots: { NO: "Skudd", EN: "Shots" },
+  corners: { NO: "Hjørnespark", EN: "Corners" },
+  freekicks: { NO: "Frispark", EN: "Free kicks" },
+  penalties: { NO: "Straffe", EN: "Penalty" },
+  yellowCards: { NO: "Gule kort", EN: "Yellow cards" },
+  redCards: { NO: "Røde kort", EN: "Red cards" },
+  showPossession: { NO: "Vis poss.", EN: "Show poss." },
+  hidePossession: { NO: "Skjul poss.", EN: "Hide poss." },
+  showPasses: { NO: "Vis pasninger", EN: "Show passes" },
+  hidePasses: { NO: "Skjul pasninger", EN: "Hide passes" },
+  downloadImage: { NO: "Last ned bilde", EN: "Download image" },
+  preparing: { NO: "Forbereder... Vennligst vent", EN: "Preparing... Please wait" },
+};
 
 const state = reactive({
   match: getMatch(id) as Match,
@@ -29,7 +50,10 @@ const state = reactive({
   hidePossession: false,
   hidePasses: false,
   grass: "",
+  lang: "NO" as "NO" | "EN",
 });
+
+const t = (key: keyof typeof translations) => translations[key][state.lang];
 const dataUrl = ref("");
 const counter = ref(0);
 
@@ -45,6 +69,14 @@ watch(
   () => state.hidePossession,
   () => download(true),
 );
+watch(
+  () => state.lang,
+  () => download(true),
+);
+
+function toggleLanguage() {
+  state.lang = state.lang === "NO" ? "EN" : "NO";
+}
 
 function download(restartCounter = false) {
   dataUrl.value = "";
@@ -88,6 +120,18 @@ const passAcc = computed(() => (state.match ? getMatchPassAcc(state.match) : [0,
 
 const passes = computed(() => (state.match ? getMatchPasses(state.match) : [0, 0]));
 
+function getLogoUrl(logoRef: string | undefined): string | undefined {
+  if (!logoRef) return undefined;
+  if (logoRef.startsWith('team:')) {
+    const teamId = logoRef.substring(5);
+    return teams.value[teamId as any]?.logo;
+  }
+  return logoRef;
+}
+const homeLogo = computed(() => getLogoUrl(state.match.homeLogo));
+const awayLogo = computed(() => getLogoUrl(state.match.awayLogo));
+const showLogos = computed(() => homeLogo.value && awayLogo.value);
+
 const imageTitle = computed(() => {
   return `image.png`;
 });
@@ -109,10 +153,13 @@ fetch(GrassImage2)
   <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
     <div class="buttonRow">
       <button @click="state.hidePossession = !state.hidePossession">
-        {{ state.hidePossession ? "Show possession" : "Hide possession" }}
+        {{ state.hidePossession ? t('showPossession') : t('hidePossession') }}
       </button>
       <button @click="state.hidePasses = !state.hidePasses">
-        {{ state.hidePasses ? "Show passes" : "Hide passes" }}
+        {{ state.hidePasses ? t('showPasses') : t('hidePasses') }}
+      </button>
+      <button @click="toggleLanguage">
+        {{ state.lang === 'NO' ? 'EN' : 'NO' }}
       </button>
 
       <a
@@ -120,7 +167,7 @@ fetch(GrassImage2)
         :href="dataUrl"
         :download="imageTitle"
         type="image/png"
-        >Download image</a
+        >{{ t('downloadImage') }}</a
       >
     </div>
     <div v-if="dataUrl != ''">
@@ -131,19 +178,29 @@ fetch(GrassImage2)
       <!--p>{{ state.data.length }}</p-->
       <img :src="dataUrl" alt="image" />
     </div>
-    <div v-if="dataUrl == ''" class="loader">Forbereder... Vennligst vent</div>
-    <div class="match" ref="matchbg" v-if="dataUrl == ''">
+    <div v-if="dataUrl == ''" class="loader">{{ t('preparing') }}</div>
+    <div class="match" ref="matchbg" v-if="dataUrl == '' || true">
       <table>
         <tbody>
           <tr class="date">
             <td colspan="5"><DateView :time="dt.getTime()" /><br />{{ state.match.location }}</td>
           </tr>
-          <tr :class="{ teams: true, hasPenalties: state.match.penaltyRound }">
-            <td>{{ state.match.homeTeam }}</td>
+          <tr :class="{ teams: true, hasPenalties: state.match.penaltyRound, withLogos: showLogos }">
+            <td class="team">
+              <div>
+                <img :src="homeLogo" alt="Home logo" class="team-logo" v-if="showLogos" />
+                <span>{{ state.match.homeTeam }}</span>
+              </div>
+            </td>
             <td>{{ getTotal(state.match, "home", "goals") }}</td>
             <td>-</td>
             <td>{{ getTotal(state.match, "away", "goals") }}</td>
-            <td>{{ state.match.awayTeam }}</td>
+            <td class="team">
+              <div>
+                <img :src="awayLogo" alt="Away logo" class="team-logo" v-if="showLogos" />
+                <span>{{ state.match.awayTeam }}</span>
+              </div>
+            </td>
           </tr>
           <tr v-if="state.match.penaltyRound" class="penalties">
             <td colspan="5">Pen {{ getPenaltyScore(state.match)?.join("-") }}</td>
@@ -201,44 +258,44 @@ fetch(GrassImage2)
           </tr>
           <tr class="stat" v-if="!state.hidePossession">
             <td>{{ possession[0].toFixed(1) }}%</td>
-            <td colspan="3">Possession</td>
+            <td colspan="3">{{ t('possession') }}</td>
             <td>{{ possession[1].toFixed(1) }}%</td>
           </tr>
           <tr class="stat" v-if="!state.hidePossession">
             <td>{{ msToTimeString(possession[2]) }}</td>
-            <td colspan="3">Poss. tid</td>
+            <td colspan="3">{{ t('possessionTime') }}</td>
             <td>{{ msToTimeString(possession[3]) }}</td>
           </tr>
           <tr class="stat" v-if="!state.hidePasses">
             <td>{{ passAcc[0].toFixed(1) }}%</td>
-            <td colspan="3">Pass.sikk.</td>
+            <td colspan="3">{{ t('passAccuracy') }}</td>
             <td>{{ passAcc[1].toFixed(1) }}%</td>
           </tr>
           <tr class="stat" v-if="!state.hidePasses">
             <td>{{ passes[0] }}</td>
-            <td colspan="3">Pasninger</td>
+            <td colspan="3">{{ t('passes') }}</td>
             <td>{{ passes[1] }}</td>
           </tr>
 
           <tr class="stat">
             <td>{{ getMatchShots(state.match)[0] }}</td>
-            <td colspan="3">Skudd</td>
+            <td colspan="3">{{ t('shots') }}</td>
             <td>{{ getMatchShots(state.match)[1] }}</td>
           </tr>
 
           <tr class="stat">
             <td>{{ getTotal(state.match, "home", "corners") }}</td>
-            <td colspan="3">Hjørnespark</td>
+            <td colspan="3">{{ t('corners') }}</td>
             <td>{{ getTotal(state.match, "away", "corners") }}</td>
           </tr>
           <tr class="stat">
             <td>{{ getTotal(state.match, "home", "freekicks") }}</td>
-            <td colspan="3">Frispark</td>
+            <td colspan="3">{{ t('freekicks') }}</td>
             <td>{{ getTotal(state.match, "away", "freekicks") }}</td>
           </tr>
           <tr class="stat">
             <td>{{ getTotal(state.match, "home", "penalties") }}</td>
-            <td colspan="3">Straffe</td>
+            <td colspan="3">{{ t('penalties') }}</td>
             <td>{{ getTotal(state.match, "away", "penalties") }}</td>
           </tr>
 
@@ -251,7 +308,7 @@ fetch(GrassImage2)
               ></div>
               <div v-if="getTotal(state.match, 'home', 'yellowCards') == 0">-</div>
             </td>
-            <td colspan="3">Gule kort</td>
+            <td colspan="3">{{ t('yellowCards') }}</td>
             <td>
               <div
                 class="card yellow"
@@ -270,7 +327,7 @@ fetch(GrassImage2)
               ></div>
               <div v-if="getTotal(state.match, 'home', 'redCards') == 0">-</div>
             </td>
-            <td colspan="3">Røde kort</td>
+            <td colspan="3">{{ t('redCards') }}</td>
             <td>
               <div
                 class="card red"
@@ -329,12 +386,36 @@ tr:nth-child(3) td {
 }
 
 tr.teams {
-  font-size: 130%;
+  font-size: 120%;
   font-weight: bolder;
   height: 1.5em;
 }
 tr.teams td {
   padding-bottom: 0.5em;
+}
+
+tr.teams td.team div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+tr.teams td.team .team-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+
+
+tr.teams.withLogos td.team div {
+  align-items: center;
+  text-align: center;
+}
+tr.teams.withLogos td.team div span {
+  width: 100%;
+  font-size: 80%;
 }
 
 tr.teams.hasPenalties td {

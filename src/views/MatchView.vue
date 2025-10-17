@@ -6,14 +6,29 @@ import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers, getPenaltyScore } from "@/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
+import { storeToRefs } from "pinia";
 
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id;
 const { matches } = useMatchStore();
+const { teams } = storeToRefs(useMatchStore());
 const match = computed(() => {
   return matches.find((m) => m.id == id);
 });
+
+function getLogoUrl(logoRef: string | undefined): string | undefined {
+  if (!logoRef) return undefined;
+  if (logoRef.startsWith('team:')) {
+    const teamId = logoRef.substring(5);
+    return teams.value[teamId as any]?.logo;
+  }
+  return logoRef;
+}
+
+const homeLogo = computed(() => getLogoUrl(match.value?.homeLogo));
+const awayLogo = computed(() => getLogoUrl(match.value?.awayLogo));
+const showLogos = computed(() => homeLogo.value && awayLogo.value);
 
 const homeGoals = computed(() => {
   if (!match.value) return [];
@@ -46,14 +61,28 @@ function download() {
     <h3>{{ match.location }}</h3>
     <h3>{{ match.gameType }}</h3>
     <header class="matchview">
-      <h1>
+      <h1 v-if="!showLogos">
         <span>{{ match.homeTeam }}</span>
         <span class="goals">{{ homeGoals.length }}</span>
       </h1>
+      <h1 v-if="showLogos" class="with-logo">
+        <div class="logo-section">
+          <img :src="homeLogo" alt="Home logo" class="team-logo" />
+          <span class="team-name">{{ match.homeTeam }}</span>
+        </div>
+        <span class="goals">{{ homeGoals.length }}</span>
+      </h1>
       <h1 class="divider">-</h1>
-      <h1>
+      <h1 v-if="!showLogos">
         <span class="goals">{{ awayGoals.length }}</span>
         <span>{{ match.awayTeam }}</span>
+      </h1>
+      <h1 v-if="showLogos" class="with-logo">
+        <span class="goals">{{ awayGoals.length }}</span>
+        <div class="logo-section">
+          <img :src="awayLogo" alt="Away logo" class="team-logo" />
+          <span class="team-name">{{ match.awayTeam }}</span>
+        </div>
       </h1>
       <div class="penalties" v-if="match.penaltyRound">
         <div class="teamPenalties">
@@ -135,18 +164,80 @@ main {
 }
 .matchview h1 {
   display: grid;
-  align-items: top;
+  align-items: center;
   grid-template-columns: 1fr auto;
 }
+
+.matchview h1.with-logo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5em;
+
+}
+
+.matchview h1.with-logo:first-child .logo-section {
+  justify-self: center;
+  grid-column: 1;
+}
+
+.matchview h1.with-logo:first-child .goals {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.matchview h1.with-logo:last-of-type {
+  grid-template-columns: auto 1fr;
+}
+
+.matchview h1.with-logo:last-of-type .goals {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.matchview h1.with-logo:last-of-type .logo-section {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.matchview h1.with-logo .logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.matchview h1.with-logo .team-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.matchview h1.with-logo .team-name {
+  font-size: 50%;
+  font-weight: normal;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.matchview h2 {
+  padding-top: 0.5em;
+}
+
 h1 {
   font-size: 140%;
 }
 h1 .goals {
   font-weight: bold;
+  line-height: 1;
 }
 h1.divider {
   width: 0.8em;
   text-align: center;
+  line-height: 1;
+}
+h1:last-child, span:last-child {
+  text-align: right;
 }
 
 .matchview h2 {

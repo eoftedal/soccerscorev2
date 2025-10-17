@@ -21,13 +21,16 @@ export type TeamId = BrandedString<"teamId">;
 export type Team = {
   id: TeamId;
   name: TeamName;
+  logo?: string;
 }
 
 export type Match = {
   id: string;
-  belongsTo: TeamId;
+  belongsTo?: TeamId;
   homeTeam: TeamName;
   awayTeam: TeamName;
+  homeLogo?: string;
+  awayLogo?: string;
   location: string;
   date: DateString;
   time: TimeString;

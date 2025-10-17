@@ -57,11 +57,13 @@ export const useMatchStore = defineStore("match", () => {
   }
 
   function newMatch(id: TeamId) {
+    const team = teams.value[id];
     matches.value.push({
       id: new Date().getTime().toString(),
       belongsTo: id,
-      homeTeam: teams.value[id].name,
+      homeTeam: team.name,
       awayTeam: "Motstander" as TeamName,
+      homeLogo: `team:${id}`,
       gameType: "11v11",
       currentPeriod: -1 as PeriodNumber,
       periods: [],

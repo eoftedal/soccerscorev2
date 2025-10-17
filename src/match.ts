@@ -196,9 +196,11 @@ export function swapSides(match: Match) {
     x.home = away;
     x.away = home;
   });
-  const { homeTeam, awayTeam } = match;
+  const { homeTeam, awayTeam, homeLogo, awayLogo } = match;
   match.homeTeam = awayTeam;
   match.awayTeam = homeTeam;
+  match.homeLogo = awayLogo;
+  match.awayLogo = homeLogo;
 }
 
 export function goalScorers(match: Match, side: "home" | "away") {

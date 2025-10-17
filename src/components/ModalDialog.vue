@@ -37,6 +37,7 @@ defineExpose({
             dialog?.close();
             emit('close');
           "
+          class="secondary"
         >
           Cancel
         </button>
