@@ -1,23 +1,30 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed, reactive } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { type Match, type TeamId } from "@/types";
 import { useRoute, useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
 import { getGoals } from "../match";
 import { storeToRefs } from "pinia";
-
+import ModalDialog from "../components/ModalDialog.vue";
 
 
 const router = useRouter();
 const route = useRoute();
 const teamId = route.params.id as TeamId;
 
-const { newMatch } = useMatchStore();
+const { newMatch, saveTeam } = useMatchStore();
 const { matches, teams } = storeToRefs(useMatchStore());
 const state = reactive({
   search: "",
+  teamName: teams.value[teamId].name ?? ""
 });
+
+watch(teams,
+  (newVal) => {
+    state.teamName = newVal[teamId].name
+  }
+);
 
 function score(match: Match) {
   if (match.state == "not_started") return "";
@@ -49,10 +56,24 @@ function isMatch(m: Match) {
     m.tags?.some((t) => t.toLowerCase().includes(state.search.toLowerCase()))
   );
 }
+function saveTeamName() {
+  const team = teams.value[teamId];
+  if (!team) return;
+  team.name = state.teamName;
+  saveTeam(team);
+}
+const changeTeamNameModal = ref<InstanceType<typeof ModalDialog> | null>(null);
+function openChangeTeamNameDialog() {
+  const team = teams.value[teamId];
+  if (!team) return;
+  state.teamName = team.name;
+  changeTeamNameModal.value?.open();
+}
 </script>
 
 <template>
   <main>
+    <h1 @click="openChangeTeamNameDialog">{{ state.teamName }}</h1>
     <h2>New matches</h2>
     <ul class="matchList">
       <li
@@ -87,6 +108,13 @@ function isMatch(m: Match) {
     </ul>
     <button @click="router.push({ name: 'export' })">Export/import matches</button>
   </main>
+  <ModalDialog
+        ref="changeTeamNameModal"
+        @ok="saveTeamName"
+        >
+        <h2>Change team name</h2>
+    <input type="text" v-model="state.teamName" placeholder="Team name" />
+  </ModalDialog>
 </template>
 <style scoped>
 main {
