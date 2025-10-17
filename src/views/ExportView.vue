@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
 import { computed, reactive, ref } from "vue";
-import { type Match } from "@/types";
+import { type Match, type TeamId } from "@/types";
 import { saveBlob } from "./viewUtils";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const teamId = route.params.id as TeamId;
+const isUnassigned = teamId === 'unassigned';
 
 const { matches, saveMatch } = useMatchStore();
 
@@ -18,7 +23,11 @@ function score(match: Match) {
 }
 
 const sorted = computed(() => {
-  return matches.slice().sort((a, b) => {
+  const filterFn = isUnassigned 
+    ? (m: Match) => !m.belongsTo
+    : (m: Match) => m.belongsTo == teamId;
+  
+  return matches.slice().filter(filterFn).sort((a, b) => {
     return (
       new Date(b.date + "T" + b.time + ":00").getTime() -
       new Date(a.date + "T" + a.time + ":00").getTime()
@@ -75,6 +84,9 @@ const readJsonFile = (file: File) => {
 
 function saveImportMatches() {
   for (const m of importMatches.value) {
+    if (!isUnassigned) {
+      m.belongsTo = teamId;
+    }
     saveMatch(m);
   }
   importMatches.value = [];

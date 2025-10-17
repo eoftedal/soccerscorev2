@@ -16,13 +16,24 @@ export type PeriodNumber = BrandedNumber<"period">;
 export type PeriodLength = BrandedNumber<"periodLength">;
 export type ExtraPeriodLength = BrandedNumber<"extraPeriodLength">;
 
+export type TeamId = BrandedString<"teamId">;
+
+export type Team = {
+  id: TeamId;
+  name: TeamName;
+  logo?: string;
+}
+
 export type Match = {
   id: string;
+  belongsTo?: TeamId;
+  homeTeam: TeamName;
+  awayTeam: TeamName;
+  homeLogo?: string;
+  awayLogo?: string;
   location: string;
   date: DateString;
   time: TimeString;
-  homeTeam: TeamName;
-  awayTeam: TeamName;
   gameType: string;
   state: "not_started" | "paused" | "in_progress" | "finished";
   currentPeriod: PeriodNumber;

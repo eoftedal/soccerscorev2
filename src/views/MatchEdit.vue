@@ -10,12 +10,17 @@ import TagList from "@/components/TagList.vue";
 import { now } from "@/timeUtils";
 import PeriodPane from "./PeriodPane.vue";
 import PenaltyRound from "./PenaltyRound.vue";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
-const { matches, saveMatch } = useMatchStore();
-const match = matches.find((m) => m.id == id);
+const { saveMatch } = useMatchStore();
+const { matches, teams } = storeToRefs(useMatchStore());
+const match = matches.value.find((m) => m.id == id);
+
+const homeLogoInput = ref<HTMLInputElement | null>(null);
+const awayLogoInput = ref<HTMLInputElement | null>(null);
 
 const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
 const side = ["home", "away"] as const;
@@ -232,6 +237,55 @@ function removeTag(tag: string) {
   if (!match) return;
   match.tags = match.tags?.filter((x) => x != tag);
 }
+
+function handleLogoUpload(event: Event, side: "home" | "away") {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  
+  if (file && match) {
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+    
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSize) {
+      alert('Image size must be less than 2MB');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (side === "home") {
+        match.homeLogo = e.target?.result as string;
+      } else {
+        match.awayLogo = e.target?.result as string;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removeLogo(side: "home" | "away") {
+  if (!match) return;
+  if (side === "home") {
+    match.homeLogo = undefined;
+    if (homeLogoInput.value) homeLogoInput.value.value = "";
+  } else {
+    match.awayLogo = undefined;
+    if (awayLogoInput.value) awayLogoInput.value.value = "";
+  }
+}
+
+function getLogoUrl(logoRef: string | undefined): string | undefined {
+  if (!logoRef) return undefined;
+  if (logoRef.startsWith('team:')) {
+    const teamId = logoRef.substring(5);
+    return teams.value[teamId as any]?.logo;
+  }
+  return logoRef;
+}
+
 const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
@@ -269,14 +323,53 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         (match.periods.length == 0 || match.periods.every((x) => x.stop)) && !state.showPenalties
       "
     >
-      <div class="form team">
-        <label>Home:</label>
-        <input type="text" v-model="match.homeTeam" />
+      <div class="form teamselect">
+        <label>Team:</label>
+        <select type="text" v-model="match.belongsTo">
+          <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
+        </select>
+      </div>
+
+      <div class="form swap-row">
         <button @click="swapSides(match)" class="swap">Swap sides</button>
       </div>
-      <div class="form team">
+
+      <div class="form team-with-logo">
+        <label>Home:</label>
+        <input type="text" v-model="match.homeTeam" />
+        <div class="logo-container" @click="!getLogoUrl(match.homeLogo) && homeLogoInput?.click()">
+          <img v-if="getLogoUrl(match.homeLogo)" :src="getLogoUrl(match.homeLogo)" alt="Home logo" class="team-logo" />
+          <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+          </svg>
+          <span v-if="getLogoUrl(match.homeLogo)" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
+        </div>
+        <input 
+          ref="homeLogoInput"
+          type="file" 
+          accept="image/*" 
+          @change="handleLogoUpload($event, 'home')"
+          style="display: none;"
+        />
+      </div>
+      
+      <div class="form team-with-logo">
         <label>Away:</label>
         <input type="text" v-model="match.awayTeam" />
+        <div class="logo-container" @click="!getLogoUrl(match.awayLogo) && awayLogoInput?.click()">
+          <img v-if="getLogoUrl(match.awayLogo)" :src="getLogoUrl(match.awayLogo)" alt="Away logo" class="team-logo" />
+          <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+          </svg>
+          <span v-if="getLogoUrl(match.awayLogo)" class="remove-logo" @click.stop="removeLogo('away')">✕</span>
+        </div>
+        <input 
+          ref="awayLogoInput"
+          type="file" 
+          accept="image/*" 
+          @change="handleLogoUpload($event, 'away')"
+          style="display: none;"
+        />
       </div>
       <div class="form">
         <label>Date:</label>
@@ -495,8 +588,106 @@ div.form > button {
   width: 5.5em;
   display: inline-block;
 }
+
+div.form.swap-row {
+  justify-content: center;
+  padding: 0.5em 0;
+}
+
+div.form.swap-row button {
+  width: auto;
+  padding: 0.5em 2em;
+}
+
+div.form.team-with-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.25em;
+}
+
+div.form.team-with-logo input[type="text"] {
+  flex-grow: 1;
+  margin-left: 0em;
+  margin-right: 0;
+}
+
+div.form.team-with-logo .logo-container {
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 4px;
+  background: var(--color-background-soft);
+  margin-left: 0;
+  margin-right: 0.5em;
+}
+
+div.form.team-with-logo .logo-container:hover {
+  background: var(--color-background-mute);
+}
+
+div.form.team-with-logo .team-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+div.form.team-with-logo .default-crest {
+  width: 44px;
+  height: 53px;
+  fill: #ccc;
+}
+
+div.form.team-with-logo .remove-logo {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0;
+}
+
+div.form.team-with-logo .remove-logo:hover {
+  background: #c82333;
+}
+
+div.form.logo-upload input[type="file"] {
+  flex-grow: 1;
+}
+
+div.form.logo-preview {
+  align-items: center;
+}
+
+div.form.logo-preview img {
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: contain;
+  margin-right: 0.5em;
+}
+
+div.form.logo-preview button {
+  margin-left: auto;
+}
+
 h1 .goalHeader {
-  xposition: absolute;
   float: left;
   font-weight: bold;
   shape-outside: margin-box;
@@ -505,9 +696,6 @@ h1 .goalHeader {
 }
 h1:first-child .goalHeader {
   float: right;
-  xleft: auto;
-  xright: 5px;
-  xtop: 5px;
   margin-right: 0;
   margin-left: 0.5em;
 }
