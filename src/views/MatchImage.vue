@@ -98,7 +98,8 @@ function download(restartCounter = false) {
       .then(function (data: string) {
         //if (!blob) return alert("error");
         //saveAs(blob, 'match.png')
-        if (data.length < 600000) return setTimeout(() => download(), 500);
+        if (data.length < 1400000) return setTimeout(() => download(), 500);
+        console.log(data.length, data.length < 1400000);
         dataUrl.value = data;
       })
       .catch(function (error: Error) {
@@ -179,7 +180,7 @@ fetch(GrassImage2)
       <img :src="dataUrl" alt="image" />
     </div>
     <div v-if="dataUrl == ''" class="loader">{{ t('preparing') }}</div>
-    <div class="match" ref="matchbg" v-if="dataUrl == '' || true">
+    <div class="match" ref="matchbg" v-if="dataUrl == ''">
       <table>
         <tbody>
           <tr class="date">
@@ -353,14 +354,14 @@ fetch(GrassImage2)
   flex-direction: column;
   align-items: center;
 
-  width: 720px;
-  height: 1280px;
+  width: 1080px;
+  height: 1920px;
   background: #000;
   padding: 1em;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  font-size: 30px;
+  font-size: 40px;
 }
 .buttonRow {
   display: flex;
@@ -402,8 +403,8 @@ tr.teams td.team div {
 }
 
 tr.teams td.team .team-logo {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
 }
 
