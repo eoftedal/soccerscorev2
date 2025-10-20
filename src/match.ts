@@ -239,7 +239,9 @@ export function goalScorers(match: Match, side: "home" | "away") {
       result[name] = result[name] ?? [];
       const tag = prevEvent[2] == EventType.Penalty ? " (pen)" : "";
       console.log(side, sameSideEvents, eventsBefore.slice(-14), goalTime, i, tag);
-      result[name].push([goalTime, i, tag, sameSideEvents.length - 1]);
+      let passCount = sameSideEvents.length - 1;
+      if (passCount < 0) passCount = 0;
+      result[name].push([goalTime, i, tag, passCount]);
     });
   });
   const all = Object.entries(result);
