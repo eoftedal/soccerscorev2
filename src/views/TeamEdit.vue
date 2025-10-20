@@ -77,6 +77,18 @@ function cancel() {
     </div>
 
     <div class="form-group">
+      <label for="displayName">Home ground</label>
+      <input 
+        id="displayName"
+        type="text" 
+        v-model="team.homeground" 
+        placeholder="Home ground for matches" 
+      />
+    </div>
+
+
+
+    <div class="form-group">
       <label>Team Logo</label>
       <div class="logo-section">
         <div v-if="logoUrl" class="logo-preview">

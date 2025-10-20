@@ -29,6 +29,7 @@ export type Logo = {
 export type Team = {
   id: TeamId;
   name: TeamName;
+  homeground: string;
   displayName?: TeamName;
   logo?: string;
 }

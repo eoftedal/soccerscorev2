@@ -62,7 +62,7 @@ export const useMatchStore = defineStore("match", () => {
       periods: [],
       date: new Date().toISOString().split("T")[0] as DateString,
       time: new Date().toTimeString().split(":").slice(0, 2).join(":") as TimeString,
-      location: "Nadderud kunstgress",
+      location: team.homeground ?? "",
       state: "not_started",
       periodLength: 35 as PeriodLength,
       extraPeriodLength: 10 as ExtraPeriodLength,
@@ -74,7 +74,8 @@ export const useMatchStore = defineStore("match", () => {
   function newTeam(teamName: TeamName) {
     const team: Team = {
       id: window.crypto.randomUUID() as TeamId,
-      name: teamName
+      name: teamName,
+      homeground: "",
     };
     saveTeam(team);
     return team;
