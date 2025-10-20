@@ -94,7 +94,14 @@ function download(restartCounter = false) {
   document.body.scrollTo(0, 0);
   requestAnimationFrame(() => {
     const node = document.querySelector("div.match") as HTMLElement;
-    toPng(node)
+    toPng(node, { 
+        canvasHeight: 1920, 
+        canvasWidth: 1080,
+        height: 1920,
+        width: 1080,
+        cacheBust: true,
+        pixelRatio: 2
+      })
       .then(function (data: string) {
         //if (!blob) return alert("error");
         //saveAs(blob, 'match.png')
@@ -345,11 +352,10 @@ fetch(GrassImage2)
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  padding: 40px;
   width: 1080px;
   height: 1920px;
   background: #000;
-  padding: 1em;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
