@@ -7,6 +7,7 @@ import MatchImage from "@/views/MatchImage.vue";
 import TestView from "@/views/TestView.vue";
 import TeamView from "@/views/TeamView.vue";
 import TeamEdit from "@/views/TeamEdit.vue";
+import LogoUpload from "@/views/LogoUpload.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,11 @@ const router = createRouter({
       path: "/match-image/:id",
       name: "image",
       component: MatchImage,
+    },
+    {
+      path: "/logo-upload/:context/:matchId?/:teamId?",
+      name: "logo-upload",
+      component: LogoUpload,
     },
     {
       path: "/birthday",

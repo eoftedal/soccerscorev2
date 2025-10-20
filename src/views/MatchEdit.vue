@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
+import { useLogoStore } from "@/stores/logos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type GoalScorer, type Period, type Timestamp } from "../types";
@@ -15,12 +16,13 @@ import { storeToRefs } from "pinia";
 const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
-const { saveMatch } = useMatchStore();
-const { matches, teams } = storeToRefs(useMatchStore());
-const match = matches.value.find((m) => m.id == id);
+const matchStore = useMatchStore();
+const { saveMatch, getMatch } = matchStore;
+const { teams } = storeToRefs(matchStore);
+const logoStore = useLogoStore();
+const { logos } = storeToRefs(logoStore);
 
-const homeLogoInput = ref<HTMLInputElement | null>(null);
-const awayLogoInput = ref<HTMLInputElement | null>(null);
+const match = getMatch(id as string);
 
 const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
 const side = ["home", "away"] as const;
@@ -238,42 +240,23 @@ function removeTag(tag: string) {
   match.tags = match.tags?.filter((x) => x != tag);
 }
 
-function handleLogoUpload(event: Event, side: "home" | "away") {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  
-  if (file && match) {
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-    
-    const maxSize = 2 * 1024 * 1024; // 2MB
-    if (file.size > maxSize) {
-      alert('Image size must be less than 2MB');
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (side === "home") {
-        match.homeLogo = e.target?.result as string;
-      } else {
-        match.awayLogo = e.target?.result as string;
-      }
-    };
-    reader.readAsDataURL(file);
-  }
+function navigateToLogoUpload(side: "home" | "away") {
+  if (!match) return;
+  router.push({
+    name: "logo-upload",
+    params: {
+      context: `match-${side}`,
+      matchId: match.id,
+    },
+  });
 }
 
 function removeLogo(side: "home" | "away") {
   if (!match) return;
   if (side === "home") {
     match.homeLogo = undefined;
-    if (homeLogoInput.value) homeLogoInput.value.value = "";
   } else {
     match.awayLogo = undefined;
-    if (awayLogoInput.value) awayLogoInput.value.value = "";
   }
 }
 
@@ -281,10 +264,19 @@ function getLogoUrl(logoRef: string | undefined): string | undefined {
   if (!logoRef) return undefined;
   if (logoRef.startsWith('team:')) {
     const teamId = logoRef.substring(5);
-    return teams.value[teamId as any]?.logo;
+    const teamLogo = teams.value[teamId as any]?.logo;
+    if (teamLogo) {
+      return logos.value[teamLogo as any]?.dataUrl;
+    }
+    return undefined;
   }
-  return logoRef;
+  return logos.value[logoRef as any]?.dataUrl;
 }
+
+// Computed properties for reactive logo URLs
+const homeLogoUrl = computed(() => getLogoUrl(match?.homeLogo));
+const awayLogoUrl = computed(() => getLogoUrl(match?.awayLogo));
+const showLogos = computed(() => homeLogoUrl.value && awayLogoUrl.value);
 
 const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
@@ -292,23 +284,35 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 
 <template>
   <div v-if="match" class="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }">
-    <header :class="{ pending: state.saveTimeout != undefined }">
+    <header :class="{ pending: state.saveTimeout != undefined }" v-if="openPeriod">
       <h1>
-        <span class="goalHeader" v-if="openPeriod">{{ getGoals(match, "home") }}</span
-        >{{ match.homeTeam }}
+        <img v-if="showLogos" :src="homeLogoUrl" alt="Home logo" class="header-logo" />
+        <span class="goalHeader">{{ getGoals(match, "home") }}</span
+        ><span v-if="!showLogos">{{ match.homeTeam }}</span>
       </h1>
       <h1>
-        <span class="time" v-if="openPeriod">{{ periodTime }}</span>
-        <button v-if="openPeriod" @click="confirmEnd">End period</button>
-        <span v-if="!openPeriod"
-          >{{ getGoals(match, "home") }} - {{ getGoals(match, "away") }}</span
-        >
+        <span class="time">{{ periodTime }}</span>
+        <button @click="confirmEnd">End period</button>
       </h1>
       <h1>
-        <span class="goalHeader" v-if="openPeriod">{{ getGoals(match, "away") }}</span
-        >{{ match.awayTeam }}
+        <img v-if="showLogos" :src="awayLogoUrl" alt="Away logo" class="header-logo" />
+        <span class="goalHeader">{{ getGoals(match, "away") }}</span
+        ><span v-if="!showLogos">{{ match.awayTeam }}</span>
       </h1>
     </header>
+    <header :class="{ pending: state.saveTimeout != undefined }" v-if="!openPeriod">
+      <h1>
+        {{ match.homeTeam }}
+      </h1>
+      <h1>
+        <span>{{ getGoals(match, "home") }} - {{ getGoals(match, "away") }}</span>
+      </h1>
+      <h1>
+        {{ match.awayTeam }}
+      </h1>
+    </header>
+
+
 
     <PeriodPane :open-period="openPeriod" v-if="openPeriod" />
     <PenaltyRound
@@ -337,39 +341,25 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <div class="form team-with-logo">
         <label>Home:</label>
         <input type="text" v-model="match.homeTeam" />
-        <div class="logo-container" @click="!getLogoUrl(match.homeLogo) && homeLogoInput?.click()">
-          <img v-if="getLogoUrl(match.homeLogo)" :src="getLogoUrl(match.homeLogo)" alt="Home logo" class="team-logo" />
+        <div class="logo-container" @click="!homeLogoUrl && navigateToLogoUpload('home')">
+          <img v-if="homeLogoUrl" :src="homeLogoUrl" alt="Home logo" class="team-logo" />
           <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
             <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
           </svg>
-          <span v-if="getLogoUrl(match.homeLogo)" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
+          <span v-if="homeLogoUrl" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
         </div>
-        <input 
-          ref="homeLogoInput"
-          type="file" 
-          accept="image/*" 
-          @change="handleLogoUpload($event, 'home')"
-          style="display: none;"
-        />
       </div>
       
       <div class="form team-with-logo">
         <label>Away:</label>
         <input type="text" v-model="match.awayTeam" />
-        <div class="logo-container" @click="!getLogoUrl(match.awayLogo) && awayLogoInput?.click()">
-          <img v-if="getLogoUrl(match.awayLogo)" :src="getLogoUrl(match.awayLogo)" alt="Away logo" class="team-logo" />
+        <div class="logo-container" @click="!awayLogoUrl && navigateToLogoUpload('away')">
+          <img v-if="awayLogoUrl" :src="awayLogoUrl" alt="Away logo" class="team-logo" />
           <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
             <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
           </svg>
-          <span v-if="getLogoUrl(match.awayLogo)" class="remove-logo" @click.stop="removeLogo('away')">✕</span>
+          <span v-if="awayLogoUrl" class="remove-logo" @click.stop="removeLogo('away')">✕</span>
         </div>
-        <input 
-          ref="awayLogoInput"
-          type="file" 
-          accept="image/*" 
-          @change="handleLogoUpload($event, 'away')"
-          style="display: none;"
-        />
       </div>
       <div class="form">
         <label>Date:</label>
@@ -490,7 +480,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   border-color: #44f;
 }
 .match header h1 {
-  font-size: 140%;
+  font-size: 120%;
   padding: 5px;
 }
 .match header h1:last-child {
@@ -505,6 +495,17 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 .match header button {
   padding-left: 1em;
   padding-right: 1em;
+}
+.match header .header-logo {
+  max-width: 56px;
+  max-height: 56px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 0.5em;
+}
+.match header h1:last-child .header-logo {
+  margin-right: 0;
+  margin-left: 0.5em;
 }
 
 .activityScrollWrapper {

@@ -11,6 +11,7 @@ import type {
   TeamName,
   TimeString,
 } from "@/types";
+import { useLogoStore } from "./logos";
 
 
 
@@ -36,15 +37,7 @@ export const useMatchStore = defineStore("match", () => {
   });
 
   function getMatch(id: string): Match | undefined {
-    const data = window.localStorage.getItem("match-" + id);
-    if (data) {
-      const m = JSON.parse(data) as Match;
-      if (!m.gameType) m.gameType = "9v9";
-      if (!m.extraPeriodLength) m.extraPeriodLength = 10 as ExtraPeriodLength;
-      if (!m.tags) m.tags = [];
-      return m;
-    }
-    return undefined;
+    return matches.value.find((m) => m.id === id);
   }
 
   function saveMatch(match: Match) {
@@ -95,6 +88,85 @@ export const useMatchStore = defineStore("match", () => {
   function getMatches(teamId: TeamId) {
     return matches.value.filter(m => m.belongsTo == teamId);
   }
+
+  // Migration: Move data URL logos to logos store
+  function migrateLogos() {
+    const logoStore = useLogoStore();
+    const migrationKey = "logos-migrated";
+    
+    // Only run migration once
+    if (localStorage.getItem(migrationKey) === "true") {
+      return;
+    }
+
+    let migrated = false;
+
+    // Migrate team logos
+    Object.values(teams.value).forEach((team) => {
+      if (team.logo && team.logo.startsWith("data:")) {
+        // Check if this data URL already exists in logos store
+        let logoId = logoStore.findLogoByDataUrl(team.logo);
+        
+        if (!logoId) {
+          // Create new logo entry
+          logoId = logoStore.addLogo(team.name, team.logo);
+        }
+        
+        // Update team to reference logo ID
+        team.logo = logoId;
+        migrated = true;
+      }
+    });
+
+    // Save updated teams if migrated
+    if (migrated) {
+      window.localStorage.setItem("teams", JSON.stringify(teams.value));
+    }
+
+    // Migrate match logos
+    matchIndex.value.forEach((id) => {
+      const data = window.localStorage.getItem("match-" + id);
+      if (data) {
+        const match = JSON.parse(data) as Match;
+        let matchMigrated = false;
+
+        // Migrate home logo
+        if (match.homeLogo && match.homeLogo.startsWith("data:")) {
+          let logoId = logoStore.findLogoByDataUrl(match.homeLogo);
+          
+          if (!logoId) {
+            logoId = logoStore.addLogo(match.homeTeam, match.homeLogo);
+          }
+          
+          match.homeLogo = logoId;
+          matchMigrated = true;
+        }
+
+        // Migrate away logo
+        if (match.awayLogo && match.awayLogo.startsWith("data:")) {
+          let logoId = logoStore.findLogoByDataUrl(match.awayLogo);
+          
+          if (!logoId) {
+            logoId = logoStore.addLogo(match.awayTeam, match.awayLogo);
+          }
+          
+          match.awayLogo = logoId;
+          matchMigrated = true;
+        }
+
+        // Save updated match
+        if (matchMigrated) {
+          window.localStorage.setItem("match-" + id, JSON.stringify(match));
+        }
+      }
+    });
+
+    // Mark migration as complete
+    localStorage.setItem(migrationKey, "true");
+  }
+
+  // Run migration on store initialization
+  migrateLogos();
 
   return { matches, teams, newMatch, saveMatch, getMatch, newTeam, getMatches, saveTeam };
 });

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
+import { useLogoStore } from "@/stores/logos";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
@@ -13,6 +14,8 @@ const router = useRouter();
 const id = route.params.id;
 const { matches } = useMatchStore();
 const { teams } = storeToRefs(useMatchStore());
+const logoStore = useLogoStore();
+const { logos } = storeToRefs(logoStore);
 const match = computed(() => {
   return matches.find((m) => m.id == id);
 });
@@ -21,9 +24,13 @@ function getLogoUrl(logoRef: string | undefined): string | undefined {
   if (!logoRef) return undefined;
   if (logoRef.startsWith('team:')) {
     const teamId = logoRef.substring(5);
-    return teams.value[teamId as any]?.logo;
+    const teamLogo = teams.value[teamId as any]?.logo;
+    if (teamLogo) {
+      return logos.value[teamLogo as any]?.dataUrl;
+    }
+    return undefined;
   }
-  return logoRef;
+  return logos.value[logoRef as any]?.dataUrl;
 }
 
 const homeLogo = computed(() => getLogoUrl(match.value?.homeLogo));
