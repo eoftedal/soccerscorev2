@@ -56,7 +56,28 @@ const awayGoalScorers = computed(() => {
 });
 
 function download() {
-  const data = JSON.stringify(match.value);
+  if (!match.value) return;
+  
+  // Create a deep copy and replace logo IDs with data URLs
+  const exportMatch = { ...match.value };
+  
+  // Replace home logo ID with data URL
+  if (exportMatch.homeLogo) {
+    const logoUrl = logoStore.getLogoUrl(exportMatch.homeLogo as any);
+    if (logoUrl) {
+      exportMatch.homeLogo = logoUrl;
+    }
+  }
+  
+  // Replace away logo ID with data URL
+  if (exportMatch.awayLogo) {
+    const logoUrl = logoStore.getLogoUrl(exportMatch.awayLogo as any);
+    if (logoUrl) {
+      exportMatch.awayLogo = logoUrl;
+    }
+  }
+  
+  const data = JSON.stringify(exportMatch);
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
 }
