@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { useLogoStore } from "@/stores/logos";
+import { useLogos } from "@/composables/useLogos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type GoalScorer, type Period, type Timestamp } from "../types";
@@ -11,16 +11,13 @@ import TagList from "@/components/TagList.vue";
 import { now } from "@/timeUtils";
 import PeriodPane from "./PeriodPane.vue";
 import PenaltyRound from "./PenaltyRound.vue";
-import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
 const matchStore = useMatchStore();
-const { saveMatch, getMatch } = matchStore;
-const { teams } = storeToRefs(matchStore);
-const logoStore = useLogoStore();
-const { logos } = storeToRefs(logoStore);
+const { saveMatch, getMatch, teams } = matchStore;
+const { getLogoUrl } = useLogos();
 
 const match = getMatch(id as string);
 
@@ -258,19 +255,6 @@ function removeLogo(side: "home" | "away") {
   } else {
     match.awayLogo = undefined;
   }
-}
-
-function getLogoUrl(logoRef: string | undefined): string | undefined {
-  if (!logoRef) return undefined;
-  if (logoRef.startsWith('team:')) {
-    const teamId = logoRef.substring(5);
-    const teamLogo = teams.value[teamId as any]?.logo;
-    if (teamLogo) {
-      return logos.value[teamLogo as any]?.dataUrl;
-    }
-    return undefined;
-  }
-  return logos.value[logoRef as any]?.dataUrl;
 }
 
 // Computed properties for reactive logo URLs

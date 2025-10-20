@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from '@/stores/matches';
-import { useLogoStore } from '@/stores/logos';
+import { useLogos } from '@/composables/useLogos';
 import type { TeamName } from '@/types';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
@@ -10,13 +10,8 @@ const buildDate = import.meta.env.VITE_BUILD_DATE;
 
 const matchStore = useMatchStore();
 const { teams, matches } = storeToRefs(matchStore);
-const logoStore = useLogoStore();
+const { getLogoUrl } = useLogos();
 const router = useRouter();
-
-function getTeamLogoUrl(logoRef: string | undefined): string | undefined {
-  if (!logoRef) return undefined;
-  return logoStore.getLogoUrl(logoRef as any);
-}
 
 const hasUnassignedMatches = computed(() => {
     return matches.value.some(m => !m.belongsTo);
@@ -47,7 +42,7 @@ function navigateToUnassigned() {
                 @click="router.push({ name: 'team', params: { id: t.id }})"
             >
                 <div class="logo-container">
-                    <img v-if="getTeamLogoUrl(t.logo)" :src="getTeamLogoUrl(t.logo)" :alt="t.name + ' logo'" class="team-logo" />
+                    <img v-if="getLogoUrl(t.logo)" :src="getLogoUrl(t.logo)" :alt="t.name + ' logo'" class="team-logo" />
                     <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
                     </svg>

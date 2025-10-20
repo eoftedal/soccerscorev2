@@ -4,7 +4,7 @@ import { useRoute } from "vue-router";
 import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
-import { useLogoStore } from "@/stores/logos";
+import { useLogos } from "@/composables/useLogos";
 import { type Match } from "@/types";
 import GrassImage2 from "../assets/grass.avif";
 import {
@@ -17,16 +17,13 @@ import {
   getPenaltyScore,
 } from "@/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
-import { storeToRefs } from "pinia";
 
 const route = useRoute();
 
 const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
 
 const { getMatch } = useMatchStore();
-const { teams } = storeToRefs(useMatchStore());
-const logoStore = useLogoStore();
-const { logos } = storeToRefs(logoStore);
+const { getLogoUrl } = useLogos();
 
 const translations = {
   possession: { NO: "Possession", EN: "Possession" },
@@ -124,18 +121,6 @@ const passAcc = computed(() => (state.match ? getMatchPassAcc(state.match) : [0,
 
 const passes = computed(() => (state.match ? getMatchPasses(state.match) : [0, 0]));
 
-function getLogoUrl(logoRef: string | undefined): string | undefined {
-  if (!logoRef) return undefined;
-  if (logoRef.startsWith('team:')) {
-    const teamId = logoRef.substring(5);
-    const teamLogo = teams.value[teamId as any]?.logo;
-    if (teamLogo) {
-      return logos.value[teamLogo as any]?.dataUrl;
-    }
-    return undefined;
-  }
-  return logos.value[logoRef as any]?.dataUrl;
-}
 const homeLogo = computed(() => getLogoUrl(state.match.homeLogo));
 const awayLogo = computed(() => getLogoUrl(state.match.awayLogo));
 const showLogos = computed(() => homeLogo.value && awayLogo.value);
