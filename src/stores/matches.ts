@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type {
+  DataUrl,
   DateString,
   ExtraPeriodLength,
   Match,
@@ -12,9 +13,6 @@ import type {
   TimeString,
 } from "@/types";
 import { useLogoStore } from "./logos";
-
-
-
 
 export const useMatchStore = defineStore("match", () => {
   const matchIndex = ref([] as string[]);
@@ -87,14 +85,14 @@ export const useMatchStore = defineStore("match", () => {
   }
 
   function getMatches(teamId: TeamId) {
-    return matches.value.filter(m => m.belongsTo == teamId);
+    return matches.value.filter((m) => m.belongsTo == teamId);
   }
 
   // Migration: Move data URL logos to logos store
   function migrateLogos() {
     const logoStore = useLogoStore();
     const migrationKey = "logos-migrated";
-    
+
     // Only run migration once
     if (localStorage.getItem(migrationKey) === "true") {
       return;
@@ -107,12 +105,12 @@ export const useMatchStore = defineStore("match", () => {
       if (team.logo && team.logo.startsWith("data:")) {
         // Check if this data URL already exists in logos store
         let logoId = logoStore.findLogoByDataUrl(team.logo);
-        
+
         if (!logoId) {
           // Create new logo entry
-          logoId = logoStore.addLogo(team.name, team.logo);
+          logoId = logoStore.addLogo(team.name, team.logo as DataUrl);
         }
-        
+
         // Update team to reference logo ID
         team.logo = logoId;
         migrated = true;
@@ -134,11 +132,11 @@ export const useMatchStore = defineStore("match", () => {
         // Migrate home logo
         if (match.homeLogo && match.homeLogo.startsWith("data:")) {
           let logoId = logoStore.findLogoByDataUrl(match.homeLogo);
-          
+
           if (!logoId) {
-            logoId = logoStore.addLogo(match.homeTeam, match.homeLogo);
+            logoId = logoStore.addLogo(match.homeTeam, match.homeLogo as DataUrl);
           }
-          
+
           match.homeLogo = logoId;
           matchMigrated = true;
         }
@@ -146,11 +144,11 @@ export const useMatchStore = defineStore("match", () => {
         // Migrate away logo
         if (match.awayLogo && match.awayLogo.startsWith("data:")) {
           let logoId = logoStore.findLogoByDataUrl(match.awayLogo);
-          
+
           if (!logoId) {
-            logoId = logoStore.addLogo(match.awayTeam, match.awayLogo);
+            logoId = logoStore.addLogo(match.awayTeam, match.awayLogo as DataUrl);
           }
-          
+
           match.awayLogo = logoId;
           matchMigrated = true;
         }

@@ -7,26 +7,23 @@ import TagList from "@/components/TagList.vue";
 import { getGoals } from "../match";
 import { storeToRefs } from "pinia";
 
-
 const router = useRouter();
 const route = useRoute();
 const teamId = route.params.id as TeamId;
-const isUnassigned = teamId === 'unassigned';
+const isUnassigned = teamId === "unassigned";
 
 const { newMatch } = useMatchStore();
 const { matches, teams } = storeToRefs(useMatchStore());
 const state = reactive({
   search: "",
-  teamName: isUnassigned ? "Unassigned" : (teams.value[teamId]?.name ?? "")
+  teamName: isUnassigned ? "Unassigned" : (teams.value[teamId]?.name ?? ""),
 });
 
-watch(teams,
-  (newVal) => {
-    if (!isUnassigned) {
-      state.teamName = newVal[teamId]?.name ?? ""
-    }
+watch(teams, (newVal) => {
+  if (!isUnassigned) {
+    state.teamName = newVal[teamId]?.name ?? "";
   }
-);
+});
 
 function score(match: Match) {
   if (match.state == "not_started") return "";
@@ -34,16 +31,17 @@ function score(match: Match) {
 }
 
 const sorted = computed(() => {
-  const filterFn = isUnassigned 
-    ? (m: Match) => !m.belongsTo
-    : (m: Match) => m.belongsTo == teamId;
-  
-  return matches.value.filter(filterFn).slice().sort((a, b) => {
-    return (
-      new Date(b.date + "T" + b.time + ":00").getTime() -
-      new Date(a.date + "T" + a.time + ":00").getTime()
-    );
-  });
+  const filterFn = isUnassigned ? (m: Match) => !m.belongsTo : (m: Match) => m.belongsTo == teamId;
+
+  return matches.value
+    .filter(filterFn)
+    .slice()
+    .sort((a, b) => {
+      return (
+        new Date(b.date + "T" + b.time + ":00").getTime() -
+        new Date(a.date + "T" + a.time + ":00").getTime()
+      );
+    });
 });
 const notFinished = computed(() => {
   return sorted.value.filter((m) => m.state != "finished");
@@ -104,7 +102,9 @@ function editTeam() {
         </div>
       </li>
     </ul>
-    <button @click="router.push({ name: 'export', params: { id: teamId } })">Export/import matches</button>
+    <button @click="router.push({ name: 'export', params: { id: teamId } })">
+      Export/import matches
+    </button>
   </main>
 </template>
 <style scoped>

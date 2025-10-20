@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useLogoStore } from "@/stores/logos";
 import { useMatchStore } from "@/stores/matches";
-import type { LogoId } from "@/types";
+import type { DataUrl, LogoId, TeamId } from "@/types";
 
 const route = useRoute();
 const router = useRouter();
@@ -21,7 +21,7 @@ const teamId = route.params.teamId as string | undefined;
 const searchQuery = ref("");
 const uploadName = ref("");
 const selectedFile = ref<File | null>(null);
-const previewUrl = ref<string>("");
+const previewUrl = ref<DataUrl>("" as DataUrl);
 const errorMessage = ref("");
 
 // Get filtered logos
@@ -36,7 +36,7 @@ const filteredLogos = computed(() => {
 const handleFileSelect = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
-  
+
   if (!file) return;
 
   // Validate file type
@@ -57,7 +57,7 @@ const handleFileSelect = (event: Event) => {
   // Create preview
   const reader = new FileReader();
   reader.onload = (e) => {
-    previewUrl.value = e.target?.result as string;
+    previewUrl.value = e.target?.result as DataUrl;
   };
   reader.readAsDataURL(file);
 };
@@ -86,7 +86,7 @@ const selectLogo = (logoId: LogoId) => {
       // Check if homeLogo is a team reference
       if (match.homeLogo && match.homeLogo.startsWith("team:")) {
         const teamId = match.homeLogo.substring(5);
-        const team = teams.value[teamId as any];
+        const team = teams.value[teamId as TeamId];
         if (team) {
           team.logo = logoId;
           matchStore.saveTeam(team);
@@ -103,7 +103,7 @@ const selectLogo = (logoId: LogoId) => {
       // Check if awayLogo is a team reference
       if (match.awayLogo && match.awayLogo.startsWith("team:")) {
         const teamId = match.awayLogo.substring(5);
-        const team = teams.value[teamId as any];
+        const team = teams.value[teamId as TeamId];
         if (team) {
           team.logo = logoId;
           matchStore.saveTeam(team);
@@ -115,7 +115,7 @@ const selectLogo = (logoId: LogoId) => {
       }
     }
   } else if (context === "team" && teamId) {
-    const team = teams.value[teamId as any];
+    const team = teams.value[teamId as TeamId];
     if (team) {
       team.logo = logoId;
       matchStore.saveTeam(team);
@@ -139,7 +139,7 @@ const cancel = () => {
     <!-- Upload Section -->
     <section class="upload-section">
       <h3>Upload New Logo</h3>
-      
+
       <div class="upload-form">
         <div class="form-group">
           <label for="logo-name">Logo Name:</label>
@@ -153,12 +153,7 @@ const cancel = () => {
 
         <div class="form-group">
           <label for="logo-file">Select Image:</label>
-          <input
-            id="logo-file"
-            type="file"
-            accept="image/*"
-            @change="handleFileSelect"
-          />
+          <input id="logo-file" type="file" accept="image/*" @change="handleFileSelect" />
         </div>
 
         <div v-if="previewUrl" class="preview">
@@ -167,11 +162,7 @@ const cancel = () => {
 
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-        <button
-          @click="uploadLogo"
-          :disabled="!selectedFile || !uploadName"
-          class="btn-upload"
-        >
+        <button @click="uploadLogo" :disabled="!selectedFile || !uploadName" class="btn-upload">
           Upload & Select
         </button>
       </div>
@@ -182,11 +173,7 @@ const cancel = () => {
       <h3>Select Existing Logo</h3>
 
       <div class="search-box">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search logos..."
-        />
+        <input v-model="searchQuery" type="text" placeholder="Search logos..." />
       </div>
 
       <div class="logo-grid">
@@ -287,7 +274,7 @@ h3 {
 .btn-upload {
   padding: 0.75em 1.5em;
   font-size: 1em;
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -334,7 +321,7 @@ h3 {
 }
 
 .logo-item:hover {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   transform: scale(1.05);
 }
 

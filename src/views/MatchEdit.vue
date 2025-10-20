@@ -296,8 +296,6 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </h1>
     </header>
 
-
-
     <PeriodPane :open-period="openPeriod" v-if="openPeriod" />
     <PenaltyRound
       :penaltyRound="match.penaltyRound"
@@ -327,19 +325,29 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <input type="text" v-model="match.homeTeam" />
         <div class="logo-container" @click="!homeLogoUrl && navigateToLogoUpload('home')">
           <img v-if="homeLogoUrl" :src="homeLogoUrl" alt="Home logo" class="team-logo" />
-          <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            v-else
+            class="default-crest"
+            viewBox="0 0 100 120"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
           </svg>
           <span v-if="homeLogoUrl" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
         </div>
       </div>
-      
+
       <div class="form team-with-logo">
         <label>Away:</label>
         <input type="text" v-model="match.awayTeam" />
         <div class="logo-container" @click="!awayLogoUrl && navigateToLogoUpload('away')">
           <img v-if="awayLogoUrl" :src="awayLogoUrl" alt="Away logo" class="team-logo" />
-          <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            v-else
+            class="default-crest"
+            viewBox="0 0 100 120"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
           </svg>
           <span v-if="awayLogoUrl" class="remove-logo" @click.stop="removeLogo('away')">✕</span>

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
 import { useLogoStore } from "@/stores/logos";
+import { useLogos } from "@/composables/useLogos";
 import { computed, reactive, ref } from "vue";
-import { type Match, type TeamId } from "@/types";
+import { type Match, type TeamId, type ExportMatch, type DataUrl } from "@/types";
 import { saveBlob } from "./viewUtils";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 const teamId = route.params.id as TeamId;
-const isUnassigned = teamId === 'unassigned';
+const isUnassigned = teamId === "unassigned";
 
 const { matches, saveMatch } = useMatchStore();
 const logoStore = useLogoStore();
+const { getLogoUrl } = useLogos();
 
 const state = reactive({
   selected: new Map<string, Match>(),
@@ -25,16 +27,17 @@ function score(match: Match) {
 }
 
 const sorted = computed(() => {
-  const filterFn = isUnassigned 
-    ? (m: Match) => !m.belongsTo
-    : (m: Match) => m.belongsTo == teamId;
-  
-  return matches.slice().filter(filterFn).sort((a, b) => {
-    return (
-      new Date(b.date + "T" + b.time + ":00").getTime() -
-      new Date(a.date + "T" + a.time + ":00").getTime()
-    );
-  });
+  const filterFn = isUnassigned ? (m: Match) => !m.belongsTo : (m: Match) => m.belongsTo == teamId;
+
+  return matches
+    .slice()
+    .filter(filterFn)
+    .sort((a, b) => {
+      return (
+        new Date(b.date + "T" + b.time + ":00").getTime() -
+        new Date(a.date + "T" + a.time + ":00").getTime()
+      );
+    });
 });
 
 const finished = computed(() => {
@@ -50,28 +53,28 @@ function toggleSelected(match: Match) {
 
 function download() {
   // Create a deep copy of matches and replace logo IDs with data URLs
-  const matchesToExport = Array.from(state.selected.values()).map((match) => {
-    const exportMatch = { ...match };
-    
+  const matchesToExport: ExportMatch[] = Array.from(state.selected.values()).map((match) => {
+    const exportMatch = { ...match } as ExportMatch;
+
     // Replace home logo ID with data URL
-    if (exportMatch.homeLogo) {
-      const logoUrl = logoStore.getLogoUrl(exportMatch.homeLogo as any);
+    if (match.homeLogo) {
+      const logoUrl = getLogoUrl(match.homeLogo);
       if (logoUrl) {
         exportMatch.homeLogo = logoUrl;
       }
     }
-    
+
     // Replace away logo ID with data URL
-    if (exportMatch.awayLogo) {
-      const logoUrl = logoStore.getLogoUrl(exportMatch.awayLogo as any);
+    if (match.awayLogo) {
+      const logoUrl = getLogoUrl(match.awayLogo);
       if (logoUrl) {
         exportMatch.awayLogo = logoUrl;
       }
     }
-    
+
     return exportMatch;
   });
-  
+
   const data = JSON.stringify(matchesToExport);
   const file = new Blob([data], { type: "application/json" });
   const date = new Date().toISOString().split("T")[0];
@@ -112,29 +115,29 @@ function saveImportMatches() {
     // Migrate home logo if it's a data URL
     if (m.homeLogo && m.homeLogo.startsWith("data:")) {
       let logoId = logoStore.findLogoByDataUrl(m.homeLogo);
-      
+
       if (!logoId) {
         // Create new logo entry
-        logoId = logoStore.addLogo(m.homeTeam, m.homeLogo);
+        logoId = logoStore.addLogo(m.homeTeam, m.homeLogo as DataUrl);
       }
-      
+
       // Update match to reference logo ID
       m.homeLogo = logoId;
     }
-    
+
     // Migrate away logo if it's a data URL
     if (m.awayLogo && m.awayLogo.startsWith("data:")) {
       let logoId = logoStore.findLogoByDataUrl(m.awayLogo);
-      
+
       if (!logoId) {
         // Create new logo entry
-        logoId = logoStore.addLogo(m.awayTeam, m.awayLogo);
+        logoId = logoStore.addLogo(m.awayTeam, m.awayLogo as DataUrl);
       }
-      
+
       // Update match to reference logo ID
       m.awayLogo = logoId;
     }
-    
+
     if (!isUnassigned) {
       m.belongsTo = teamId;
     }

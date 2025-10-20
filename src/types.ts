@@ -18,29 +18,32 @@ export type ExtraPeriodLength = BrandedNumber<"extraPeriodLength">;
 
 export type TeamId = BrandedString<"teamId">;
 export type LogoId = BrandedString<"logoId">;
+export type TeamLogoRef = LogoId;
+export type MatchLogoRef = LogoId | `team:${string}`;
+export type DataUrl = `data:${string}`;
 
 export type Logo = {
   id: LogoId;
   name: string;
-  dataUrl: string;
+  dataUrl: DataUrl;
   uploadedAt: number;
-}
+};
 
 export type Team = {
   id: TeamId;
   name: TeamName;
   homeground: string;
   displayName?: TeamName;
-  logo?: string;
-}
+  logo?: TeamLogoRef;
+};
 
 export type Match = {
   id: string;
   belongsTo?: TeamId;
   homeTeam: TeamName;
   awayTeam: TeamName;
-  homeLogo?: string;
-  awayLogo?: string;
+  homeLogo?: MatchLogoRef;
+  awayLogo?: MatchLogoRef;
   location: string;
   date: DateString;
   time: TimeString;
@@ -52,6 +55,15 @@ export type Match = {
   extraPeriodLength: ExtraPeriodLength;
   tags?: string[];
   penaltyRound?: PenaltyRound;
+};
+
+/**
+ * ExportMatch type for exporting matches with embedded logo data URLs
+ * instead of logo IDs or references
+ */
+export type ExportMatch = Omit<Match, "homeLogo" | "awayLogo"> & {
+  homeLogo?: DataUrl;
+  awayLogo?: DataUrl;
 };
 
 export type Period = {

@@ -94,14 +94,14 @@ function download(restartCounter = false) {
   document.body.scrollTo(0, 0);
   requestAnimationFrame(() => {
     const node = document.querySelector("div.match") as HTMLElement;
-    toPng(node, { 
-        canvasHeight: 1920, 
-        canvasWidth: 1080,
-        height: 1920,
-        width: 1080,
-        cacheBust: true,
-        pixelRatio: 2
-      })
+    toPng(node, {
+      canvasHeight: 1920,
+      canvasWidth: 1080,
+      height: 1920,
+      width: 1080,
+      cacheBust: true,
+      pixelRatio: 2,
+    })
       .then(function (data: string) {
         //if (!blob) return alert("error");
         //saveAs(blob, 'match.png')
@@ -153,13 +153,13 @@ fetch(GrassImage2)
   <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
     <div class="buttonRow">
       <button @click="state.hidePossession = !state.hidePossession">
-        {{ state.hidePossession ? t('showPossession') : t('hidePossession') }}
+        {{ state.hidePossession ? t("showPossession") : t("hidePossession") }}
       </button>
       <button @click="state.hidePasses = !state.hidePasses">
-        {{ state.hidePasses ? t('showPasses') : t('hidePasses') }}
+        {{ state.hidePasses ? t("showPasses") : t("hidePasses") }}
       </button>
       <button @click="toggleLanguage">
-        {{ state.lang === 'NO' ? 'EN' : 'NO' }}
+        {{ state.lang === "NO" ? "EN" : "NO" }}
       </button>
 
       <a
@@ -167,7 +167,7 @@ fetch(GrassImage2)
         :href="dataUrl"
         :download="imageTitle"
         type="image/png"
-        >{{ t('downloadImage') }}</a
+        >{{ t("downloadImage") }}</a
       >
     </div>
     <div v-if="dataUrl != ''">
@@ -178,14 +178,16 @@ fetch(GrassImage2)
       <!--p>{{ state.data.length }}</p-->
       <img :src="dataUrl" alt="image" />
     </div>
-    <div v-if="dataUrl == ''" class="loader">{{ t('preparing') }}</div>
+    <div v-if="dataUrl == ''" class="loader">{{ t("preparing") }}</div>
     <div class="match" ref="matchbg" v-if="dataUrl == ''">
       <table>
         <tbody>
           <tr class="date">
             <td colspan="5"><DateView :time="dt.getTime()" /><br />{{ state.match.location }}</td>
           </tr>
-          <tr :class="{ teams: true, hasPenalties: state.match.penaltyRound, withLogos: showLogos }">
+          <tr
+            :class="{ teams: true, hasPenalties: state.match.penaltyRound, withLogos: showLogos }"
+          >
             <td class="team">
               <div>
                 <img :src="homeLogo" alt="Home logo" class="team-logo" v-if="showLogos" />
@@ -258,44 +260,44 @@ fetch(GrassImage2)
           </tr>
           <tr class="stat" v-if="!state.hidePossession">
             <td>{{ possession[0].toFixed(1) }}%</td>
-            <td colspan="3">{{ t('possession') }}</td>
+            <td colspan="3">{{ t("possession") }}</td>
             <td>{{ possession[1].toFixed(1) }}%</td>
           </tr>
           <tr class="stat" v-if="!state.hidePossession">
             <td>{{ msToTimeString(possession[2]) }}</td>
-            <td colspan="3">{{ t('possessionTime') }}</td>
+            <td colspan="3">{{ t("possessionTime") }}</td>
             <td>{{ msToTimeString(possession[3]) }}</td>
           </tr>
           <tr class="stat" v-if="!state.hidePasses">
             <td>{{ passAcc[0].toFixed(1) }}%</td>
-            <td colspan="3">{{ t('passAccuracy') }}</td>
+            <td colspan="3">{{ t("passAccuracy") }}</td>
             <td>{{ passAcc[1].toFixed(1) }}%</td>
           </tr>
           <tr class="stat" v-if="!state.hidePasses">
             <td>{{ passes[0] }}</td>
-            <td colspan="3">{{ t('passes') }}</td>
+            <td colspan="3">{{ t("passes") }}</td>
             <td>{{ passes[1] }}</td>
           </tr>
 
           <tr class="stat">
             <td>{{ getMatchShots(state.match)[0] }}</td>
-            <td colspan="3">{{ t('shots') }}</td>
+            <td colspan="3">{{ t("shots") }}</td>
             <td>{{ getMatchShots(state.match)[1] }}</td>
           </tr>
 
           <tr class="stat">
             <td>{{ getTotal(state.match, "home", "corners") }}</td>
-            <td colspan="3">{{ t('corners') }}</td>
+            <td colspan="3">{{ t("corners") }}</td>
             <td>{{ getTotal(state.match, "away", "corners") }}</td>
           </tr>
           <tr class="stat">
             <td>{{ getTotal(state.match, "home", "freekicks") }}</td>
-            <td colspan="3">{{ t('freekicks') }}</td>
+            <td colspan="3">{{ t("freekicks") }}</td>
             <td>{{ getTotal(state.match, "away", "freekicks") }}</td>
           </tr>
           <tr class="stat">
             <td>{{ getTotal(state.match, "home", "penalties") }}</td>
-            <td colspan="3">{{ t('penalties') }}</td>
+            <td colspan="3">{{ t("penalties") }}</td>
             <td>{{ getTotal(state.match, "away", "penalties") }}</td>
           </tr>
 
@@ -308,7 +310,7 @@ fetch(GrassImage2)
               ></div>
               <div v-if="getTotal(state.match, 'home', 'yellowCards') == 0">-</div>
             </td>
-            <td colspan="3">{{ t('yellowCards') }}</td>
+            <td colspan="3">{{ t("yellowCards") }}</td>
             <td>
               <div
                 class="card yellow"
@@ -327,7 +329,7 @@ fetch(GrassImage2)
               ></div>
               <div v-if="getTotal(state.match, 'home', 'redCards') == 0">-</div>
             </td>
-            <td colspan="3">{{ t('redCards') }}</td>
+            <td colspan="3">{{ t("redCards") }}</td>
             <td>
               <div
                 class="card red"
@@ -397,7 +399,6 @@ tr.teams td.team div {
   width: 100%;
   display: flex;
   flex-direction: column;
-  
 }
 
 tr.teams td.team .team-logo {
@@ -405,8 +406,6 @@ tr.teams td.team .team-logo {
   height: 120px;
   object-fit: contain;
 }
-
-
 
 tr.teams.withLogos td.team div {
   align-items: center;

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type { Logo, LogoId } from "@/types";
+import type { DataUrl, Logo, LogoId } from "@/types";
 
 // Generate UUID v4
 const generateUUID = (): string => {
@@ -28,7 +28,7 @@ export const useLogoStore = defineStore("logos", () => {
   };
 
   // Add a new logo
-  const addLogo = (name: string, dataUrl: string): LogoId => {
+  const addLogo = (name: string, dataUrl: DataUrl): LogoId => {
     const id = generateUUID() as LogoId;
     const logo: Logo = {
       id,

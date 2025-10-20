@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
-import { useLogoStore } from "@/stores/logos";
 import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -8,12 +7,12 @@ import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers, getPenaltyScore } from "@/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
+import type { ExportMatch } from "@/types";
 
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id;
 const { matches } = useMatchStore();
-const logoStore = useLogoStore();
 const { getLogoUrl } = useLogos();
 const match = computed(() => {
   return matches.find((m) => m.id == id);
@@ -43,26 +42,26 @@ const awayGoalScorers = computed(() => {
 
 function download() {
   if (!match.value) return;
-  
+
   // Create a deep copy and replace logo IDs with data URLs
-  const exportMatch = { ...match.value };
-  
+  const exportMatch = { ...match.value } as ExportMatch;
+
   // Replace home logo ID with data URL
-  if (exportMatch.homeLogo) {
-    const logoUrl = logoStore.getLogoUrl(exportMatch.homeLogo as any);
+  if (match.value.homeLogo) {
+    const logoUrl = getLogoUrl(match.value.homeLogo);
     if (logoUrl) {
       exportMatch.homeLogo = logoUrl;
     }
   }
-  
+
   // Replace away logo ID with data URL
-  if (exportMatch.awayLogo) {
-    const logoUrl = logoStore.getLogoUrl(exportMatch.awayLogo as any);
+  if (match.value.awayLogo) {
+    const logoUrl = getLogoUrl(match.value.awayLogo);
     if (logoUrl) {
       exportMatch.awayLogo = logoUrl;
     }
   }
-  
+
   const data = JSON.stringify(exportMatch);
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
@@ -187,7 +186,6 @@ main {
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 0.5em;
-
 }
 
 .matchview h1.with-logo:first-child .logo-section {
@@ -250,7 +248,8 @@ h1.divider {
   text-align: center;
   line-height: 1;
 }
-h1:last-child, span:last-child {
+h1:last-child,
+span:last-child {
   text-align: right;
 }
 

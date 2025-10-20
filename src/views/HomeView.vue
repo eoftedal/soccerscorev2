@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useMatchStore } from '@/stores/matches';
-import { useLogos } from '@/composables/useLogos';
-import type { TeamName } from '@/types';
-import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useMatchStore } from "@/stores/matches";
+import { useLogos } from "@/composables/useLogos";
+import type { TeamName } from "@/types";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
 
 const buildDate = import.meta.env.VITE_BUILD_DATE;
 
@@ -14,12 +14,12 @@ const { getLogoUrl } = useLogos();
 const router = useRouter();
 
 const hasUnassignedMatches = computed(() => {
-    return matches.value.some(m => !m.belongsTo);
+  return matches.value.some((m) => !m.belongsTo);
 });
 
 function addTeam() {
-    const team = matchStore.newTeam("New Team" as TeamName);
-    router.push({ name: 'team-edit', params: { id: team.id }});
+  const team = matchStore.newTeam("New Team" as TeamName);
+  router.push({ name: "team-edit", params: { id: team.id } });
 }
 
 function reload() {
@@ -27,44 +27,49 @@ function reload() {
 }
 
 function navigateToUnassigned() {
-    router.push({ name: 'team', params: { id: 'unassigned' }});
+  router.push({ name: "team", params: { id: "unassigned" } });
 }
-
 </script>
 <template>
-    <main>
-        <h2>Teams</h2>
-        <div class="teams-grid">
-            <div 
-                v-for="t in teams" 
-                :key="t.id" 
-                class="team-card"
-                @click="router.push({ name: 'team', params: { id: t.id }})"
-            >
-                <div class="logo-container">
-                    <img v-if="getLogoUrl(t.logo)" :src="getLogoUrl(t.logo)" :alt="t.name + ' logo'" class="team-logo" />
-                    <svg v-else class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
-                    </svg>
-                </div>
-                <div class="team-name">{{ t.name }}</div>
-            </div>
-            <div 
-                v-if="hasUnassignedMatches"
-                class="team-card unassigned"
-                @click="navigateToUnassigned()"
-            >
-                <div class="logo-container">
-                    <svg class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
-                    </svg>
-                </div>
-                <div class="team-name">Unassigned</div>
-            </div>
+  <main>
+    <h2>Teams</h2>
+    <div class="teams-grid">
+      <div
+        v-for="t in teams"
+        :key="t.id"
+        class="team-card"
+        @click="router.push({ name: 'team', params: { id: t.id } })"
+      >
+        <div class="logo-container">
+          <img
+            v-if="getLogoUrl(t.logo)"
+            :src="getLogoUrl(t.logo)"
+            :alt="t.name + ' logo'"
+            class="team-logo"
+          />
+          <svg
+            v-else
+            class="default-crest"
+            viewBox="0 0 100 120"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+          </svg>
         </div>
-        <button @click="addTeam()">Add team</button>
-        <footer @click="reload()">Version: {{ buildDate }}</footer>
-    </main>
+        <div class="team-name">{{ t.name }}</div>
+      </div>
+      <div v-if="hasUnassignedMatches" class="team-card unassigned" @click="navigateToUnassigned()">
+        <div class="logo-container">
+          <svg class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+          </svg>
+        </div>
+        <div class="team-name">Unassigned</div>
+      </div>
+    </div>
+    <button @click="addTeam()">Add team</button>
+    <footer @click="reload()">Version: {{ buildDate }}</footer>
+  </main>
 </template>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { useLogoStore } from "@/stores/logos";
+import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
 import { type TeamId } from "@/types";
 import { useRoute, useRouter } from "vue-router";
@@ -12,7 +12,7 @@ const teamId = route.params.id as TeamId;
 
 const { saveTeam } = useMatchStore();
 const { teams } = storeToRefs(useMatchStore());
-const logoStore = useLogoStore();
+const { getLogoUrl } = useLogos();
 
 const team = teams.value[teamId];
 if (!team) {
@@ -21,7 +21,7 @@ if (!team) {
 
 const logoUrl = computed(() => {
   if (!team?.logo) return undefined;
-  return logoStore.getLogoUrl(team.logo as any);
+  return getLogoUrl(team.logo);
 });
 
 function navigateToLogoUpload() {
@@ -54,39 +54,32 @@ function cancel() {
 <template>
   <main>
     <h1>Edit Team</h1>
-    
+
     <div class="form-group">
       <label for="teamName">Team Name</label>
-      <input 
-        id="teamName"
-        type="text" 
-        v-model="team.name" 
-        placeholder="Team name" 
-      />
+      <input id="teamName" type="text" v-model="team.name" placeholder="Team name" />
     </div>
 
     <div class="form-group">
       <label for="displayName">Display Name (optional)</label>
-      <input 
+      <input
         id="displayName"
-        type="text" 
-        v-model="team.displayName" 
-        placeholder="Display name for matches" 
+        type="text"
+        v-model="team.displayName"
+        placeholder="Display name for matches"
       />
       <small class="help-text">Used as the default team name when creating matches</small>
     </div>
 
     <div class="form-group">
       <label for="displayName">Home ground</label>
-      <input 
+      <input
         id="displayName"
-        type="text" 
-        v-model="team.homeground" 
-        placeholder="Home ground for matches" 
+        type="text"
+        v-model="team.homeground"
+        placeholder="Home ground for matches"
       />
     </div>
-
-
 
     <div class="form-group">
       <label>Team Logo</label>
@@ -99,7 +92,7 @@ function cancel() {
           <p>No logo uploaded</p>
         </div>
         <button type="button" @click="navigateToLogoUpload" class="upload-btn">
-          {{ logoUrl ? 'Change Logo' : 'Upload Logo' }}
+          {{ logoUrl ? "Change Logo" : "Upload Logo" }}
         </button>
       </div>
     </div>
