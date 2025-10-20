@@ -54,7 +54,7 @@ export const useMatchStore = defineStore("match", () => {
     matches.value.push({
       id: new Date().getTime().toString(),
       belongsTo: id,
-      homeTeam: team.name,
+      homeTeam: (team.displayName || team.name) as TeamName,
       awayTeam: "Motstander" as TeamName,
       homeLogo: `team:${id}`,
       gameType: "11v11",

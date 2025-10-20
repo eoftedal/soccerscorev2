@@ -66,6 +66,17 @@ function cancel() {
     </div>
 
     <div class="form-group">
+      <label for="displayName">Display Name (optional)</label>
+      <input 
+        id="displayName"
+        type="text" 
+        v-model="team.displayName" 
+        placeholder="Display name for matches" 
+      />
+      <small class="help-text">Used as the default team name when creating matches</small>
+    </div>
+
+    <div class="form-group">
       <label>Team Logo</label>
       <div class="logo-section">
         <div v-if="logoUrl" class="logo-preview">
@@ -110,6 +121,13 @@ main {
   font-size: 1em;
   border: 1px solid var(--color-border);
   border-radius: 4px;
+}
+
+.form-group .help-text {
+  display: block;
+  margin-top: 0.25em;
+  font-size: 0.875em;
+  color: var(--color-text-muted, #666);
 }
 
 .logo-section {

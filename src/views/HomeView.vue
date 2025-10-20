@@ -3,9 +3,8 @@ import { useMatchStore } from '@/stores/matches';
 import { useLogoStore } from '@/stores/logos';
 import type { TeamName } from '@/types';
 import { storeToRefs } from 'pinia';
-import { computed, reactive, ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import ModalDialog from "../components/ModalDialog.vue";
 
 const buildDate = import.meta.env.VITE_BUILD_DATE;
 
@@ -19,25 +18,13 @@ function getTeamLogoUrl(logoRef: string | undefined): string | undefined {
   return logoStore.getLogoUrl(logoRef as any);
 }
 
-const state = reactive({
-    showNewTeam: false,
-    teamName: ""
-});
-
 const hasUnassignedMatches = computed(() => {
     return matches.value.some(m => !m.belongsTo);
 });
 
 function addTeam() {
-    matchStore.newTeam((state.teamName || "Team") as TeamName);
-    state.showNewTeam = false;
-    state.teamName = "";
-}
-
-const newTeamModal = ref<InstanceType<typeof ModalDialog> | null>(null);
-function openNewTeamDialog() {
-    state.teamName = "";
-    newTeamModal.value?.open();
+    const team = matchStore.newTeam("New Team" as TeamName);
+    router.push({ name: 'team-edit', params: { id: team.id }});
 }
 
 function reload() {
@@ -80,16 +67,9 @@ function navigateToUnassigned() {
                 <div class="team-name">Unassigned</div>
             </div>
         </div>
-        <button @click="openNewTeamDialog()">Add team</button>
+        <button @click="addTeam()">Add team</button>
         <footer @click="reload()">Version: {{ buildDate }}</footer>
     </main>
-    <ModalDialog
-        ref="newTeamModal"
-        @ok="addTeam"
-        >
-        <h2>Add team</h2>
-    <input type="text" v-model="state.teamName" placeholder="Team name" />
-  </ModalDialog>
 </template>
 
 <style scoped>
