@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { reactive, ref } from "vue";
+import { useLogoStore } from "@/stores/logos";
+import { computed } from "vue";
 import { type TeamId } from "@/types";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
@@ -11,60 +12,38 @@ const teamId = route.params.id as TeamId;
 
 const { saveTeam } = useMatchStore();
 const { teams } = storeToRefs(useMatchStore());
+const logoStore = useLogoStore();
 
 const team = teams.value[teamId];
 if (!team) {
   router.push({ name: "home" });
 }
 
-const state = reactive({
-  teamName: team?.name ?? "",
-  logo: team?.logo ?? ""
+const logoUrl = computed(() => {
+  if (!team?.logo) return undefined;
+  return logoStore.getLogoUrl(team.logo as any);
 });
 
-const fileInput = ref<HTMLInputElement | null>(null);
-
-function handleLogoUpload(event: Event) {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  
-  if (file) {
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-    
-    // Validate file size (e.g., max 2MB)
-    const maxSize = 2 * 1024 * 1024; // 2MB
-    if (file.size > maxSize) {
-      alert('Image size must be less than 2MB');
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      state.logo = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  }
+function navigateToLogoUpload() {
+  router.push({
+    name: "logo-upload",
+    params: {
+      context: "team",
+      teamId: teamId,
+    },
+  });
 }
 
 function removeLogo() {
-  state.logo = "";
-  if (fileInput.value) {
-    fileInput.value.value = "";
-  }
+  if (!team) return;
+  team.logo = undefined;
+  saveTeam(team);
 }
 
 function save() {
   if (!team) return;
-  
-  team.name = state.teamName;
-  team.logo = state.logo || undefined;
-  
   saveTeam(team);
-  router.back()
+  router.back();
 }
 
 function cancel() {
@@ -81,7 +60,7 @@ function cancel() {
       <input 
         id="teamName"
         type="text" 
-        v-model="state.teamName" 
+        v-model="team.name" 
         placeholder="Team name" 
       />
     </div>
@@ -89,20 +68,16 @@ function cancel() {
     <div class="form-group">
       <label>Team Logo</label>
       <div class="logo-section">
-        <div v-if="state.logo" class="logo-preview">
-          <img :src="state.logo" alt="Team logo" />
+        <div v-if="logoUrl" class="logo-preview">
+          <img :src="logoUrl" alt="Team logo" />
           <button type="button" @click="removeLogo" class="remove-btn">Remove Logo</button>
         </div>
         <div v-else class="no-logo">
           <p>No logo uploaded</p>
         </div>
-        <input 
-          ref="fileInput"
-          type="file" 
-          accept="image/*" 
-          @change="handleLogoUpload"
-          class="file-input"
-        />
+        <button type="button" @click="navigateToLogoUpload" class="upload-btn">
+          {{ logoUrl ? 'Change Logo' : 'Upload Logo' }}
+        </button>
       </div>
     </div>
 
@@ -170,6 +145,20 @@ main {
 
 .file-input {
   cursor: pointer;
+}
+
+.upload-btn {
+  padding: 0.75em 1em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.upload-btn:hover {
+  background-color: #0056b3;
 }
 
 .remove-btn {

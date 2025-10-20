@@ -17,6 +17,14 @@ export type PeriodLength = BrandedNumber<"periodLength">;
 export type ExtraPeriodLength = BrandedNumber<"extraPeriodLength">;
 
 export type TeamId = BrandedString<"teamId">;
+export type LogoId = BrandedString<"logoId">;
+
+export type Logo = {
+  id: LogoId;
+  name: string;
+  dataUrl: string;
+  uploadedAt: number;
+}
 
 export type Team = {
   id: TeamId;

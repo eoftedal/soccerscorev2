@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
+import { useLogoStore } from "@/stores/logos";
 import { type Match } from "@/types";
 import GrassImage2 from "../assets/grass.avif";
 import {
@@ -24,6 +25,8 @@ const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
 
 const { getMatch } = useMatchStore();
 const { teams } = storeToRefs(useMatchStore());
+const logoStore = useLogoStore();
+const { logos } = storeToRefs(logoStore);
 
 const translations = {
   possession: { NO: "Possession", EN: "Possession" },
@@ -125,9 +128,13 @@ function getLogoUrl(logoRef: string | undefined): string | undefined {
   if (!logoRef) return undefined;
   if (logoRef.startsWith('team:')) {
     const teamId = logoRef.substring(5);
-    return teams.value[teamId as any]?.logo;
+    const teamLogo = teams.value[teamId as any]?.logo;
+    if (teamLogo) {
+      return logos.value[teamLogo as any]?.dataUrl;
+    }
+    return undefined;
   }
-  return logoRef;
+  return logos.value[logoRef as any]?.dataUrl;
 }
 const homeLogo = computed(() => getLogoUrl(state.match.homeLogo));
 const awayLogo = computed(() => getLogoUrl(state.match.awayLogo));
