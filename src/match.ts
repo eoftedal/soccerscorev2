@@ -8,6 +8,7 @@ export enum EventType {
   Freekick,
   OutOfPlay,
   Goal,
+  Offside,
 }
 
 type Side = "H" | "A" | "N";
@@ -21,7 +22,8 @@ function getAllTeamEvents(
     .concat(data.corners.map((x) => [x, EventType.Corner]))
     .concat(data.freekicks.map((x) => [x, EventType.Freekick]))
     .concat(data.penalties.map((x) => [x, EventType.Penalty]))
-    .concat(includeGoals ? data.goals.map((x) => [[x[0], 0 as Delta], EventType.Goal]) : []);
+    .concat(includeGoals ? data.goals.map((x) => [[x[0], 0 as Delta], EventType.Goal]) : [])
+    .concat((data.offsides ?? []).map((x) => [[x, 0 as Delta], EventType.Offside]));
 }
 
 export function getAllEventsSorted(
@@ -61,7 +63,7 @@ export function getPossession(period: Period): [Percentage, Percentage, TotalTim
     }
     previous = x[1][0];
     previousT = x[0];
-    if (x[2] == EventType.Goal) {
+    if (x[2] == EventType.Goal || x[2] == EventType.Offside) {
       previousT = "N";
     }
   });

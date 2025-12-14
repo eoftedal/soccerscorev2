@@ -56,8 +56,13 @@ function isOutOfPlay() {
     .concat(openPeriod.value.away.goals ?? [])
     .sort((a, b) => a[0] - b[0])
     .slice(-1)[0];
-  if (lastGoal == undefined) return false;
-  return lastGoal[0] > lastTouchEvent[0];
+  const lastOffside = (openPeriod.value.home.offsides ?? [])
+    .concat(openPeriod.value.away.offsides ?? [])
+    .sort((a, b) => a - b)
+    .slice(-1)[0];
+  const lastStoppage = Math.max(lastGoal?.[0] ?? 0, lastOffside ?? 0);
+  if (lastStoppage == 0) return false;
+  return lastStoppage > lastTouchEvent[0];
 }
 
 function addEventWithDelta(
