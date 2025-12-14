@@ -102,9 +102,14 @@ function editTeam() {
         </div>
       </li>
     </ul>
-    <button @click="router.push({ name: 'export', params: { id: teamId } })">
-      Export/import matches
-    </button>
+    <div class="buttonRow">
+      <button @click="router.push({ name: 'export', params: { id: teamId } })">
+        Export/import matches
+      </button>
+      <button @click="router.push({ name: 'match-select', params: { id: teamId } })">
+        Generate match image
+      </button>
+    </div>
   </main>
 </template>
 <style scoped>
@@ -147,5 +152,8 @@ input.search {
 
 h1.clickable {
   cursor: pointer;
+}
+.buttonRow {
+  display: flex;
 }
 </style>

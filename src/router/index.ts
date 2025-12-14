@@ -8,6 +8,8 @@ import TestView from "@/views/TestView.vue";
 import TeamView from "@/views/TeamView.vue";
 import TeamEdit from "@/views/TeamEdit.vue";
 import LogoUpload from "@/views/LogoUpload.vue";
+import MatchSelectView from "@/views/MatchSelectView.vue";
+import MultiMatchImage from "@/views/MultiMatchImage.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -32,6 +34,16 @@ const router = createRouter({
       path: "/export/:id",
       name: "export",
       component: ExportView,
+    },
+    {
+      path: "/match-select/:id",
+      name: "match-select",
+      component: MatchSelectView,
+    },
+    {
+      path: "/multi-match-image/:id",
+      name: "multi-match-image",
+      component: MultiMatchImage,
     },
     {
       path: "/match/:id",

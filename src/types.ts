@@ -22,6 +22,10 @@ export type TeamLogoRef = LogoId;
 export type MatchLogoRef = LogoId | `team:${string}`;
 export type DataUrl = `data:${string}`;
 
+export function isTeamLogoRef(ref: MatchLogoRef): ref is TeamLogoRef {
+  return !ref.startsWith("team:");
+}
+
 export type Logo = {
   id: LogoId;
   name: string;
