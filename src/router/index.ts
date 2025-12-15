@@ -66,11 +66,6 @@ const router = createRouter({
       component: LogoUpload,
     },
     {
-      path: "/birthday",
-      name: "birthday",
-      component: () => import("../views/BirthdayView.vue"),
-    },
-    {
       path: "/test",
       name: "test",
       component: TestView,
