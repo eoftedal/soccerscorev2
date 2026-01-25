@@ -4,21 +4,21 @@ import ActivityRow from "./ActivityRow.vue";
 import { msToTimeString } from "../timeUtils";
 import PeriodChart from "./PeriodChart.vue";
 import {
+  getMatchAveragePassStrings,
+  getMatchPassAcc,
+  getMatchPasses,
+  getMatchPassStrings,
+  getMatchPossession,
+  getMatchShotAccuracy,
+  getMatchShots,
+  getMatchTotalStat,
   getPeriodAllEventsSorted,
+  getPeriodPassAcc,
+  getPeriodPasses,
   getPeriodPassStrings,
   getPeriodPossession,
-  getMatchTotalStat,
-  getMatchPossession,
-  getMatchPassStrings,
-  getMatchAveragePassStrings,
-  getPeriodShots,
-  getMatchShots,
-  getMatchShotAccuracy,
   getPeriodShotAccuracy,
-  getPeriodPasses,
-  getMatchPasses,
-  getPeriodPassAcc,
-  getMatchPassAcc,
+  getPeriodShots,
 } from "../models/match";
 import { computed, ref } from "vue";
 

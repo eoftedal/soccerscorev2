@@ -11,7 +11,7 @@ export function getMatchGoalScorers(match: Match, side: "home" | "away") {
     const allEvents = getPeriodAllEventsSorted(p, false);
     p[side].goals.forEach((x) => {
       const eventsBefore = allEvents.filter((y) => y[1][0] < x[0]);
-      if (eventsBefore[eventsBefore.length - 1][2] == EventType.OutOfPlay) {
+      if (eventsBefore[eventsBefore.length - 1] && eventsBefore[eventsBefore.length - 1][2] == EventType.OutOfPlay) {
         eventsBefore.pop();
       }
       const sameSideEvents = [];
@@ -36,7 +36,7 @@ export function getMatchGoalScorers(match: Match, side: "home" | "away") {
       const goalTime = Math.ceil((x[0] - p.start) / 60000) + elapsed;
       const name = x[1] || "Unknown";
       result[name] = result[name] ?? [];
-      const tag = prevEvent[2] == EventType.Penalty ? " (pen)" : "";
+      const tag = prevEvent?.[2] == EventType.Penalty ? " (pen)" : "";
       console.log(side, sameSideEvents, eventsBefore.slice(-14), goalTime, i, tag);
       let passCount = sameSideEvents.length - 1;
       if (passCount < 0) passCount = 0;
