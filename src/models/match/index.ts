@@ -3,7 +3,7 @@ export { getMatchAllGoalsWithTiming } from "./getMatchAllGoalsWithTiming";
 export { getAllTeamEvents } from "./getAllTeamEvents";
 export { getPeriodAllTouches } from "./getPeriodAllTouches";
 export { getMatchGoalScorers } from "./getMatchGoalScorers";
-export { getGoalEvents } from "./getGoalEvents";
+export { getPeriodGoalEvents } from "./getPeriodGoalEvents";
 export { getMatchGoals } from "./getMatchGoals";
 export { getMatchScore } from "./getMatchScore";
 export { getMatchAveragePassStrings } from "./getMatchAveragePassStrings";

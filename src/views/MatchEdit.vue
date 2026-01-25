@@ -4,7 +4,7 @@ import { useLogos } from "@/composables/useLogos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Assister, type GoalScorer, type Period, type Timestamp } from "../models/types";
-import { getGoalEvents, getMatchGoals, swapSides } from "../models/match";
+import { getPeriodGoalEvents, getMatchGoals, swapSides } from "../models/match";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
@@ -187,7 +187,7 @@ function confirmEnd() {
 
 const goalEvents = computed(() => {
   if (!openPeriod.value) return [];
-  return getGoalEvents(openPeriod.value);
+  return getPeriodGoalEvents(openPeriod.value);
 });
 
 const goalEventsMatch = computed(() => {
