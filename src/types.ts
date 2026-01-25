@@ -2,6 +2,7 @@ declare const __brand: unique symbol;
 type BrandedNumber<T> = number & { [__brand]: T };
 type BrandedString<T> = string & { [__brand]: T };
 export type GoalScorer = BrandedString<"GoalScorer">;
+export type Assister = BrandedString<"GoalScorer">;
 
 export type Timestamp = BrandedNumber<"timestamp">;
 export type Delta = BrandedNumber<"delta">;
@@ -84,7 +85,7 @@ export type PenaltyRound = {
 };
 
 export type TeamData = {
-  goals: Array<[MatchEvent, GoalScorer]>;
+  goals: Array<[MatchEvent, GoalScorer, Assister?]>;
   shots: Array<MatchEvent>;
   offsides?: Array<MatchEvent>;
   touches: Array<FirstTouchEvent>;

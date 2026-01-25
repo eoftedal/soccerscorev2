@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
-import { type Delta, type GoalScorer, type Period, type Timestamp } from "../types";
+import { type Assister, type Delta, type GoalScorer, type Period, type Timestamp } from "../types";
 import UpDown from "./UpDown.vue";
 import { CUTOFF, getPossession } from "../match";
 import { setActive, setInactive } from "./buttonUtil";
@@ -29,9 +29,9 @@ const state = reactive({
   holdStart: undefined as undefined | Timestamp,
   periodEvents: [] as [number, TouchType, SideType | "N"][],
   outOfPlayHold: false as boolean,
-  promptDialog: {
-    title: "",
-    data: "",
+  scoreDialog: {
+    goalScorer: "" as GoalScorer,
+    assister: "" as Assister,
     onOk: undefined as undefined | (() => void),
   },
   confirm: {
@@ -40,7 +40,7 @@ const state = reactive({
   },
 });
 
-const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
+const scoreModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 
 function isOutOfPlay() {
@@ -104,15 +104,15 @@ function removeEvent(
 function addGoal(period: Period, team: "home" | "away") {
   const t = now();
   //const name = prompt("Scorer");
-  if (!state.promptDialog) return;
-  state.promptDialog.title = "Scorer";
-  state.promptDialog.data = "";
-  state.promptDialog.onOk = () => {
-    const name = state.promptDialog.data;
+  if (!state.scoreDialog) return;
+  state.scoreDialog.assister = "" as Assister;
+  state.scoreDialog.goalScorer = "" as GoalScorer;
+  state.scoreDialog.onOk = () => {
+    const name = state.scoreDialog.goalScorer;
     if (name == null || name == undefined) return;
-    period[team].goals.push([t, name as GoalScorer]);
+    period[team].goals.push([t, name as GoalScorer, state.scoreDialog.assister as Assister]);
   };
-  promptModal.value?.open();
+  scoreModal.value?.open();
 }
 function removeGoal(period: Period, team: "home" | "away") {
   period[team].goals.pop();
@@ -429,11 +429,13 @@ const currentPossession = computed(() => {
     </div>
     <ModalDialog
       v-if="openPeriod"
-      ref="promptModal"
-      @ok="state.promptDialog.onOk ? state.promptDialog.onOk() : undefined"
+      ref="scoreModal"
+      @ok="state.scoreDialog.onOk ? state.scoreDialog.onOk() : undefined"
     >
-      {{ state.promptDialog.title }}
-      <input type="text" v-model="state.promptDialog.data" />
+      <div class="goalsDialog">
+      <input type="text" v-model="state.scoreDialog.goalScorer" placeholder="Goal scorer" />
+      <input type="text" v-model="state.scoreDialog.assister" placeholder="Assister" />
+      </div>
     </ModalDialog>
     <ModalDialog
       v-if="openPeriod"
@@ -465,6 +467,11 @@ div.big .plus .num {
 }
 div.mid {
   width: 1em;
+}
+.goalsDialog input {
+  width: 100%;
+  padding: 0.25em;
+  margin-bottom: 0.25em;
 }
 
 .button {

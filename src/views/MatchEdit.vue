@@ -3,7 +3,7 @@ import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { type GoalScorer, type Period, type Timestamp } from "../types";
+import { type Assister, type GoalScorer, type Period, type Timestamp } from "../types";
 import { getGoals, swapSides } from "../match";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import ModalDialog from "../components/ModalDialog.vue";
@@ -57,6 +57,11 @@ const state = reactive({
   promptDialog: {
     title: "",
     data: "",
+    onOk: undefined as undefined | (() => void),
+  },
+  scoreEditDialog : {
+    goalScorer: "" as GoalScorer,
+    assister: "" as Assister,
     onOk: undefined as undefined | (() => void),
   },
   confirm: {
@@ -182,10 +187,10 @@ function confirmEnd() {
 const goalEvents = computed(() => {
   if (!openPeriod.value) return [];
   const events = openPeriod.value.home.goals
-    .map((x) => [x, "home", openPeriod.value] as [[number, string], "home" | "away", Period])
+    .map((x) => [x, "home", openPeriod.value] as [[number, GoalScorer, Assister?], "home" | "away", Period])
     .concat(
       openPeriod.value.away.goals.map(
-        (x) => [x, "away", openPeriod.value] as [[number, string], "home" | "away", Period],
+        (x) => [x, "away", openPeriod.value] as [[number, GoalScorer, Assister?], "home" | "away", Period],
       ),
     );
   return events.sort((a, b) => a[0][0] - b[0][0]);
@@ -195,22 +200,23 @@ const goalEventsMatch = computed(() => {
   if (!match?.periods?.length) return [];
   const events = match.periods.flatMap((p) =>
     p.home.goals
-      .map((x) => [x, "home", p] as [[number, string], "home" | "away", Period])
+      .map((x) => [x, "home", p] as [[number, GoalScorer, Assister?], "home" | "away", Period])
       .concat(p.away.goals.map((x) => [x, "away", p])),
   );
   return events.sort((a, b) => a[0][0] - b[0][0]);
 });
 
-function changeName(e: [number, string]) {
+function changeName(e: [number, GoalScorer, Assister?]) {
   /*const name = prompt("Scorer", e[1]);
   if (name == null || name == undefined) return;
   e[1] = name;*/
-  state.promptDialog.title = "Scorer";
-  state.promptDialog.data = e[1];
-  state.promptDialog.onOk = () => {
-    e[1] = state.promptDialog.data;
+  state.scoreEditDialog.goalScorer = e[1];
+  state.scoreEditDialog.assister = e[2] ?? "" as Assister;
+  state.scoreEditDialog.onOk = () => {
+    e[1] = state.scoreEditDialog.goalScorer;
+    e[2] = state.scoreEditDialog.assister;
   };
-  promptModal.value?.open();
+  scoreModal.value?.open();
 }
 function swapGoalSide(e: [Timestamp, GoalScorer], side: "home" | "away", period: Period) {
   const team: "homeTeam" | "awayTeam" = side == "home" ? "awayTeam" : "homeTeam";
@@ -262,6 +268,7 @@ const homeLogoUrl = computed(() => getLogoUrl(match?.homeLogo));
 const awayLogoUrl = computed(() => getLogoUrl(match?.awayLogo));
 const showLogos = computed(() => homeLogoUrl.value && awayLogoUrl.value);
 
+const scoreModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
@@ -407,7 +414,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <div v-for="(e, i) of goalEventsMatch" v-bind:key="i" :class="e[1]">
           <span @click="changeName(e[0])"
             ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
-            {{ e[0][1] }}</span
+            {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : ""  }}</span
           >
           <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
             Switch team
@@ -421,7 +428,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <div v-for="(e, i) of goalEvents" v-bind:key="i" :class="e[1]">
         <span @click="changeName(e[0])"
           ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
-          {{ e[0][1] }}</span
+          {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : ""  }}</span
         >
         <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
           Switch team
@@ -437,6 +444,17 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   >
     {{ state.promptDialog.title }}
     <input type="text" v-model="state.promptDialog.data" />
+  </ModalDialog>
+  <ModalDialog
+    v-if="match"
+    ref="scoreModal"
+    @ok="state.scoreEditDialog.onOk ? state.scoreEditDialog.onOk() : undefined"
+  >
+    <div class="goalDialog">
+      <input type="text" v-model="state.scoreEditDialog.goalScorer" placeholder="Goal scorer" />
+      <input type="text" v-model="state.scoreEditDialog.assister" placeholder="Assister" />
+    </div>
+    
   </ModalDialog>
   <ModalDialog
     v-if="match"
@@ -520,6 +538,12 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.goalDialog input {
+  width: 100%;
+  padding: 0.25em;
+  margin-bottom: 0.25em;
 }
 
 div.form {

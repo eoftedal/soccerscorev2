@@ -7,7 +7,7 @@ import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { goalScorers, getPenaltyScore } from "@/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
-import type { ExportMatch } from "@/types";
+import type { Assister, ExportMatch, GoalScorer, Timestamp } from "@/types";
 
 const route = useRoute();
 const router = useRouter();
@@ -31,6 +31,28 @@ const awayGoals = computed(() => {
   return match.value.periods.flatMap((x) => x.away.goals);
 });
 
+const allGoals = computed(() => {
+  if (!match.value) return [];
+  type Arr = ["H"|"A", number, GoalScorer, Assister?];
+  const all = match.value.periods.map((p,i) => {
+    const homeGoals = p.home.goals.map(g => ["H", ...g] as Arr);
+    const awayGoals = p.away.goals.map(g => ["A", ...g] as Arr);
+    const a = [...homeGoals, ...awayGoals];
+    a.sort((a,b) => a[1]-b[1]);
+    let elapsed = i * match.value!.periodLength;
+    if (i > 1) {
+      elapsed = 2 *  match.value!.periodLength + (i - 2) *  match.value!.extraPeriodLength;
+    }
+    a.forEach(g => {
+       g[1] = Math.ceil((g[1] - p.start) / 60000) + elapsed;
+    })
+    return a;
+  });
+  
+  console.log("SORTED GOALS", all);
+  return all;
+})
+
 const homeGoalScorers = computed(() => {
   if (!match.value) return [];
   return goalScorers(match.value, "home");
@@ -39,6 +61,8 @@ const awayGoalScorers = computed(() => {
   if (!match.value) return [];
   return goalScorers(match.value, "away");
 });
+
+
 
 function download() {
   if (!match.value) return;
@@ -149,11 +173,57 @@ function download() {
     <button @click="router.push({ name: 'edit', params: { id } })">Edit</button>
     <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
   </div>
+  <div class="goalList" v-if="match">
+    <div v-for="(p,i) in allGoals" :key="i" class="period">
+      <div v-for="g in p" :key="g[1]" :class="g[0]">
+        <div class="scorer" v-if="g[0] == 'H'">
+        {{ g[2] || "unknown" }} {{ g[3] ? `(${g[3]})`: '' }}
+        ⚽️
+        </div>
+        <div class="time">
+          {{ formatScoringTime(g[1], i, match.periodLength, match.extraPeriodLength) }}'
+        </div>
+        <div class="scorer" v-if="g[0] == 'A'">
+        ⚽️&nbsp; {{ g[2] || "unknown" }} {{ g[3] ? `(${g[3]})`: '' }}
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <style scoped>
 main {
   margin: 0.5em;
 }
+.goalList {
+  margin-bottom: 1em;
+}
+.goalList .H, .goalList .A {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  padding: 0 0.5em;
+}
+
+.goalList .H {
+  flex-direction: row;
+}
+.goalList .A {
+  flex-direction: row-reverse;
+}
+.goalList .time {
+  width: 3em;
+  grid-column: 2;
+  text-align: center;
+}
+.goalList .H .scorer {
+  grid-column: 1;
+  text-align: right;
+}
+.goalList .A .scorer {
+  grid-column: 3;
+  text-align: left;
+}
+
+
 
 .penalties {
   width: 100%;
