@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import { getMatchAllGoalsWithTiming, getMatchGoalScorers, getPenaltyScore } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
 import type { ExportMatch } from "@/models/types";
+import { toPng } from "html-to-image";
 
 const route = useRoute();
 const router = useRouter();
@@ -71,10 +72,32 @@ function download() {
   const file = new Blob([data], { type: "application/json" });
   saveBlob(file, "data.json");
 }
+const main = ref<HTMLElement | undefined>(undefined);
+function downloadImage() {
+  if (!main.value) return;
+  const width = window.innerWidth;
+  const height = main.value.clientHeight;
+    toPng(main.value, {
+      canvasHeight: height,
+      canvasWidth: width,
+      height: height,
+      width: width,
+      cacheBust: true,
+      pixelRatio: 2,
+    }).then(dataURL => {
+      fetch(dataURL)
+        .then(res => res.blob())
+        .then(blob => {
+          const sanitize = (str: string) => str.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
+          const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || '')}-vs-${sanitize(match.value?.awayTeam || '')}.png`;
+          saveBlob(blob, filename);
+        });
+    });
+}
 </script>
 
 <template>
-  <main v-if="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }">
+  <main v-if="match" :class="{ home: match?.homeTeam?.includes('Stabæk') }" ref="main">
     <h3>{{ match.date }} {{ match.time }}</h3>
     <h3>{{ match.location }}</h3>
     <h3>{{ match.gameType }}</h3>
@@ -150,9 +173,10 @@ function download() {
     </div>
   </main>
   <div class="buttons">
-    <button @click="download()">Download</button>
+    <button @click="download()">Download data</button>
     <button @click="router.push({ name: 'edit', params: { id } })">Edit</button>
-    <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
+    <button @click="downloadImage">Match image</button>
+    <button @click="router.push({ name: 'image', params: { id } })">Match poster</button>
   </div>
   <div class="goalList" v-if="match">
     <div v-for="(p, i) in allGoals" :key="i" class="period">
@@ -173,7 +197,8 @@ function download() {
 </template>
 <style scoped>
 main {
-  margin: 0.5em;
+  padding: 0.5em;
+  background: var(--color-background);
 }
 .goalList {
   margin-bottom: 1em;
