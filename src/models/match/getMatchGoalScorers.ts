@@ -11,7 +11,10 @@ export function getMatchGoalScorers(match: Match, side: "home" | "away") {
     const allEvents = getPeriodAllEventsSorted(p, false);
     p[side].goals.forEach((x) => {
       const eventsBefore = allEvents.filter((y) => y[1][0] < x[0]);
-      if (eventsBefore[eventsBefore.length - 1] && eventsBefore[eventsBefore.length - 1][2] == EventType.OutOfPlay) {
+      if (
+        eventsBefore[eventsBefore.length - 1] &&
+        eventsBefore[eventsBefore.length - 1][2] == EventType.OutOfPlay
+      ) {
         eventsBefore.pop();
       }
       const sameSideEvents = [];

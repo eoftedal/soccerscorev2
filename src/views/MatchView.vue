@@ -77,22 +77,22 @@ function downloadImage() {
   if (!main.value) return;
   const width = window.innerWidth;
   const height = main.value.clientHeight;
-    toPng(main.value, {
-      canvasHeight: height,
-      canvasWidth: width,
-      height: height,
-      width: width,
-      cacheBust: true,
-      pixelRatio: 2,
-    }).then(dataURL => {
-      fetch(dataURL)
-        .then(res => res.blob())
-        .then(blob => {
-          const sanitize = (str: string) => str.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
-          const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || '')}-vs-${sanitize(match.value?.awayTeam || '')}.png`;
-          saveBlob(blob, filename);
-        });
-    });
+  toPng(main.value, {
+    canvasHeight: height,
+    canvasWidth: width,
+    height: height,
+    width: width,
+    cacheBust: true,
+    pixelRatio: 2,
+  }).then((dataURL) => {
+    fetch(dataURL)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const sanitize = (str: string) => str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
+        const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
+        saveBlob(blob, filename);
+      });
+  });
 }
 </script>
 
