@@ -1,10 +1,10 @@
 import type { Match } from "../types";
-import { getPassStrings } from "./getPassStrings";
+import { getPeriodPassStrings } from "./getPeriodPassStrings";
 import type { TeamStat } from "./types";
 
 export function getMatchAveragePassStrings(match: Match): TeamStat {
   const data = match.periods
-    .map((p) => getPassStrings(p))
+    .map((p) => getPeriodPassStrings(p))
     .map((x) => [x[4], x[5]])
     .reduce(
       (a, b) => {

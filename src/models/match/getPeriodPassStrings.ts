@@ -1,11 +1,11 @@
 import type { Period } from "../types";
-import { getAllEventsSorted } from "./getAllEventsSorted";
+import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
 import { EventType } from "./types";
 
-export function getPassStrings(
+export function getPeriodPassStrings(
   period: Period,
 ): [number[], number[], number, number, [number, number], [number, number]] {
-  const allEvents = getAllEventsSorted(period);
+  const allEvents = getPeriodAllEventsSorted(period);
   let count = 0;
   let previous = "";
   const result = [[], []] as [number[], number[]];

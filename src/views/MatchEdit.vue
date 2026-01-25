@@ -60,7 +60,7 @@ const state = reactive({
     data: "",
     onOk: undefined as undefined | (() => void),
   },
-  scoreEditDialog : {
+  scoreEditDialog: {
     goalScorer: "" as GoalScorer,
     assister: "" as Assister,
     onOk: undefined as undefined | (() => void),
@@ -200,7 +200,7 @@ function changeName(e: [number, GoalScorer, Assister?]) {
   if (name == null || name == undefined) return;
   e[1] = name;*/
   state.scoreEditDialog.goalScorer = e[1];
-  state.scoreEditDialog.assister = e[2] ?? "" as Assister;
+  state.scoreEditDialog.assister = e[2] ?? ("" as Assister);
   state.scoreEditDialog.onOk = () => {
     e[1] = state.scoreEditDialog.goalScorer;
     e[2] = state.scoreEditDialog.assister;
@@ -403,7 +403,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <div v-for="(e, i) of goalEventsMatch" v-bind:key="i" :class="e[1]">
           <span @click="changeName(e[0])"
             ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
-            {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : ""  }}</span
+            {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
           >
           <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
             Switch team
@@ -417,7 +417,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <div v-for="(e, i) of goalEvents" v-bind:key="i" :class="e[1]">
         <span @click="changeName(e[0])"
           ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
-          {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : ""  }}</span
+          {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
         >
         <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
           Switch team
@@ -443,7 +443,6 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <input type="text" v-model="state.scoreEditDialog.goalScorer" placeholder="Goal scorer" />
       <input type="text" v-model="state.scoreEditDialog.assister" placeholder="Assister" />
     </div>
-    
   </ModalDialog>
   <ModalDialog
     v-if="match"

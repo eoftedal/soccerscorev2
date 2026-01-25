@@ -1,5 +1,5 @@
 import type { Period, Timestamp } from "../types";
-import { getAllEventsSorted } from "./getAllEventsSorted";
+import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
 import { CUTOFF, EventType } from "./types";
 
 export interface PeriodChartData {
@@ -11,7 +11,7 @@ export interface PeriodChartData {
 }
 
 export function getPeriodChartData(period: Period): PeriodChartData {
-  const events = getAllEventsSorted(period);
+  const events = getPeriodAllEventsSorted(period);
   if (events.length == 0) {
     return { lines: [], homeGoals: [], awayGoals: [], homeRedCards: [], awayRedCards: [] };
   }

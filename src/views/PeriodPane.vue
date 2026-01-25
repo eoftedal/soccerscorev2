@@ -1,8 +1,14 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
-import { type Assister, type Delta, type GoalScorer, type Period, type Timestamp } from "../models/types";
+import {
+  type Assister,
+  type Delta,
+  type GoalScorer,
+  type Period,
+  type Timestamp,
+} from "../models/types";
 import UpDown from "./UpDown.vue";
-import { CUTOFF, getPossession } from "../models/match";
+import { CUTOFF, getPeriodPossession } from "../models/match";
 import { setActive, setInactive } from "./buttonUtil";
 import { delta, msToTimeString, now } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";
@@ -200,7 +206,7 @@ const awayPasses = computed(() => {
 
 const possession = computed(() => {
   if (!openPeriod.value) return [0, 0, 0, 0];
-  return getPossession(openPeriod.value);
+  return getPeriodPossession(openPeriod.value);
 });
 
 const currentPossession = computed(() => {
@@ -433,8 +439,8 @@ const currentPossession = computed(() => {
       @ok="state.scoreDialog.onOk ? state.scoreDialog.onOk() : undefined"
     >
       <div class="goalsDialog">
-      <input type="text" v-model="state.scoreDialog.goalScorer" placeholder="Goal scorer" />
-      <input type="text" v-model="state.scoreDialog.assister" placeholder="Assister" />
+        <input type="text" v-model="state.scoreDialog.goalScorer" placeholder="Goal scorer" />
+        <input type="text" v-model="state.scoreDialog.assister" placeholder="Assister" />
       </div>
     </ModalDialog>
     <ModalDialog

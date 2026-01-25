@@ -1,9 +1,9 @@
 import type { Period } from "../types";
-import { getAllEventsSorted } from "./getAllEventsSorted";
+import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
 import { EventType, type Side, type TeamStat } from "./types";
 
-export function getPasses(period: Period): TeamStat {
-  const allEvents = getAllEventsSorted(period);
+export function getPeriodPasses(period: Period): TeamStat {
+  const allEvents = getPeriodAllEventsSorted(period);
   let prev: Side | undefined = undefined;
   const passes: [number, number] = [0, 0];
   allEvents.forEach((x) => {

@@ -1,9 +1,9 @@
 import type { Period } from "../types";
-import { getShots } from "./getShots";
+import { getPeriodShots } from "./getPeriodShots";
 import type { TeamStat } from "./types";
 
-export function getShotAccuracy(period: Period): TeamStat {
-  const shots = getShots(period);
+export function getPeriodShotAccuracy(period: Period): TeamStat {
+  const shots = getPeriodShots(period);
   const goals = [period.home.goals.length, period.away.goals.length];
   return [
     shots[0] == 0 ? 0 : (goals[0] / shots[0]) * 100,

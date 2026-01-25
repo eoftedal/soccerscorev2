@@ -12,7 +12,7 @@ const route = useRoute();
 
 const matchIds = computed(() => {
   const matchesQuery = route.query.matches as string;
-  return matchesQuery ? matchesQuery.split(',') : [];
+  return matchesQuery ? matchesQuery.split(",") : [];
 });
 
 const { getMatch } = useMatchStore();
@@ -23,9 +23,7 @@ const state = reactive({
 });
 
 const matches = computed(() => {
-  return matchIds.value
-    .map(id => getMatch(id))
-    .filter((m): m is Match => m !== undefined);
+  return matchIds.value.map((id) => getMatch(id)).filter((m): m is Match => m !== undefined);
 });
 
 const dataUrl = ref("");
@@ -164,8 +162,8 @@ fetch(GrassImage2)
   display: inline-block;
 }
 .image {
-    display: block;
-    width: 100px;
+  display: block;
+  width: 100px;
 }
 
 .content {
@@ -194,7 +192,6 @@ fetch(GrassImage2)
   width: 300px;
 }
 
-
 .logo {
   width: 150px;
   height: 150px;
@@ -221,8 +218,6 @@ fetch(GrassImage2)
   margin-top: 8px;
   text-align: center;
   max-width: 100%;
-  
-  
 }
 /*
 .team.home .name {
@@ -247,7 +242,6 @@ fetch(GrassImage2)
   padding: 2em;
   color: #fff;
 }
-
 
 .linkButton {
   display: inline-block;

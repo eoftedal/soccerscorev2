@@ -140,7 +140,9 @@ function saveImportMatches() {
       <input type="file" @change="handleFileUpload" accept="application/json" />
       <ul class="import" v-if="importMatches.length > 0">
         <li v-for="m in importMatches" v-bind:key="m.id">
-          <div>{{ m.date }} {{ m.time }} {{ m.homeTeam }} - {{ m.awayTeam }} {{ getMatchScore(m) }}</div>
+          <div>
+            {{ m.date }} {{ m.time }} {{ m.homeTeam }} - {{ m.awayTeam }} {{ getMatchScore(m) }}
+          </div>
         </li>
       </ul>
       <button v-if="importMatches.length > 0" @click="saveImportMatches()">Import</button>

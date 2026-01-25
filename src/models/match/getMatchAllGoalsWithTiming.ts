@@ -2,7 +2,7 @@ import type { Assister, GoalScorer, Match } from "../types";
 
 export type GoalWithTiming = ["H" | "A", number, GoalScorer, Assister?];
 
-export function getAllGoalsWithTiming(match: Match): GoalWithTiming[][] {
+export function getMatchAllGoalsWithTiming(match: Match): GoalWithTiming[][] {
   return match.periods.map((p, i) => {
     const homeGoals = p.home.goals.map((g) => ["H", ...g] as GoalWithTiming);
     const awayGoals = p.away.goals.map((g) => ["A", ...g] as GoalWithTiming);

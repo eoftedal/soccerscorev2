@@ -12,8 +12,8 @@ import {
   getMatchPasses,
   getMatchPossession,
   getMatchShots,
-  getTotal,
-  goalScorers,
+  getMatchTotalStat,
+  getMatchGoalScorers,
   getPenaltyScore,
 } from "@/models/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
@@ -119,8 +119,12 @@ const dt = computed(() => {
   return new Date(state.match.date + "T" + state.match.time + ":00.000Z");
 });
 
-const homeGoalScorers = computed(() => (state.match ? goalScorers(state.match, "home") : []));
-const awayGoalScorers = computed(() => (state.match ? goalScorers(state.match, "away") : []));
+const homeGoalScorers = computed(() =>
+  state.match ? getMatchGoalScorers(state.match, "home") : [],
+);
+const awayGoalScorers = computed(() =>
+  state.match ? getMatchGoalScorers(state.match, "away") : [],
+);
 
 const possession = computed(() => (state.match ? getMatchPossession(state.match) : [0, 0, 0, 0]));
 
@@ -194,9 +198,9 @@ fetch(GrassImage2)
                 <span>{{ state.match.homeTeam }}</span>
               </div>
             </td>
-            <td>{{ getTotal(state.match, "home", "goals") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "home", "goals") }}</td>
             <td>-</td>
-            <td>{{ getTotal(state.match, "away", "goals") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "away", "goals") }}</td>
             <td class="team">
               <div>
                 <img :src="awayLogo" alt="Away logo" class="team-logo" v-if="showLogos" />
@@ -286,57 +290,57 @@ fetch(GrassImage2)
           </tr>
 
           <tr class="stat">
-            <td>{{ getTotal(state.match, "home", "corners") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "home", "corners") }}</td>
             <td colspan="3">{{ t("corners") }}</td>
-            <td>{{ getTotal(state.match, "away", "corners") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "away", "corners") }}</td>
           </tr>
           <tr class="stat">
-            <td>{{ getTotal(state.match, "home", "freekicks") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "home", "freekicks") }}</td>
             <td colspan="3">{{ t("freekicks") }}</td>
-            <td>{{ getTotal(state.match, "away", "freekicks") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "away", "freekicks") }}</td>
           </tr>
           <tr class="stat">
-            <td>{{ getTotal(state.match, "home", "penalties") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "home", "penalties") }}</td>
             <td colspan="3">{{ t("penalties") }}</td>
-            <td>{{ getTotal(state.match, "away", "penalties") }}</td>
+            <td>{{ getMatchTotalStat(state.match, "away", "penalties") }}</td>
           </tr>
 
           <tr class="stat cards">
             <td>
               <div
                 class="card yellow"
-                v-for="x in getTotal(state.match, 'home', 'yellowCards')"
+                v-for="x in getMatchTotalStat(state.match, 'home', 'yellowCards')"
                 v-bind:key="x"
               ></div>
-              <div v-if="getTotal(state.match, 'home', 'yellowCards') == 0">-</div>
+              <div v-if="getMatchTotalStat(state.match, 'home', 'yellowCards') == 0">-</div>
             </td>
             <td colspan="3">{{ t("yellowCards") }}</td>
             <td>
               <div
                 class="card yellow"
-                v-for="x in getTotal(state.match, 'away', 'yellowCards')"
+                v-for="x in getMatchTotalStat(state.match, 'away', 'yellowCards')"
                 v-bind:key="x"
               ></div>
-              <div v-if="getTotal(state.match, 'away', 'yellowCards') == 0">-</div>
+              <div v-if="getMatchTotalStat(state.match, 'away', 'yellowCards') == 0">-</div>
             </td>
           </tr>
           <tr class="stat cards">
             <td>
               <div
                 class="card red"
-                v-for="x in getTotal(state.match, 'home', 'redCards')"
+                v-for="x in getMatchTotalStat(state.match, 'home', 'redCards')"
                 v-bind:key="x"
               ></div>
-              <div v-if="getTotal(state.match, 'home', 'redCards') == 0">-</div>
+              <div v-if="getMatchTotalStat(state.match, 'home', 'redCards') == 0">-</div>
             </td>
             <td colspan="3">{{ t("redCards") }}</td>
             <td>
               <div
                 class="card red"
-                v-for="x in getTotal(state.match, 'away', 'redCards')"
+                v-for="x in getMatchTotalStat(state.match, 'away', 'redCards')"
                 v-bind:key="x"
               ></div>
-              <div v-if="getTotal(state.match, 'away', 'redCards') == 0">-</div>
+              <div v-if="getMatchTotalStat(state.match, 'away', 'redCards') == 0">-</div>
             </td>
           </tr>
 

@@ -4,7 +4,7 @@ import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
-import { getAllGoalsWithTiming, goalScorers, getPenaltyScore } from "@/models/match";
+import { getMatchAllGoalsWithTiming, getMatchGoalScorers, getPenaltyScore } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
 import type { ExportMatch } from "@/models/types";
@@ -33,19 +33,17 @@ const awayGoals = computed(() => {
 
 const allGoals = computed(() => {
   if (!match.value) return [];
-  return getAllGoalsWithTiming(match.value);
-})
+  return getMatchAllGoalsWithTiming(match.value);
+});
 
 const homeGoalScorers = computed(() => {
   if (!match.value) return [];
-  return goalScorers(match.value, "home");
+  return getMatchGoalScorers(match.value, "home");
 });
 const awayGoalScorers = computed(() => {
   if (!match.value) return [];
-  return goalScorers(match.value, "away");
+  return getMatchGoalScorers(match.value, "away");
 });
-
-
 
 function download() {
   if (!match.value) return;
@@ -157,17 +155,17 @@ function download() {
     <button @click="router.push({ name: 'image', params: { id } })">Generate image</button>
   </div>
   <div class="goalList" v-if="match">
-    <div v-for="(p,i) in allGoals" :key="i" class="period">
+    <div v-for="(p, i) in allGoals" :key="i" class="period">
       <div v-for="g in p" :key="g[1]" :class="g[0]">
         <div class="scorer" v-if="g[0] == 'H'">
-        {{ g[2] || "unknown" }} {{ g[3] ? `(${g[3]})`: '' }}
-        ⚽️
+          {{ g[2] || "unknown" }} {{ g[3] ? `(${g[3]})` : "" }}
+          ⚽️
         </div>
         <div class="time">
           {{ formatScoringTime(g[1], i, match.periodLength, match.extraPeriodLength) }}'
         </div>
         <div class="scorer" v-if="g[0] == 'A'">
-        ⚽️&nbsp; {{ g[2] || "unknown" }} {{ g[3] ? `(${g[3]})`: '' }}
+          ⚽️&nbsp; {{ g[2] || "unknown" }} {{ g[3] ? `(${g[3]})` : "" }}
         </div>
       </div>
     </div>
@@ -180,7 +178,8 @@ main {
 .goalList {
   margin-bottom: 1em;
 }
-.goalList .H, .goalList .A {
+.goalList .H,
+.goalList .A {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   padding: 0 0.5em;
@@ -205,8 +204,6 @@ main {
   grid-column: 3;
   text-align: left;
 }
-
-
 
 .penalties {
   width: 100%;

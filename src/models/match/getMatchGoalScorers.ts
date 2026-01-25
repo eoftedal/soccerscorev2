@@ -1,14 +1,14 @@
 import type { Match } from "../types";
-import { getAllEventsSorted } from "./getAllEventsSorted";
+import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
 import { CUTOFF, EventType } from "./types";
 
-export function goalScorers(match: Match, side: "home" | "away") {
+export function getMatchGoalScorers(match: Match, side: "home" | "away") {
   const m = match;
   if (!m) return [];
   const result = {} as Record<string, [number, number, string, number][]>;
 
   match.periods.forEach((p, i) => {
-    const allEvents = getAllEventsSorted(p, false);
+    const allEvents = getPeriodAllEventsSorted(p, false);
     p[side].goals.forEach((x) => {
       const eventsBefore = allEvents.filter((y) => y[1][0] < x[0]);
       if (eventsBefore[eventsBefore.length - 1][2] == EventType.OutOfPlay) {

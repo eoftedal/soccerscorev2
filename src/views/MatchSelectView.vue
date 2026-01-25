@@ -42,10 +42,10 @@ function selectAll() {
 
 function generateImage() {
   const selectedIds = Array.from(state.selected.keys());
-  router.push({ 
-    name: 'multi-match-image', 
+  router.push({
+    name: "multi-match-image",
     params: { id: teamId },
-    query: { matches: selectedIds.join(',') }
+    query: { matches: selectedIds.join(",") },
   });
 }
 </script>

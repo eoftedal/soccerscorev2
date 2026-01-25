@@ -4,20 +4,20 @@ import ActivityRow from "./ActivityRow.vue";
 import { msToTimeString } from "../timeUtils";
 import PeriodChart from "./PeriodChart.vue";
 import {
-  getAllEventsSorted,
-  getPassStrings,
-  getPossession,
-  getTotal,
+  getPeriodAllEventsSorted,
+  getPeriodPassStrings,
+  getPeriodPossession,
+  getMatchTotalStat,
   getMatchPossession,
   getMatchPassStrings,
   getMatchAveragePassStrings,
-  getShots,
+  getPeriodShots,
   getMatchShots,
   getMatchShotAccuracy,
-  getShotAccuracy,
-  getPasses,
+  getPeriodShotAccuracy,
+  getPeriodPasses,
   getMatchPasses,
-  getPassAcc,
+  getPeriodPassAcc,
   getMatchPassAcc,
 } from "../models/match";
 import { computed, ref } from "vue";
@@ -33,7 +33,7 @@ const periodPaths = computed(() => {
     const total = period.stop
       ? period.stop - period.start
       : (i <= 1 ? props.match.periodLength : props.match.extraPeriodLength) * 60 * 1000;
-    const allEvents = getAllEventsSorted(period);
+    const allEvents = getPeriodAllEventsSorted(period);
     const events = allEvents.map((x, i) => {
       const eventsToLookAt = allEvents
         .slice(i - window.value, i)
@@ -72,7 +72,7 @@ function chunk(data: number[], chunkSize: number = 2) {
 }
 
 function getLongestString(period: Period): [number, number] {
-  const passStrings = getPassStrings(period);
+  const passStrings = getPeriodPassStrings(period);
   return [passStrings[0].length - 1, passStrings[1].length - 1];
 }
 function getLongestStringMatch(match: Match): [number, number] {
@@ -151,9 +151,9 @@ const sizeDivider = computed(() => {
         </svg-->
           <PeriodChart :period="p[3]" :invert="!props.match.homeTeam.includes('Stabæk')" />
           <ActivityRow :values="[p[3].home.goals.length, p[3].away.goals.length]" />
-          <ActivityRow :values="getShots(p[3])" />
+          <ActivityRow :values="getPeriodShots(p[3])" />
           <ActivityRow
-            :values="getShotAccuracy(p[3])"
+            :values="getPeriodShotAccuracy(p[3])"
             :formatter="(n) => n.toFixed(1)"
             :percentage="true"
           />
@@ -164,22 +164,26 @@ const sizeDivider = computed(() => {
           <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
           <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
           <ActivityRow
-            :values="firstTwo(getPossession(p[3]))"
+            :values="firstTwo(getPeriodPossession(p[3]))"
             :percentage="true"
             :formatter="(n) => n.toFixed(1)"
           />
           <ActivityRow
-            :values="firstTwo(chunk(getPossession(p[3]))[1])"
+            :values="firstTwo(chunk(getPeriodPossession(p[3]))[1])"
             :formatter="msToTimeString"
           />
           <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
-          <ActivityRow :values="getPassAcc(p[3])" :formatter="(n) => n.toFixed(1)" percentage />
-          <ActivityRow :values="getPasses(p[3])" />
+          <ActivityRow
+            :values="getPeriodPassAcc(p[3])"
+            :formatter="(n) => n.toFixed(1)"
+            percentage
+          />
+          <ActivityRow :values="getPeriodPasses(p[3])" />
           <template v-for="(l, j) in [3, 5, 7]" v-bind:key="j">
             <ActivityRow
               :values="
                 firstTwo(
-                  getPassStrings(p[3])
+                  getPeriodPassStrings(p[3])
                     .slice(0, 2)
                     .map((x) => (x as number[])[l]),
                 )
@@ -188,7 +192,7 @@ const sizeDivider = computed(() => {
           </template>
           <ActivityRow :values="getLongestString(p[3])" />
           <ActivityRow
-            :values="getPassStrings(p[3]).slice(2, 4) as [number, number]"
+            :values="getPeriodPassStrings(p[3]).slice(2, 4) as [number, number]"
             :formatter="(n) => n.toFixed(1)"
           />
           <ActivityRow :values="[p[3].home.yellowCards.length, p[3].away.yellowCards.length]" />
@@ -200,8 +204,8 @@ const sizeDivider = computed(() => {
           <svg height="100" width="100"></svg>
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'goals'),
-              getTotal(props.match, 'away', 'goals'),
+              getMatchTotalStat(props.match, 'home', 'goals'),
+              getMatchTotalStat(props.match, 'away', 'goals'),
             ]"
           />
           <ActivityRow :values="getMatchShots(props.match)" />
@@ -212,26 +216,26 @@ const sizeDivider = computed(() => {
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'corners'),
-              getTotal(props.match, 'away', 'corners'),
+              getMatchTotalStat(props.match, 'home', 'corners'),
+              getMatchTotalStat(props.match, 'away', 'corners'),
             ]"
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'offsides'),
-              getTotal(props.match, 'away', 'offsides'),
+              getMatchTotalStat(props.match, 'home', 'offsides'),
+              getMatchTotalStat(props.match, 'away', 'offsides'),
             ]"
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'freekicks'),
-              getTotal(props.match, 'away', 'freekicks'),
+              getMatchTotalStat(props.match, 'home', 'freekicks'),
+              getMatchTotalStat(props.match, 'away', 'freekicks'),
             ]"
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'penalties'),
-              getTotal(props.match, 'away', 'penalties'),
+              getMatchTotalStat(props.match, 'home', 'penalties'),
+              getMatchTotalStat(props.match, 'away', 'penalties'),
             ]"
           />
           <ActivityRow
@@ -245,8 +249,8 @@ const sizeDivider = computed(() => {
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'touches'),
-              getTotal(props.match, 'away', 'touches'),
+              getMatchTotalStat(props.match, 'home', 'touches'),
+              getMatchTotalStat(props.match, 'away', 'touches'),
             ]"
           />
           <ActivityRow
@@ -265,14 +269,14 @@ const sizeDivider = computed(() => {
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'yellowCards'),
-              getTotal(props.match, 'away', 'yellowCards'),
+              getMatchTotalStat(props.match, 'home', 'yellowCards'),
+              getMatchTotalStat(props.match, 'away', 'yellowCards'),
             ]"
           />
           <ActivityRow
             :values="[
-              getTotal(props.match, 'home', 'redCards'),
-              getTotal(props.match, 'away', 'redCards'),
+              getMatchTotalStat(props.match, 'home', 'redCards'),
+              getMatchTotalStat(props.match, 'away', 'redCards'),
             ]"
           />
         </div>

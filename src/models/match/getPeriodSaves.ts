@@ -1,9 +1,9 @@
 import type { Period } from "../types";
-import { getAllEventsSorted } from "./getAllEventsSorted";
+import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
 import { CUTOFF, EventType, type Side, type TeamStat } from "./types";
 
-export function getSaves(period: Period): TeamStat {
-  const allEvents = getAllEventsSorted(period, true);
+export function getPeriodSaves(period: Period): TeamStat {
+  const allEvents = getPeriodAllEventsSorted(period, true);
   const stat: TeamStat = [0, 0];
   allEvents.forEach((s, i) => {
     if (s[2] != EventType.Shot) return;

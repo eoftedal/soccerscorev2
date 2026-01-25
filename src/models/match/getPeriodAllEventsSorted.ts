@@ -2,7 +2,7 @@ import type { Delta, MatchEventWithDelta, Period } from "../types";
 import { getAllTeamEvents } from "./getAllTeamEvents";
 import { type Side, EventType } from "./types";
 
-export function getAllEventsSorted(
+export function getPeriodAllEventsSorted(
   period: Period,
   includeGoals?: boolean,
 ): Array<[Side, MatchEventWithDelta, EventType]> {

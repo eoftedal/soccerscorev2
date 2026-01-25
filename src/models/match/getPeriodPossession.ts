@@ -1,9 +1,11 @@
 import type { Period } from "../types";
-import { getAllEventsSorted } from "./getAllEventsSorted";
+import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
 import { CUTOFF, EventType, type Percentage, type TotalTime } from "./types";
 
-export function getPossession(period: Period): [Percentage, Percentage, TotalTime, TotalTime] {
-  const allEvents = getAllEventsSorted(period, true);
+export function getPeriodPossession(
+  period: Period,
+): [Percentage, Percentage, TotalTime, TotalTime] {
+  const allEvents = getPeriodAllEventsSorted(period, true);
   const possession = [0, 0];
   let previous = -1;
   let previousT = "";

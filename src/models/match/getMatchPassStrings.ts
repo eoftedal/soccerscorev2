@@ -1,8 +1,8 @@
 import type { Match } from "../types";
-import { getPassStrings } from "./getPassStrings";
+import { getPeriodPassStrings } from "./getPeriodPassStrings";
 
 export function getMatchPassStrings(match: Match): [number[], number[]] {
-  const periods = match.periods.map(getPassStrings);
+  const periods = match.periods.map(getPeriodPassStrings);
   const total = [[], []] as [number[], number[]];
   periods.forEach((x) => {
     x[0].forEach((y, i) => {
