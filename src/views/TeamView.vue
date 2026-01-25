@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
 import { computed, reactive, watch } from "vue";
-import { type Match, type TeamId } from "@/types";
+import { type Match, type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
-import { getGoals } from "../match";
+import { getGoals } from "../models/match";
 import { storeToRefs } from "pinia";
 
 const router = useRouter();

@@ -1,4 +1,4 @@
-import type { Delta, Timestamp } from "./types";
+import type { Delta, Timestamp } from "./models/types";
 
 export function msToTimeString(ms: number) {
   const minutes = Math.floor(ms / 60000);

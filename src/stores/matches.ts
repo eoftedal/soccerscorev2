@@ -11,7 +11,7 @@ import type {
   TeamId,
   TeamName,
   TimeString,
-} from "@/types";
+} from "@/models/types";
 import { useLogoStore } from "./logos";
 
 export const useMatchStore = defineStore("match", () => {

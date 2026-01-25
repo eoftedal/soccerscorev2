@@ -4,9 +4,9 @@ import { useRoute } from "vue-router";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
-import { type Match } from "@/types";
+import { type Match } from "@/models/types";
 import GrassImage2 from "../assets/grass.avif";
-import { getGoals } from "@/match";
+import { getGoals } from "@/models/match";
 
 const route = useRoute();
 

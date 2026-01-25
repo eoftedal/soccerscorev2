@@ -3,14 +3,15 @@ import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { type Assister, type GoalScorer, type Period, type Timestamp } from "../types";
-import { getGoals, swapSides } from "../match";
+import { type Assister, type GoalScorer, type Period, type Timestamp } from "../models/types";
+import { getGoalEvents, getGoals, swapSides } from "../models/match";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
 import { now } from "@/timeUtils";
 import PeriodPane from "./PeriodPane.vue";
 import PenaltyRound from "./PenaltyRound.vue";
+import { getMatchGoalEvents } from "@/models/match/getMatchGoalEvents";
 
 const router = useRouter();
 const route = useRoute();
@@ -186,24 +187,12 @@ function confirmEnd() {
 
 const goalEvents = computed(() => {
   if (!openPeriod.value) return [];
-  const events = openPeriod.value.home.goals
-    .map((x) => [x, "home", openPeriod.value] as [[number, GoalScorer, Assister?], "home" | "away", Period])
-    .concat(
-      openPeriod.value.away.goals.map(
-        (x) => [x, "away", openPeriod.value] as [[number, GoalScorer, Assister?], "home" | "away", Period],
-      ),
-    );
-  return events.sort((a, b) => a[0][0] - b[0][0]);
+  return getGoalEvents(openPeriod.value);
 });
 
 const goalEventsMatch = computed(() => {
   if (!match?.periods?.length) return [];
-  const events = match.periods.flatMap((p) =>
-    p.home.goals
-      .map((x) => [x, "home", p] as [[number, GoalScorer, Assister?], "home" | "away", Period])
-      .concat(p.away.goals.map((x) => [x, "away", p])),
-  );
-  return events.sort((a, b) => a[0][0] - b[0][0]);
+  return getMatchGoalEvents(match);
 });
 
 function changeName(e: [number, GoalScorer, Assister?]) {

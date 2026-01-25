@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Match, type Period } from "../types";
+import { type Match, type Period } from "../models/types";
 import ActivityRow from "./ActivityRow.vue";
 import { msToTimeString } from "../timeUtils";
 import PeriodChart from "./PeriodChart.vue";
@@ -19,7 +19,7 @@ import {
   getMatchPasses,
   getPassAcc,
   getMatchPassAcc,
-} from "../match";
+} from "../models/match";
 import { computed, ref } from "vue";
 
 const props = defineProps<{

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
 import { computed, reactive } from "vue";
-import { type Match, type TeamId } from "@/types";
+import { type Match, type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();

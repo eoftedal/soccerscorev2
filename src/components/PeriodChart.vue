@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { CUTOFF, EventType, getAllEventsSorted } from "@/match";
-import type { Period, Timestamp } from "@/types";
+import { CUTOFF, EventType, getAllEventsSorted } from "@/models/match";
+import type { Period, Timestamp } from "@/models/types";
 import { computed } from "vue";
 
 const props = defineProps<{

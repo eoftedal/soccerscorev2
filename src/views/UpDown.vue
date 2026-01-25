@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { setActive, setInactive } from "./buttonUtil";
-import type { Delta, Timestamp } from "@/types";
+import type { Delta, Timestamp } from "@/models/types";
 import { delta, now } from "@/timeUtils";
 
 const emit = defineEmits<{

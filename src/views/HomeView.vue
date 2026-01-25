@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
-import type { TeamName } from "@/types";
+import type { TeamName } from "@/models/types";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useRouter } from "vue-router";

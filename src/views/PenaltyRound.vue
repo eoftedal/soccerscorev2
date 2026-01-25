@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { type PenaltyRound, type GoalScorer } from "../types";
+import { type PenaltyRound, type GoalScorer } from "../models/types";
 
 const props = defineProps<{
   penaltyRound: PenaltyRound;

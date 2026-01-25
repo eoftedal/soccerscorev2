@@ -1,6 +1,6 @@
 import { useLogoStore } from "@/stores/logos";
 import { useMatchStore } from "@/stores/matches";
-import { isTeamLogoRef, type DataUrl, type LogoId, type TeamId } from "@/types";
+import { isTeamLogoRef, type DataUrl, type LogoId, type TeamId } from "@/models/types";
 import { storeToRefs } from "pinia";
 
 /**

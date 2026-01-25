@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type { DataUrl, Logo, LogoId } from "@/types";
+import type { DataUrl, Logo, LogoId } from "@/models/types";
 
 // Generate UUID v4
 const generateUUID = (): string => {

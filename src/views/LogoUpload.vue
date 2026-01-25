@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useLogoStore } from "@/stores/logos";
 import { useMatchStore } from "@/stores/matches";
-import type { DataUrl, LogoId, TeamId } from "@/types";
+import type { DataUrl, LogoId, TeamId } from "@/models/types";
 
 const route = useRoute();
 const router = useRouter();

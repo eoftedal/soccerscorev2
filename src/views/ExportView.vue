@@ -3,7 +3,7 @@ import { useMatchStore } from "@/stores/matches";
 import { useLogoStore } from "@/stores/logos";
 import { useLogos } from "@/composables/useLogos";
 import { computed, reactive, ref } from "vue";
-import { type Match, type TeamId, type ExportMatch, type DataUrl } from "@/types";
+import { type Match, type TeamId, type ExportMatch, type DataUrl } from "@/models/types";
 import { saveBlob } from "./viewUtils";
 import { useRoute } from "vue-router";
 

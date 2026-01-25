@@ -4,10 +4,10 @@ import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
-import { goalScorers, getPenaltyScore } from "@/match";
+import { goalScorers, getPenaltyScore } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
-import type { Assister, ExportMatch, GoalScorer, Timestamp } from "@/types";
+import type { Assister, ExportMatch, GoalScorer, Timestamp } from "@/models/types";
 
 const route = useRoute();
 const router = useRouter();

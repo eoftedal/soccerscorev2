@@ -2,7 +2,7 @@
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
-import { type TeamId } from "@/types";
+import { type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 

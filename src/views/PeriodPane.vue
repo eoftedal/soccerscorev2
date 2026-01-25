@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
-import { type Assister, type Delta, type GoalScorer, type Period, type Timestamp } from "../types";
+import { type Assister, type Delta, type GoalScorer, type Period, type Timestamp } from "../models/types";
 import UpDown from "./UpDown.vue";
-import { CUTOFF, getPossession } from "../match";
+import { CUTOFF, getPossession } from "../models/match";
 import { setActive, setInactive } from "./buttonUtil";
 import { delta, msToTimeString, now } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";

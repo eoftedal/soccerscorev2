@@ -5,7 +5,7 @@ import DateView from "../components/DateView.vue";
 import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
-import { type Match } from "@/types";
+import { type Match } from "@/models/types";
 import GrassImage2 from "../assets/grass.avif";
 import {
   getMatchPassAcc,
@@ -15,7 +15,7 @@ import {
   getTotal,
   goalScorers,
   getPenaltyScore,
-} from "@/match";
+} from "@/models/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 
 const route = useRoute();
