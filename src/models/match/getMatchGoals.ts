@@ -1,6 +1,6 @@
 import type { Match } from "../types";
 
-export function getGoals(match: Match, team: "home" | "away"): number {
+export function getMatchGoals(match: Match, team: "home" | "away"): number {
   const penaltyGoals =
     match?.penaltyRound?.events?.map((x) => x[team == "home" ? 0 : 1]).filter((x) => x[0]).length ??
     0;

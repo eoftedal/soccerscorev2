@@ -4,7 +4,7 @@ import { useLogos } from "@/composables/useLogos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { type Assister, type GoalScorer, type Period, type Timestamp } from "../models/types";
-import { getGoalEvents, getGoals, swapSides } from "../models/match";
+import { getGoalEvents, getMatchGoals, swapSides } from "../models/match";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
@@ -267,7 +267,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
     <header :class="{ pending: state.saveTimeout != undefined }" v-if="openPeriod">
       <h1>
         <img v-if="showLogos" :src="homeLogoUrl" alt="Home logo" class="header-logo" />
-        <span class="goalHeader">{{ getGoals(match, "home") }}</span
+        <span class="goalHeader">{{ getMatchGoals(match, "home") }}</span
         ><span v-if="!showLogos">{{ match.homeTeam }}</span>
       </h1>
       <h1>
@@ -276,7 +276,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </h1>
       <h1>
         <img v-if="showLogos" :src="awayLogoUrl" alt="Away logo" class="header-logo" />
-        <span class="goalHeader">{{ getGoals(match, "away") }}</span
+        <span class="goalHeader">{{ getMatchGoals(match, "away") }}</span
         ><span v-if="!showLogos">{{ match.awayTeam }}</span>
       </h1>
     </header>
@@ -285,7 +285,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         {{ match.homeTeam }}
       </h1>
       <h1>
-        <span>{{ getGoals(match, "home") }} - {{ getGoals(match, "away") }}</span>
+        <span>{{ getMatchGoals(match, "home") }} - {{ getMatchGoals(match, "away") }}</span>
       </h1>
       <h1>
         {{ match.awayTeam }}

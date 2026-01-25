@@ -33,7 +33,7 @@ export function getPeriodChartData(period: Period): PeriodChartData {
       if (x[0] == prev && x[2] == EventType.Touch) {
         let pTime = x[1][1] > CUTOFF ? prevTime + x[1][1] : prevTime;
         if (pTime < time) pTime = time;
-        let t = x[1][0] - pTime;
+        const t = x[1][0] - pTime;
         if (t > 0) times[x[0] == "H" ? 0 : 1] += t;
         if (t < 0)
           console.log("NEGATIVE", i, t, x[1][1], x[1][0], prevTime, x[0], x[1][0] - prevTime);

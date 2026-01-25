@@ -6,7 +6,7 @@ import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { type Match } from "@/models/types";
 import GrassImage2 from "../assets/grass.avif";
-import { getGoals } from "@/models/match";
+import { getMatchGoals } from "@/models/match";
 
 const route = useRoute();
 
@@ -77,7 +77,7 @@ function getAwayLogo(match: Match) {
 }
 
 function getScore(match: Match) {
-  return getGoals(match, "home") + " - " + getGoals(match, "away");
+  return getMatchGoals(match, "home") + " - " + getMatchGoals(match, "away");
 }
 
 const imageTitle = computed(() => {

@@ -4,7 +4,7 @@ import { computed, reactive, watch } from "vue";
 import { type Match, type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
-import { getGoals } from "../models/match";
+import { getMatchGoals } from "../models/match";
 import { storeToRefs } from "pinia";
 
 const router = useRouter();
@@ -27,7 +27,7 @@ watch(teams, (newVal) => {
 
 function score(match: Match) {
   if (match.state == "not_started") return "";
-  return getGoals(match, "home") + " - " + getGoals(match, "away");
+  return getMatchGoals(match, "home") + " - " + getMatchGoals(match, "away");
 }
 
 const sorted = computed(() => {

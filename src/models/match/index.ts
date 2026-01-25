@@ -4,7 +4,7 @@ export { getAllTeamEvents } from "./getAllTeamEvents";
 export { getAllTouches } from "./getAllTouches";
 export { goalScorers } from "./getGoalScorers";
 export { getGoalEvents } from "./getGoalEvents";
-export { getGoals } from "./getGoals";
+export { getMatchGoals } from "./getMatchGoals";
 export { getMatchScore } from "./getMatchScore";
 export { getMatchAveragePassStrings } from "./getMatchAveragePassStrings";
 export { getMatchPassAcc } from "./getMatchPassAcc";
