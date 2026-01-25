@@ -4,6 +4,7 @@ import { useLogoStore } from "@/stores/logos";
 import { useLogos } from "@/composables/useLogos";
 import { computed, reactive, ref } from "vue";
 import { type Match, type TeamId, type ExportMatch, type DataUrl } from "@/models/types";
+import { getMatchScore, sortMatchesByDateTime } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { useRoute } from "vue-router";
 
@@ -19,25 +20,10 @@ const state = reactive({
   selected: new Map<string, Match>(),
 });
 
-function score(match: Match) {
-  if (match.state == "not_started") return "";
-  return match.periods
-    .reduce((c, p) => [c[0] + p.home.goals.length, c[1] + p.away.goals.length], [0, 0])
-    .join(" - ");
-}
-
 const sorted = computed(() => {
   const filterFn = isUnassigned ? (m: Match) => !m.belongsTo : (m: Match) => m.belongsTo == teamId;
-
-  return matches
-    .slice()
-    .filter(filterFn)
-    .sort((a, b) => {
-      return (
-        new Date(b.date + "T" + b.time + ":00").getTime() -
-        new Date(a.date + "T" + a.time + ":00").getTime()
-      );
-    });
+  const filtered = matches.filter(filterFn);
+  return sortMatchesByDateTime(filtered);
 });
 
 const finished = computed(() => {
@@ -154,7 +140,7 @@ function saveImportMatches() {
       <input type="file" @change="handleFileUpload" accept="application/json" />
       <ul class="import" v-if="importMatches.length > 0">
         <li v-for="m in importMatches" v-bind:key="m.id">
-          <div>{{ m.date }} {{ m.time }} {{ m.homeTeam }} - {{ m.awayTeam }} {{ score(m) }}</div>
+          <div>{{ m.date }} {{ m.time }} {{ m.homeTeam }} - {{ m.awayTeam }} {{ getMatchScore(m) }}</div>
         </li>
       </ul>
       <button v-if="importMatches.length > 0" @click="saveImportMatches()">Import</button>
@@ -165,7 +151,7 @@ function saveImportMatches() {
       <li v-for="m in finished" v-bind:key="m.id">
         <input type="checkbox" @change="toggleSelected(m)" :checked="state.selected.has(m.id)" />
         <div @click="toggleSelected(m)">
-          {{ m.date }} - {{ m.homeTeam }} - {{ m.awayTeam }} {{ score(m) }}
+          {{ m.date }} - {{ m.homeTeam }} - {{ m.awayTeam }} {{ getMatchScore(m) }}
         </div>
       </li>
     </ul>

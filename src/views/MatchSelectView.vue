@@ -2,6 +2,7 @@
 import { useMatchStore } from "@/stores/matches";
 import { computed, reactive } from "vue";
 import { type Match, type TeamId } from "@/models/types";
+import { getMatchScore, sortMatchesByDateTime } from "@/models/match";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
@@ -15,25 +16,10 @@ const state = reactive({
   selected: new Map<string, Match>(),
 });
 
-function score(match: Match) {
-  if (match.state == "not_started") return "";
-  return match.periods
-    .reduce((c, p) => [c[0] + p.home.goals.length, c[1] + p.away.goals.length], [0, 0])
-    .join(" - ");
-}
-
 const sorted = computed(() => {
   const filterFn = isUnassigned ? (m: Match) => !m.belongsTo : (m: Match) => m.belongsTo == teamId;
-
-  return matches
-    .slice()
-    .filter(filterFn)
-    .sort((a, b) => {
-      return (
-        new Date(b.date + "T" + b.time + ":00").getTime() -
-        new Date(a.date + "T" + a.time + ":00").getTime()
-      );
-    });
+  const filtered = matches.filter(filterFn);
+  return sortMatchesByDateTime(filtered);
 });
 
 const finished = computed(() => {
@@ -72,7 +58,7 @@ function generateImage() {
       <li v-for="m in finished" v-bind:key="m.id">
         <input type="checkbox" @change="toggleSelected(m)" :checked="state.selected.has(m.id)" />
         <div @click="toggleSelected(m)">
-          {{ m.date }} - {{ m.homeTeam }} - {{ m.awayTeam }} {{ score(m) }}
+          {{ m.date }} - {{ m.homeTeam }} - {{ m.awayTeam }} {{ getMatchScore(m) }}
         </div>
       </li>
     </ul>

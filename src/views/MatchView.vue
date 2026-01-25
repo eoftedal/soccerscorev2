@@ -4,10 +4,10 @@ import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay.vue";
-import { goalScorers, getPenaltyScore } from "@/models/match";
+import { getAllGoalsWithTiming, goalScorers, getPenaltyScore } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
-import type { Assister, ExportMatch, GoalScorer, Timestamp } from "@/models/types";
+import type { ExportMatch } from "@/models/types";
 
 const route = useRoute();
 const router = useRouter();
@@ -33,24 +33,7 @@ const awayGoals = computed(() => {
 
 const allGoals = computed(() => {
   if (!match.value) return [];
-  type Arr = ["H"|"A", number, GoalScorer, Assister?];
-  const all = match.value.periods.map((p,i) => {
-    const homeGoals = p.home.goals.map(g => ["H", ...g] as Arr);
-    const awayGoals = p.away.goals.map(g => ["A", ...g] as Arr);
-    const a = [...homeGoals, ...awayGoals];
-    a.sort((a,b) => a[1]-b[1]);
-    let elapsed = i * match.value!.periodLength;
-    if (i > 1) {
-      elapsed = 2 *  match.value!.periodLength + (i - 2) *  match.value!.extraPeriodLength;
-    }
-    a.forEach(g => {
-       g[1] = Math.ceil((g[1] - p.start) / 60000) + elapsed;
-    })
-    return a;
-  });
-  
-  console.log("SORTED GOALS", all);
-  return all;
+  return getAllGoalsWithTiming(match.value);
 })
 
 const homeGoalScorers = computed(() => {
