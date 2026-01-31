@@ -6,7 +6,7 @@ import sharp from "sharp";
 import { execSync } from "node:child_process";
 
 const commitDate = execSync("git log -1 --format=%cI").toString().trimEnd();
-
+console.log(commitDate);
 const image = sharp("./src/assets/soccer.webp");
 
 const versions = [16, 120, 152, 180];

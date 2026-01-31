@@ -5,6 +5,7 @@ const props = defineProps<{
   values: [number, number];
   percentage?: boolean;
   formatter?: (x: number) => string;
+  invert?: boolean;
 }>();
 
 const first = computed(() => {
@@ -19,7 +20,7 @@ const second = computed(() => {
 });
 </script>
 <template>
-  <div class="row">
+  <div :class="{ row: true, invert }">
     <span
       :class="{ positive: values[0] > (values[1] ?? 0), negative: values[1] > (values[0] ?? 0) }"
       >{{ first }}{{ props.percentage ? "%" : "" }}</span
@@ -31,11 +32,13 @@ const second = computed(() => {
   </div>
 </template>
 <style>
-.negative {
-  xbackground-color: #ddf;
-}
 .positive {
-  xbackground-color: #dfd;
+  font-weight: bold;
+}
+.invert .positive {
+  font-weight: normal;
+}
+.invert .negative {
   font-weight: bold;
 }
 </style>

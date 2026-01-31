@@ -9,6 +9,7 @@ import {
   getMatchPasses,
   getMatchPassStrings,
   getMatchPossession,
+  getMatchRecoveryTime,
   getMatchShotAccuracy,
   getMatchShots,
   getMatchTotalStat,
@@ -17,6 +18,7 @@ import {
   getPeriodPasses,
   getPeriodPassStrings,
   getPeriodPossession,
+  getPeriodRecoveryTime,
   getPeriodShotAccuracy,
   getPeriodShots,
 } from "../models/match";
@@ -87,6 +89,16 @@ const sizeDivider = computed(() => {
   }
   return "calc(100vw/36)";
 });
+
+function getAverageRecoveryTime(period: Period): [number, number] {
+  const data = getPeriodRecoveryTime(period);
+  return [data[0][0] / data[0][1] / 1000, data[1][0] / data[1][1] / 1000];
+}
+function getMatchAverageRecoveryTime(match?: Match): [number, number] {
+  if (!match) return [0, 0];
+  const data = getMatchRecoveryTime(match);
+  return [data[0][0] / data[0][1] / 1000, data[1][0] / data[1][1] / 1000];
+}
 </script>
 
 <template>
@@ -105,6 +117,7 @@ const sizeDivider = computed(() => {
           <div class="row">Penalties</div>
           <div class="row">Possession</div>
           <div class="row">Poss.time</div>
+          <div class="row">Recov.time</div>
           <div class="row">Touches</div>
           <div class="row">Pass %</div>
           <div class="row">Passes</div>
@@ -160,6 +173,7 @@ const sizeDivider = computed(() => {
           <ActivityRow :values="[p[3].home.corners.length, p[3].away.corners.length]" />
           <ActivityRow
             :values="[p[3].home.offsides?.length ?? 0, p[3].away.offsides?.length ?? 0]"
+            :invert="true"
           />
           <ActivityRow :values="[p[3].home.freekicks.length, p[3].away.freekicks.length]" />
           <ActivityRow :values="[p[3].home.penalties.length, p[3].away.penalties.length]" />
@@ -172,6 +186,12 @@ const sizeDivider = computed(() => {
             :values="firstTwo(chunk(getPeriodPossession(p[3]))[1])"
             :formatter="msToTimeString"
           />
+          <ActivityRow
+            :values="getAverageRecoveryTime(p[3])"
+            :formatter="(n) => n.toFixed(1)"
+            :invert="true"
+          />
+
           <ActivityRow :values="[p[3].home.touches.length, p[3].away.touches.length]" />
           <ActivityRow
             :values="getPeriodPassAcc(p[3])"
@@ -195,8 +215,14 @@ const sizeDivider = computed(() => {
             :values="getPeriodPassStrings(p[3]).slice(2, 4) as [number, number]"
             :formatter="(n) => n.toFixed(1)"
           />
-          <ActivityRow :values="[p[3].home.yellowCards.length, p[3].away.yellowCards.length]" />
-          <ActivityRow :values="[p[3].home.redCards.length, p[3].away.redCards.length]" />
+          <ActivityRow
+            :values="[p[3].home.yellowCards.length, p[3].away.yellowCards.length]"
+            :invert="true"
+          />
+          <ActivityRow
+            :values="[p[3].home.redCards.length, p[3].away.redCards.length]"
+            :invert="true"
+          />
         </div>
 
         <!-- Total -->
@@ -225,6 +251,7 @@ const sizeDivider = computed(() => {
               getMatchTotalStat(props.match, 'home', 'offsides'),
               getMatchTotalStat(props.match, 'away', 'offsides'),
             ]"
+            :invert="true"
           />
           <ActivityRow
             :values="[
@@ -246,6 +273,11 @@ const sizeDivider = computed(() => {
           <ActivityRow
             :values="firstTwo(chunk(getMatchPossession(props.match))[1])"
             :formatter="msToTimeString"
+          />
+          <ActivityRow
+            :values="getMatchAverageRecoveryTime(props.match)"
+            :formatter="(n) => n.toFixed(1)"
+            :invert="true"
           />
           <ActivityRow
             :values="[
@@ -272,12 +304,14 @@ const sizeDivider = computed(() => {
               getMatchTotalStat(props.match, 'home', 'yellowCards'),
               getMatchTotalStat(props.match, 'away', 'yellowCards'),
             ]"
+            :invert="true"
           />
           <ActivityRow
             :values="[
               getMatchTotalStat(props.match, 'home', 'redCards'),
               getMatchTotalStat(props.match, 'away', 'redCards'),
             ]"
+            :invert="true"
           />
         </div>
       </div>
