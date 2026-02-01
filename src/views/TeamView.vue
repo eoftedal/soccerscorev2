@@ -86,8 +86,14 @@ function editTeam() {
       </li>
     </ul>
     <button v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</button>
-    <h2>Finished matches</h2>
+    <div class="finished-header">
+      <h2>Finished matches</h2>
+      <h2 class="button" @click="router.push({ name: 'team-stats', params: { id: teamId } })">
+        &#x1f4c8;&#xFE0E;
+      </h2>
+    </div>
     <input type="text" placeholder="Search" class="search" v-model="state.search" />
+
     <ul class="matchList">
       <li
         v-for="m in finished"
@@ -113,6 +119,13 @@ function editTeam() {
   </main>
 </template>
 <style scoped>
+.finished-header {
+  display: flex;
+  justify-content: space-between;
+}
+.finished-header .button {
+  filter: grayscale(100%);
+}
 main {
   margin: 2em;
 }

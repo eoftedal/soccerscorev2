@@ -1,0 +1,25 @@
+export function levenshteinDistance(s: string, t: string): number {
+  if (!s.length) return t.length;
+  if (!t.length) return s.length;
+
+  const arr = [];
+  for (let i = 0; i <= t.length; i++) {
+    arr[i] = [i];
+  }
+  for (let j = 0; j <= s.length; j++) {
+    arr[0][j] = j;
+  }
+
+  for (let i = 1; i <= t.length; i++) {
+    for (let j = 1; j <= s.length; j++) {
+      const substitutionCost = s[j - 1] === t[i - 1] ? 0 : 1;
+      arr[i][j] = Math.min(
+        arr[i - 1][j] + 1,
+        arr[i][j - 1] + 1,
+        arr[i - 1][j - 1] + substitutionCost,
+      );
+    }
+  }
+
+  return arr[t.length][s.length];
+}

@@ -1,6 +1,6 @@
 import type { MatchEventWithDelta, Period } from "../types";
 import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
-import { CUTOFF, EventType, type Percentage, type Side, type TotalTime } from "./types";
+import { CUTOFF, EventType, type Side, type TotalTime } from "./types";
 
 export type Recoveries = number;
 

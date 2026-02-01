@@ -3,7 +3,7 @@ import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import ActivityDisplay from "@/components/ActivityDisplay.vue";
+import ActivityDisplay from "@/components/ActivityDisplay";
 import { getMatchAllGoalsWithTiming, getMatchGoalScorers, getPenaltyScore } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";

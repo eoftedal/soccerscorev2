@@ -10,6 +10,7 @@ import TeamEdit from "@/views/TeamEdit.vue";
 import LogoUpload from "@/views/LogoUpload.vue";
 import MatchSelectView from "@/views/MatchSelectView.vue";
 import MultiMatchImage from "@/views/MultiMatchImage.vue";
+import StatsView from "@/views/StatsView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,11 @@ const router = createRouter({
       path: "/team-edit/:id",
       name: "team-edit",
       component: TeamEdit,
+    },
+    {
+      path: "/team-stats/:id",
+      name: "team-stats",
+      component: StatsView,
     },
     {
       path: "/export/:id",
