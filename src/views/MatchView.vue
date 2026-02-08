@@ -83,6 +83,7 @@ function downloadImage() {
     canvasWidth: width,
     height: height,
     width: width,
+    quality: 100,
     cacheBust: true,
     pixelRatio: 2,
   }).then((dataURL) => {
