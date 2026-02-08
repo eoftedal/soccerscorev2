@@ -177,7 +177,9 @@ function downloadImage() {
     <StyledButton @click="download()">Download data</StyledButton>
     <StyledButton @click="router.push({ name: 'edit', params: { id } })">Edit</StyledButton>
     <StyledButton @click="downloadImage">Match image</StyledButton>
-    <StyledButton @click="router.push({ name: 'image', params: { id } })">Match poster</StyledButton>
+    <StyledButton @click="router.push({ name: 'image', params: { id } })"
+      >Match poster</StyledButton
+    >
   </div>
   <div class="goalList" v-if="match">
     <div v-for="(p, i) in allGoals" :key="i" class="period">

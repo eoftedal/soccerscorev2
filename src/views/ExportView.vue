@@ -146,7 +146,9 @@ function saveImportMatches() {
           </div>
         </li>
       </ul>
-      <StyledButton v-if="importMatches.length > 0" @click="saveImportMatches()">Import</StyledButton>
+      <StyledButton v-if="importMatches.length > 0" @click="saveImportMatches()"
+        >Import</StyledButton
+      >
     </div>
     <h2>Export matches</h2>
 

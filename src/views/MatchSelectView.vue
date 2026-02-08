@@ -65,7 +65,9 @@ function generateImage() {
     </ul>
     <div class="buttons">
       <StyledButton @click="selectAll()">Select all</StyledButton>
-      <StyledButton @click="generateImage()" :disabled="state.selected.size == 0">Generate image</StyledButton>
+      <StyledButton @click="generateImage()" :disabled="state.selected.size == 0"
+        >Generate image</StyledButton
+      >
     </div>
   </main>
 </template>

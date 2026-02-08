@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useRipple } from '@/composables/useRipple'
+import { useRipple } from "@/composables/useRipple";
 
-const { onTouchStart } = useRipple()
+const { onTouchStart } = useRipple();
 </script>
 
 <template>
@@ -22,11 +22,12 @@ button {
 :deep(.ripple) {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, 
-    rgba(255, 255, 255, 0.25) 0%, 
-    rgba(255, 255, 255, 0.5) 5%, 
-    rgba(255, 255, 255, 1) 10%, 
-    rgba(255, 255, 255, 0) 11%, 
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.5) 5%,
+    rgba(255, 255, 255, 1) 10%,
+    rgba(255, 255, 255, 0) 11%,
     rgba(255, 255, 255, 0) 70%
   );
   transform: scale(0);
@@ -37,7 +38,12 @@ button {
 
 @media (prefers-color-scheme: dark) {
   :deep(.ripple) {
-    background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0) 70%);
+    background: radial-gradient(
+      circle,
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.2) 40%,
+      rgba(0, 0, 0, 0) 70%
+    );
   }
 }
 

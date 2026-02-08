@@ -163,7 +163,11 @@ const cancel = () => {
 
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-        <StyledButton @click="uploadLogo" :disabled="!selectedFile || !uploadName" class="btn-upload">
+        <StyledButton
+          @click="uploadLogo"
+          :disabled="!selectedFile || !uploadName"
+          class="btn-upload"
+        >
           Upload & Select
         </StyledButton>
       </div>

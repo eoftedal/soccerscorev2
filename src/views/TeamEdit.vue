@@ -87,7 +87,9 @@ function cancel() {
       <div class="logo-section">
         <div v-if="logoUrl" class="logo-preview">
           <img :src="logoUrl" alt="Team logo" />
-          <StyledButton type="button" @click="removeLogo" class="remove-btn">Remove Logo</StyledButton>
+          <StyledButton type="button" @click="removeLogo" class="remove-btn"
+            >Remove Logo</StyledButton
+          >
         </div>
         <div v-else class="no-logo">
           <p>No logo uploaded</p>
