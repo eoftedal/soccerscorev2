@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { type PenaltyRound, type GoalScorer } from "../models/types";
+import StyledButton from "@/components/StyledButton.vue";
 
 const props = defineProps<{
   penaltyRound: PenaltyRound;
@@ -40,7 +41,7 @@ const state = reactive({
     </div>
   </div>
   <div class="toolbar">
-    <button
+    <StyledButton
       @click="
         state.penaltyRound.events.push([
           [false, '' as GoalScorer],
@@ -49,9 +50,9 @@ const state = reactive({
       "
     >
       Add row
-    </button>
-    <button @click="state.penaltyRound.events.pop()">Remove last row</button>
-    <button @click="emit('close')">Close</button>
+    </StyledButton>
+    <StyledButton @click="state.penaltyRound.events.pop()">Remove last row</StyledButton>
+    <StyledButton @click="emit('close')">Close</StyledButton>
   </div>
 </template>
 

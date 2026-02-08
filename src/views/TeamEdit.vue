@@ -5,6 +5,7 @@ import { computed } from "vue";
 import { type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
+import StyledButton from "@/components/StyledButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -86,20 +87,20 @@ function cancel() {
       <div class="logo-section">
         <div v-if="logoUrl" class="logo-preview">
           <img :src="logoUrl" alt="Team logo" />
-          <button type="button" @click="removeLogo" class="remove-btn">Remove Logo</button>
+          <StyledButton type="button" @click="removeLogo" class="remove-btn">Remove Logo</StyledButton>
         </div>
         <div v-else class="no-logo">
           <p>No logo uploaded</p>
         </div>
-        <button type="button" @click="navigateToLogoUpload" class="upload-btn">
+        <StyledButton type="button" @click="navigateToLogoUpload" class="upload-btn">
           {{ logoUrl ? "Change Logo" : "Upload Logo" }}
-        </button>
+        </StyledButton>
       </div>
     </div>
 
     <div class="toolbar">
-      <button @click="save">Save</button>
-      <button @click="cancel" class="secondary">Cancel</button>
+      <StyledButton @click="save">Save</StyledButton>
+      <StyledButton @click="cancel" class="secondary">Cancel</StyledButton>
     </div>
   </main>
 </template>

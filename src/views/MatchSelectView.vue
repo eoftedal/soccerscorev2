@@ -4,6 +4,7 @@ import { computed, reactive } from "vue";
 import { type Match, type TeamId } from "@/models/types";
 import { getMatchScore, sortMatchesByDateTime } from "@/models/match";
 import { useRoute, useRouter } from "vue-router";
+import StyledButton from "@/components/StyledButton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -63,8 +64,8 @@ function generateImage() {
       </li>
     </ul>
     <div class="buttons">
-      <button @click="selectAll()">Select all</button>
-      <button @click="generateImage()" :disabled="state.selected.size == 0">Generate image</button>
+      <StyledButton @click="selectAll()">Select all</StyledButton>
+      <StyledButton @click="generateImage()" :disabled="state.selected.size == 0">Generate image</StyledButton>
     </div>
   </main>
 </template>

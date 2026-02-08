@@ -7,6 +7,7 @@ import { type Match, type TeamId, type ExportMatch, type DataUrl } from "@/model
 import { getMatchScore, sortMatchesByDateTime } from "@/models/match";
 import { saveBlob } from "./viewUtils";
 import { useRoute } from "vue-router";
+import StyledButton from "@/components/StyledButton.vue";
 
 const route = useRoute();
 const teamId = route.params.id as TeamId;
@@ -145,7 +146,7 @@ function saveImportMatches() {
           </div>
         </li>
       </ul>
-      <button v-if="importMatches.length > 0" @click="saveImportMatches()">Import</button>
+      <StyledButton v-if="importMatches.length > 0" @click="saveImportMatches()">Import</StyledButton>
     </div>
     <h2>Export matches</h2>
 
@@ -158,8 +159,8 @@ function saveImportMatches() {
       </li>
     </ul>
     <div class="buttons">
-      <button @click="selectAll()">Select all</button>
-      <button @click="download()" :disabled="state.selected.size == 0">Download</button>
+      <StyledButton @click="selectAll()">Select all</StyledButton>
+      <StyledButton @click="download()" :disabled="state.selected.size == 0">Download</StyledButton>
     </div>
   </main>
 </template>

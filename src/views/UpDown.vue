@@ -3,6 +3,7 @@ import { reactive } from "vue";
 import { setActive, setInactive } from "./buttonUtil";
 import type { Delta, Timestamp } from "@/models/types";
 import { delta, now } from "@/timeUtils";
+import StyledButton from "@/components/StyledButton.vue";
 
 const emit = defineEmits<{
   (e: "add", time: Timestamp, delta: Delta): void;
@@ -27,7 +28,7 @@ function remove() {
 </script>
 <template>
   <div class="button">
-    <button
+    <StyledButton
       class="plus"
       @touchstart.prevent="
         state.holdStart = now();
@@ -40,8 +41,8 @@ function remove() {
       "
     >
       <slot></slot>
-    </button>
-    <button
+    </StyledButton>
+    <StyledButton
       @touchstart.prevent="setActive($event)"
       @touchend.prevent="
         remove();
@@ -50,7 +51,7 @@ function remove() {
       class="minus"
     >
       -
-    </button>
+    </StyledButton>
   </div>
 </template>
 

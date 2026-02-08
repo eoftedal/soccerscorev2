@@ -12,6 +12,7 @@ import { now } from "@/timeUtils";
 import PeriodPane from "./PeriodPane.vue";
 import PenaltyRound from "./PenaltyRound.vue";
 import { getMatchGoalEvents } from "@/models/match/getMatchGoalEvents";
+import StyledButton from "@/components/StyledButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -272,7 +273,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </h1>
       <h1>
         <span class="time">{{ periodTime }}</span>
-        <button @click="confirmEnd">End period</button>
+        <StyledButton @click="confirmEnd">End period</StyledButton>
       </h1>
       <h1>
         <img v-if="showLogos" :src="awayLogoUrl" alt="Away logo" class="header-logo" />
@@ -313,7 +314,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
 
       <div class="form swap-row">
-        <button @click="swapSides(match)" class="swap">Swap sides</button>
+        <StyledButton @click="swapSides(match)" class="swap">Swap sides</StyledButton>
       </div>
 
       <div class="form team-with-logo">
@@ -387,11 +388,11 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         </div>
       </div>
       <div class="toolbar">
-        <button @click="newPeriod()">Start new period</button>
-        <button @click="showPenalties()">
+        <StyledButton @click="newPeriod()">Start new period</StyledButton>
+        <StyledButton @click="showPenalties()">
           {{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties
-        </button>
-        <button @click="endMatch()">End match</button>
+        </StyledButton>
+        <StyledButton @click="endMatch()">End match</StyledButton>
       </div>
       <div class="activityScrollWrapper">
         <div class="activityWrapper">
@@ -405,9 +406,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
             ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
             {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
           >
-          <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
+          <StyledButton @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
             Switch team
-          </button>
+          </StyledButton>
         </div>
       </div>
     </div>
@@ -419,9 +420,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
           ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
           {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
         >
-        <button @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
+        <StyledButton @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
           Switch team
-        </button>
+        </StyledButton>
       </div>
     </div>
   </div>

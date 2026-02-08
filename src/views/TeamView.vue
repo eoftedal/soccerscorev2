@@ -6,6 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
 import { getMatchGoals } from "../models/match";
 import { storeToRefs } from "pinia";
+import StyledButton from "@/components/StyledButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -85,7 +86,7 @@ function editTeam() {
         </div>
       </li>
     </ul>
-    <button v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</button>
+    <StyledButton v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</StyledButton>
     <div class="finished-header">
       <h2>Finished matches</h2>
       <h2 class="button" @click="router.push({ name: 'team-stats', params: { id: teamId } })">
@@ -109,12 +110,12 @@ function editTeam() {
       </li>
     </ul>
     <div class="buttonRow">
-      <button @click="router.push({ name: 'export', params: { id: teamId } })">
+      <StyledButton @click="router.push({ name: 'export', params: { id: teamId } })">
         Export/import matches
-      </button>
-      <button @click="router.push({ name: 'match-select', params: { id: teamId } })">
+      </StyledButton>
+      <StyledButton @click="router.push({ name: 'match-select', params: { id: teamId } })">
         Generate match image
-      </button>
+      </StyledButton>
     </div>
   </main>
 </template>

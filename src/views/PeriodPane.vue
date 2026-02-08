@@ -12,6 +12,7 @@ import { CUTOFF, getPeriodPossession } from "../models/match";
 import { setActive, setInactive } from "./buttonUtil";
 import { delta, msToTimeString, now } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";
+import StyledButton from "@/components/StyledButton.vue";
 
 const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
 const side = ["home", "away"] as const;
@@ -358,7 +359,7 @@ const currentPossession = computed(() => {
     </UpDown>
 
     <div class="wide">
-      <button
+      <StyledButton
         v-if="openPeriod"
         @click="addOutOfPlayEvent"
         :class="{
@@ -373,10 +374,10 @@ const currentPossession = computed(() => {
               : "Out of play"
           }}
         </div>
-      </button>
+      </StyledButton>
     </div>
     <div class="big button left">
-      <button
+      <StyledButton
         class="plus"
         @touchstart.prevent="beginTouch($event)"
         @touchend.prevent="finishTouch($event, 'home')"
@@ -392,8 +393,8 @@ const currentPossession = computed(() => {
         <span class="num">{{ possession[0].toFixed(1) }}%</span>
         <span>Poss. time</span>
         <span class="num">{{ msToTimeString(possession[2]) }}</span>
-      </button>
-      <button
+      </StyledButton>
+      <StyledButton
         class="minus"
         @touchstart.prevent="setActive($event)"
         @touchend.prevent="
@@ -402,11 +403,11 @@ const currentPossession = computed(() => {
         "
       >
         -
-      </button>
+      </StyledButton>
     </div>
     <div></div>
     <div class="big button right">
-      <button
+      <StyledButton
         class="plus"
         @touchstart.prevent="beginTouch($event)"
         @touchend.prevent="finishTouch($event, 'away')"
@@ -421,8 +422,8 @@ const currentPossession = computed(() => {
         <span class="num">{{ possession[1].toFixed(1) }}%</span>
         <span>Poss. time</span>
         <span class="num">{{ msToTimeString(possession[3]) }}</span>
-      </button>
-      <button
+      </StyledButton>
+      <StyledButton
         class="minus"
         @touchstart.prevent="setActive($event)"
         @touchend.prevent="
@@ -431,7 +432,7 @@ const currentPossession = computed(() => {
         "
       >
         -
-      </button>
+      </StyledButton>
     </div>
     <ModalDialog
       v-if="openPeriod"

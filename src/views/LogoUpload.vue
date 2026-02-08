@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import { useLogoStore } from "@/stores/logos";
 import { useMatchStore } from "@/stores/matches";
 import type { DataUrl, LogoId, TeamId } from "@/models/types";
+import StyledButton from "@/components/StyledButton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -162,9 +163,9 @@ const cancel = () => {
 
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-        <button @click="uploadLogo" :disabled="!selectedFile || !uploadName" class="btn-upload">
+        <StyledButton @click="uploadLogo" :disabled="!selectedFile || !uploadName" class="btn-upload">
           Upload & Select
-        </button>
+        </StyledButton>
       </div>
     </section>
 
@@ -194,7 +195,7 @@ const cancel = () => {
     </section>
 
     <div class="actions">
-      <button @click="cancel" class="btn-cancel">Cancel</button>
+      <StyledButton @click="cancel" class="btn-cancel">Cancel</StyledButton>
     </div>
   </main>
 </template>

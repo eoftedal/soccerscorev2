@@ -17,6 +17,7 @@ import {
   getPenaltyScore,
 } from "@/models/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
+import StyledButton from "@/components/StyledButton.vue";
 
 const route = useRoute();
 
@@ -156,15 +157,15 @@ fetch(GrassImage2)
 <template>
   <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
     <div class="buttonRow">
-      <button @click="state.hidePossession = !state.hidePossession">
+      <StyledButton @click="state.hidePossession = !state.hidePossession">
         {{ state.hidePossession ? t("showPossession") : t("hidePossession") }}
-      </button>
-      <button @click="state.hidePasses = !state.hidePasses">
+      </StyledButton>
+      <StyledButton @click="state.hidePasses = !state.hidePasses">
         {{ state.hidePasses ? t("showPasses") : t("hidePasses") }}
-      </button>
-      <button @click="toggleLanguage">
+      </StyledButton>
+      <StyledButton @click="toggleLanguage">
         {{ state.lang === "NO" ? "EN" : "NO" }}
-      </button>
+      </StyledButton>
 
       <a
         :class="{ linkButton: true, disabled: dataUrl == '' }"

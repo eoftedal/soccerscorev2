@@ -5,6 +5,7 @@ import type { TeamName } from "@/models/types";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import StyledButton from "@/components/StyledButton.vue";
 
 const buildDate = import.meta.env.VITE_BUILD_DATE;
 
@@ -67,7 +68,7 @@ function navigateToUnassigned() {
         <div class="team-name">Unassigned</div>
       </div>
     </div>
-    <button @click="addTeam()">Add team</button>
+    <StyledButton @click="addTeam()">Add team</StyledButton>
     <footer @click="reload()">Version: {{ buildDate }}</footer>
   </main>
 </template>

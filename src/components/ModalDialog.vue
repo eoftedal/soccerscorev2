@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import StyledButton from "./StyledButton.vue";
 
 const emit = defineEmits<{
   (e: "close"): void;
@@ -24,15 +25,15 @@ defineExpose({
         <slot />
       </div>
       <div class="modal-actions">
-        <button
+        <StyledButton
           @click="
             dialog?.close();
             emit('ok');
           "
         >
           Ok
-        </button>
-        <button
+        </StyledButton>
+        <StyledButton
           @click="
             dialog?.close();
             emit('close');
@@ -40,7 +41,7 @@ defineExpose({
           class="secondary"
         >
           Cancel
-        </button>
+        </StyledButton>
         <slot name="actions" />
       </div>
     </div>

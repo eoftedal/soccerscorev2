@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import StyledButton from "@/components/StyledButton.vue";
 import { reactive } from "vue";
 
 const state = reactive({
@@ -48,7 +49,7 @@ function handlOrientation(event: DeviceOrientationEvent) {
 }
 </script>
 <template>
-  <button @click="go">Request orientation permission</button>
+  <StyledButton @click="go">Request orientation permission</StyledButton>
   <div>
     {{ state.orientationGranted }}
   </div>
