@@ -75,16 +75,21 @@ function download() {
 }
 const main = ref<HTMLElement | undefined>(undefined);
 function downloadImage() {
-  if (!main.value) return;
+  const m = main.value;
+  if (!m) return;
   const width = window.innerWidth;
-  const height = main.value.clientHeight;
-  toPng(main.value, {
+  const height = m.clientHeight;
+  setTimeout(() => {
+    convertAndDownload(m, width, height);
+  }, 1000);
+}
+
+function convertAndDownload(main: HTMLElement, width: number, height: number) {
+  toPng(main, {
     canvasHeight: height,
     canvasWidth: width,
     height: height,
     width: width,
-    quality: 100,
-    cacheBust: true,
     pixelRatio: 2,
   }).then((dataURL) => {
     fetch(dataURL)
