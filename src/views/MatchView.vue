@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
-import { computed, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay";
 import { getMatchAllGoalsWithTiming, getMatchGoalScorers, getPenaltyScore } from "@/models/match";
@@ -18,6 +18,9 @@ const { matches } = useMatchStore();
 const { getLogoUrl } = useLogos();
 const match = computed(() => {
   return matches.find((m) => m.id == id);
+});
+const state = reactive({
+  matchImageUrl: ""
 });
 
 const homeLogo = computed(() => getLogoUrl(match.value?.homeLogo));
@@ -74,14 +77,14 @@ function download() {
   saveBlob(file, "data.json");
 }
 const main = ref<HTMLElement | undefined>(undefined);
+  
 function downloadImage() {
+  state.matchImageUrl = "";
   const m = main.value;
   if (!m) return;
   const width = window.innerWidth;
   const height = m.clientHeight;
-  setTimeout(() => {
-    convertAndDownload(m, width, height);
-  }, 1000);
+  convertAndDownload(m, width, height);
 }
 
 function convertAndDownload(main: HTMLElement, width: number, height: number) {
@@ -92,13 +95,16 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
     width: width,
     pixelRatio: 2,
   }).then((dataURL) => {
-    fetch(dataURL)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const sanitize = (str: string) => str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
-        const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
-        saveBlob(blob, filename);
-      });
+    state.matchImageUrl = dataURL;
+    setTimeout(() => {
+      fetch(dataURL)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const sanitize = (str: string) => str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
+          const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
+          //saveBlob(blob, filename);
+        });
+    }, 1000);
   });
 }
 </script>
@@ -203,6 +209,7 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
       </div>
     </div>
   </div>
+  <img v-if="state.matchImageUrl " :src="state.matchImageUrl" style="width: 50%"/>
 </template>
 <style scoped>
 main {
