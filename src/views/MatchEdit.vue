@@ -271,7 +271,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <span class="goalHeader">{{ getMatchGoals(match, "home") }}</span
         ><span v-if="!showLogos">{{ match.homeTeam }}</span>
       </h1>
-      <h1>
+      <h1 class="middle">
         <span class="time">{{ periodTime }}</span>
         <StyledButton @click="confirmEnd">End period</StyledButton>
       </h1>
@@ -454,6 +454,10 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   </ModalDialog>
 </template>
 <style scoped>
+h1.middle {
+  display: flex;
+  flex-direction: column;
+}
 .goalEvents h2 {
   text-align: center;
   font-size: 100%;
