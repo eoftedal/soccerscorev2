@@ -269,7 +269,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <h1>
         <img v-if="showLogos" :src="homeLogoUrl" alt="Home logo" class="header-logo" />
         <span class="goalHeader">{{ getMatchGoals(match, "home") }}</span
-        ><span v-if="!showLogos">{{ match.homeTeam }}</span>
+        ><span v-if="!showLogos" class="teamName">{{ match.homeTeam }}</span>
       </h1>
       <h1 class="middle">
         <span class="time">{{ periodTime }}</span>
@@ -278,7 +278,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       <h1>
         <img v-if="showLogos" :src="awayLogoUrl" alt="Away logo" class="header-logo" />
         <span class="goalHeader">{{ getMatchGoals(match, "away") }}</span
-        ><span v-if="!showLogos">{{ match.awayTeam }}</span>
+        ><span v-if="!showLogos" class="teamName">{{ match.awayTeam }}</span>
       </h1>
     </header>
     <header :class="{ pending: state.saveTimeout != undefined }" v-if="!openPeriod">
@@ -454,6 +454,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   </ModalDialog>
 </template>
 <style scoped>
+h1 .teamName {
+  font-size: 100%;
+}
 h1.middle {
   display: flex;
   flex-direction: column;
@@ -520,13 +523,15 @@ h1.middle {
 
 .toolbar {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5em;
+  xjustify-content: space-between;
   padding: 0.5em 0.5em 0em 0.5em;
 }
 .toolbar button {
   padding: 1em;
-  width: 40%;
+  width: 100%;
   text-align: center;
   display: flex;
   justify-content: center;

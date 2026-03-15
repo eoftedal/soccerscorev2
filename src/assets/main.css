@@ -43,9 +43,9 @@ a.disabled {
 }
 
 button.secondary {
-  background-color: transparent;
+  background-color: var(--color-border);
   color: var(--color-text);
-  border: 1px solid var(--color-border);
+  xborder: 1px solid var(--color-border);
 }
 
 button.secondary:hover {

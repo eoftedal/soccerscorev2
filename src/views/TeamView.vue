@@ -71,7 +71,13 @@ function editTeam() {
 <template>
   <main>
     <h1 @click="editTeam" :class="{ clickable: !isUnassigned }">{{ state.teamName }}</h1>
-    <h2>New matches</h2>
+    <div class="header">
+      <h2>New matches</h2>
+      <!--
+      <StyledButton v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</StyledButton>
+      -->
+      <h2 v-if="!isUnassigned" @click="newMatch(teamId)" class="plus">&#x2795;</h2>
+    </div>
     <ul class="matchList">
       <li
         v-for="m in notFinished"
@@ -86,7 +92,7 @@ function editTeam() {
         </div>
       </li>
     </ul>
-    <StyledButton v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</StyledButton>
+
     <div class="finished-header">
       <h2>Finished matches</h2>
       <h2 class="button" @click="router.push({ name: 'team-stats', params: { id: teamId } })">
@@ -114,12 +120,20 @@ function editTeam() {
         Export/import matches
       </StyledButton>
       <StyledButton @click="router.push({ name: 'match-select', params: { id: teamId } })">
-        Generate match image
+        Generate match list image
       </StyledButton>
     </div>
   </main>
 </template>
 <style scoped>
+.plus {
+  cursor: pointer;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .finished-header {
   display: flex;
   justify-content: space-between;
@@ -147,7 +161,7 @@ main {
   }
 }
 ul.matchList {
-  margin: 0;
+  margin: 0 0 1em 0;
   padding: 0;
   list-style-type: none;
   li {
@@ -162,12 +176,15 @@ ul.matchList {
 
 input.search {
   width: 100%;
+  padding: 0.5em 1em;
 }
 
 h1.clickable {
   cursor: pointer;
 }
 .buttonRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5em;
 }
 </style>

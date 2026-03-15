@@ -20,7 +20,7 @@ const match = computed(() => {
   return matches.find((m) => m.id == id);
 });
 const state = reactive({
-  matchImageUrl: ""
+  matchImageUrl: "",
 });
 
 const homeLogo = computed(() => getLogoUrl(match.value?.homeLogo));
@@ -77,7 +77,7 @@ function download() {
   saveBlob(file, "data.json");
 }
 const main = ref<HTMLElement | undefined>(undefined);
-  
+
 function downloadImage() {
   state.matchImageUrl = "";
   const m = main.value;
@@ -100,7 +100,8 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
       fetch(dataURL)
         .then((res) => res.blob())
         .then((blob) => {
-          const sanitize = (str: string) => str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
+          const sanitize = (str: string) =>
+            str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
           const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
           //saveBlob(blob, filename);
         });
@@ -116,7 +117,7 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
     <h3>{{ match.gameType }}</h3>
     <header class="matchview">
       <h1 v-if="!showLogos">
-        <span>{{ match.homeTeam }}</span>
+        <span class="teamName">{{ match.homeTeam }}</span>
         <span class="goals">{{ homeGoals.length }}</span>
       </h1>
       <h1 v-if="showLogos" class="with-logo">
@@ -129,7 +130,7 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
       <h1 class="divider">-</h1>
       <h1 v-if="!showLogos">
         <span class="goals">{{ awayGoals.length }}</span>
-        <span>{{ match.awayTeam }}</span>
+        <span class="teamName">{{ match.awayTeam }}</span>
       </h1>
       <h1 v-if="showLogos" class="with-logo">
         <span class="goals">{{ awayGoals.length }}</span>
@@ -209,12 +210,15 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
       </div>
     </div>
   </div>
-  <img v-if="state.matchImageUrl " :src="state.matchImageUrl" style="width: 50%"/>
+  <img v-if="state.matchImageUrl" :src="state.matchImageUrl" style="width: 50%" alt="match image" />
 </template>
 <style scoped>
 main {
   padding: 0.5em;
   background: var(--color-background);
+}
+.teamName {
+  text-wrap: balance;
 }
 .goalList {
   margin-bottom: 1em;

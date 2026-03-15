@@ -412,16 +412,16 @@ const currentPossession = computed(() => {
         @touchstart.prevent="beginTouch($event)"
         @touchend.prevent="finishTouch($event, 'away')"
       >
-        <span>First touch</span>
         <span class="num">{{ openPeriod.away.touches.length }}</span>
-        <span>Passes</span>
+        <span>First touch</span>
         <span class="num">{{ awayPasses }}</span>
-        <span>Pass acc</span>
+        <span>Passes</span>
         <span class="num">{{ getPassAcc(openPeriod)[1].toFixed(1) }}%</span>
-        <span>Possession</span>
+        <span>Pass acc</span>
         <span class="num">{{ possession[1].toFixed(1) }}%</span>
-        <span>Poss. time</span>
+        <span>Possession</span>
         <span class="num">{{ msToTimeString(possession[3]) }}</span>
+        <span>Poss. time</span>
       </StyledButton>
       <StyledButton
         class="minus"
@@ -469,9 +469,18 @@ div.big .plus {
   grid-template-rows: 1fr auto;
   text-align: left;
 }
+
 div.big .plus .num {
   text-align: right;
 }
+
+div.big.right .plus span {
+  text-align: right;
+}
+div.big.right .plus span.num {
+  text-align: left;
+}
+
 div.mid {
   width: 1em;
 }

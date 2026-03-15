@@ -12,6 +12,9 @@ import MatchSelectView from "@/views/MatchSelectView.vue";
 import MultiMatchImage from "@/views/MultiMatchImage.vue";
 import StatsView from "@/views/StatsView.vue";
 
+import HelpView from "@/views/HelpView.vue";
+import StatsHelp from "@/views/StatsHelp.vue";
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
 
@@ -20,6 +23,16 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/stats-help",
+      name: "stats-help",
+      component: StatsHelp,
+    },
+    {
+      path: "/help",
+      name: "help",
+      component: HelpView,
     },
     {
       path: "/team/:id",

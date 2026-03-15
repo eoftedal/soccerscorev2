@@ -33,7 +33,7 @@ function navigateToUnassigned() {
 </script>
 <template>
   <main>
-    <h2>Teams</h2>
+    <h1>Teams</h1>
     <div class="teams-grid">
       <div
         v-for="t in teams"
@@ -68,14 +68,41 @@ function navigateToUnassigned() {
         <div class="team-name">Unassigned</div>
       </div>
     </div>
-    <StyledButton @click="addTeam()">Add team</StyledButton>
+    <div class="action-row">
+      <StyledButton @click="addTeam()">Add team</StyledButton>
+      <StyledButton @click="router.push({ name: 'help' })" aria-label="Help" class="help-btn"
+        >How to register</StyledButton
+      >
+      <StyledButton
+        @click="router.push({ name: 'stats-help' })"
+        aria-label="Stats Help"
+        class="help-btn"
+        >Explain the stats</StyledButton
+      >
+    </div>
     <footer @click="reload()">Version: {{ buildDate }}</footer>
   </main>
 </template>
 
 <style scoped>
+h1 {
+  margin-bottom: 0.25em;
+}
+
 main {
   margin: 2em;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5em;
+  margin-bottom: 1.5em;
+  align-items: center;
+  justify-content: space-between;
+}
+.action-row button {
+  height: 100%;
 }
 
 .teams-grid {
