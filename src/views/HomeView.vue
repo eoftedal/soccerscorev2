@@ -67,6 +67,14 @@ function navigateToUnassigned() {
         </div>
         <div class="team-name">Unassigned</div>
       </div>
+      <!--div class="team-card unassigned" @click="addTeam()">
+        <div class="logo-container">
+          <svg class="default-crest" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+          </svg>
+        </div>
+        <div class="team-name">+ Add team</div>
+      </div-->
     </div>
     <div class="action-row">
       <StyledButton @click="addTeam()">Add team</StyledButton>

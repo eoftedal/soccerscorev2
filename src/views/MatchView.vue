@@ -363,6 +363,7 @@ h3 {
   margin-bottom: 2em;
   display: flex;
   justify-content: space-between;
+  gap: 2px;
 }
 .buttons button {
   width: 30%;

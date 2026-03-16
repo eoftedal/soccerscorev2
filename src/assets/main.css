@@ -19,9 +19,10 @@ a.linkButton {
   border-radius: 0.75em;
   background-color: var(--button-color);
   color: var(--button-text);
-  border: 1px solid var(--color-background);
+  border: 1px solid var(--button-color);
   padding: 0.5em 1em;
   text-decoration: none;
+  xbox-shadow: 0px 2px 5px rgba(0,0,0,0.5);
 }
 button:active,
 button.active,
@@ -30,6 +31,7 @@ a.linkButton.active {
   border-color: var(--button-color);
   color: var(--button-color);
   background-color: var(--color-background-soft);
+  box-shadow: none;
 }
 a.linkButton {
   display: inline-block;
