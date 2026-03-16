@@ -7,6 +7,7 @@ import TagList from "@/components/TagList.vue";
 import { getMatchGoals } from "../models/match";
 import { storeToRefs } from "pinia";
 import StyledButton from "@/components/StyledButton.vue";
+import MdiIcon from "@/components/MdiIcon.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -70,14 +71,17 @@ function editTeam() {
 
 <template>
   <main>
-    <h1 @click="editTeam" :class="{ clickable: !isUnassigned }">{{ state.teamName }}</h1>
-    <div class="header">
-      <h2>New matches</h2>
+    <h1 @click="editTeam" :class="{ clickable: !isUnassigned }">
+      <span>{{ state.teamName }}</span>
+      <MdiIcon icon="mdiPencil" />
+    </h1>
+    <h2 class="header">
+      <span>New matches</span>
       <!--
       <StyledButton v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</StyledButton>
       -->
-      <h2 v-if="!isUnassigned" @click="newMatch(teamId)" class="plus">&#x2795;</h2>
-    </div>
+      <span v-if="!isUnassigned" @click="newMatch(teamId)" class="plus">&#x2795;</span>
+    </h2>
     <ul class="matchList">
       <li
         v-for="m in notFinished"
@@ -93,12 +97,10 @@ function editTeam() {
       </li>
     </ul>
 
-    <div class="finished-header">
-      <h2>Finished matches</h2>
-      <h2 class="button" @click="router.push({ name: 'team-stats', params: { id: teamId } })">
-        &#x1f4c8;&#xFE0E;
-      </h2>
-    </div>
+    <h2 class="finished-header">
+      <span>Finished matches</span>
+      <MdiIcon icon="mdiViewColumnOutline"  @click="router.push({ name: 'team-stats', params: { id: teamId } })" />
+    </h2>
     <input type="text" placeholder="Search" class="search" v-model="state.search" />
 
     <ul class="matchList">
@@ -116,16 +118,30 @@ function editTeam() {
       </li>
     </ul>
     <div class="buttonRow">
-      <StyledButton @click="router.push({ name: 'export', params: { id: teamId } })">
+      <StyledButton @click="router.push({ name: 'export', params: { id: teamId } })"
+        icon="mdiDownloadMultipleOutline"
+      >
         Export/import matches
       </StyledButton>
-      <StyledButton @click="router.push({ name: 'match-select', params: { id: teamId } })">
+      <StyledButton @click="router.push({ name: 'match-select', params: { id: teamId } })"
+      icon="mdiListBoxOutline"
+      >
         Generate match list image
       </StyledButton>
     </div>
   </main>
 </template>
 <style scoped>
+h1 {
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+h1 svg {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
 .plus {
   cursor: pointer;
 }
@@ -137,6 +153,7 @@ function editTeam() {
 .finished-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .finished-header .button {
   filter: grayscale(100%);

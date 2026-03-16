@@ -187,10 +187,11 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
     </div>
   </main>
   <div class="buttons">
-    <StyledButton @click="download()">Download data</StyledButton>
-    <StyledButton @click="router.push({ name: 'edit', params: { id } })">Edit</StyledButton>
-    <StyledButton @click="downloadImage">Match image</StyledButton>
+    <StyledButton @click="download()" icon="mdiDownload">Download data</StyledButton>
+    <StyledButton @click="router.push({ name: 'edit', params: { id } })" icon="mdiPencil">Edit</StyledButton>
+    <!--StyledButton @click="downloadImage">Match image</StyledButton-->
     <StyledButton @click="router.push({ name: 'image', params: { id } })"
+    icon="mdiImageOutline"
       >Match poster</StyledButton
     >
   </div>

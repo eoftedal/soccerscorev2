@@ -13,6 +13,7 @@ import PeriodPane from "./PeriodPane.vue";
 import PenaltyRound from "./PenaltyRound.vue";
 import { getMatchGoalEvents } from "@/models/match/getMatchGoalEvents";
 import StyledButton from "@/components/StyledButton.vue";
+import MdiIcon from "@/components/MdiIcon.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -273,7 +274,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </h1>
       <h1 class="middle">
         <span class="time">{{ periodTime }}</span>
-        <StyledButton @click="confirmEnd">End period</StyledButton>
+        <StyledButton @click="confirmEnd" icon="mdiTimerStopOutline">End period</StyledButton>
       </h1>
       <h1>
         <img v-if="showLogos" :src="awayLogoUrl" alt="Away logo" class="header-logo" />
@@ -314,7 +315,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
 
       <div class="form swap-row">
-        <StyledButton @click="swapSides(match)" class="swap">Swap sides</StyledButton>
+        <StyledButton @click="swapSides(match)" class="swap" icon="mdiSwapHorizontal">Swap sides</StyledButton>
       </div>
 
       <div class="form team-with-logo">
@@ -388,11 +389,11 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         </div>
       </div>
       <div class="toolbar">
-        <StyledButton @click="newPeriod()">Start new period</StyledButton>
-        <StyledButton @click="showPenalties()">
+        <StyledButton @click="newPeriod()" icon="mdiWhistle">Start new period</StyledButton>
+        <StyledButton @click="showPenalties()" icon="mdiTarget">
           {{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties
         </StyledButton>
-        <StyledButton @click="endMatch()">End match</StyledButton>
+        <StyledButton @click="endMatch()" icon="mdiFlagCheckered">End match</StyledButton>
       </div>
       <div class="activityScrollWrapper">
         <div class="activityWrapper">

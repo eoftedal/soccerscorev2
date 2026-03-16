@@ -77,7 +77,7 @@ function navigateToUnassigned() {
       </div-->
     </div>
     <div class="action-row">
-      <StyledButton @click="addTeam()">Add team</StyledButton>
+      <StyledButton @click="addTeam()" icon="mdiPlus">Add team</StyledButton>
       <StyledButton @click="router.push({ name: 'help' })" aria-label="Help" class="help-btn"
         >How to register</StyledButton
       >

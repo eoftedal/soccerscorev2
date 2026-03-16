@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { useRipple } from "@/composables/useRipple";
+import type { IconName } from "./mdiIconsAvailable";
+import MdiIcon from "./MdiIcon.vue";
 
 const { onTouchStart } = useRipple();
+
+const props = defineProps<{
+  icon?: IconName,
+}>();
 </script>
 
 <template>
   <button @touchstart.passive="onTouchStart">
-    <slot />
+    <MdiIcon v-if="props.icon" :icon="props.icon" />
+    <div v-if="props.icon"><slot /></div>
+    <slot v-if="!props.icon" />
   </button>
 </template>
 
@@ -16,9 +24,14 @@ button {
   overflow: hidden;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
-
+button > svg {
+  margin-right: 0.75em;
+  height: 1.5em;
+  width: 1.5em;
+  flex-shrink: 0;
+}
 :deep(.ripple) {
   position: absolute;
   border-radius: 50%;
