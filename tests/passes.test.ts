@@ -1,5 +1,5 @@
-import { MatchEventWithDelta, Period, Timestamp } from "../src/types";
-import { getPasses, getPassStrings } from "../src/match";
+import { MatchEventWithDelta, Period, Timestamp } from "../src/models/types";
+import { getPeriodPasses, getPeriodPassStrings } from "../src/models/match";
 function asTimeseries(data: Array<[number, number]>) {
   return data as Array<MatchEventWithDelta>;
 }
@@ -50,7 +50,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPasses(period);
+    const result = getPeriodPasses(period);
     expect(result[0]).toBe(2);
     expect(result[1]).toBe(1);
   });
@@ -76,7 +76,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPasses(period);
+    const result = getPeriodPasses(period);
     expect(result[0]).toBe(1);
     expect(result[1]).toBe(1);
   });
@@ -100,7 +100,7 @@ describe("should calculate strings", () => {
         ],
       },
     };
-    const x = getPassStrings(period);
+    const x = getPeriodPassStrings(period);
     expect(x[0].length).toBe(0);
     expect(x[1].length).toBe(0);
     expect(x[2]).toBe(0);
@@ -125,7 +125,7 @@ describe("should calculate strings", () => {
         ],
       },
     };
-    const x = getPassStrings(period);
+    const x = getPeriodPassStrings(period);
     expect(x[0][1]).toBe(1);
     expect(x[1].length).toBe(0);
     expect(x[2]).toBe(1);
@@ -155,7 +155,7 @@ describe("should calculate strings", () => {
         ],
       },
     };
-    const x = getPassStrings(period);
+    const x = getPeriodPassStrings(period);
     expect(x[0]).toEqual([undefined, 2, 1]);
     expect(x[1].length).toBe(0);
     expect(x[2]).toBe(1.5);
@@ -187,7 +187,7 @@ describe("should calculate strings", () => {
         ]),
       },
     };
-    const x = getPassStrings(period);
+    const x = getPeriodPassStrings(period);
     expect(x[0]).toEqual([undefined, 2, 1, 1]);
     expect(x[1]).toEqual([undefined, 1]);
     expect(x[2]).toBe(2);
@@ -217,7 +217,7 @@ describe("should calculate strings", () => {
         ]),
       },
     };
-    const x = getPassStrings(period);
+    const x = getPeriodPassStrings(period);
     expect(x[0]).toEqual([undefined, 1, 1]);
     expect(x[1]).toEqual([]);
     expect(x[2]).toBe(2);
