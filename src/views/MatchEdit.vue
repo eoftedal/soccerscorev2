@@ -23,10 +23,8 @@ const { getLogoUrl } = useLogos();
 
 const match = getMatch(id as string);
 
-const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
-const side = ["home", "away"] as const;
-type TouchType = (typeof touchTypes)[number];
-type SideType = (typeof side)[number];
+type TouchType = "touches" | "corners" | "freekicks" | "penalties" | "outofplay";
+type SideType = "home" | "away";
 
 const lockState = ref<WakeLockSentinel | undefined>(undefined);
 

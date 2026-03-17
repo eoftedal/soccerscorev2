@@ -14,10 +14,8 @@ import { delta, msToTimeString, now } from "../timeUtils";
 import ModalDialog from "../components/ModalDialog.vue";
 import StyledButton from "@/components/StyledButton.vue";
 
-const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
-const side = ["home", "away"] as const;
-type TouchType = (typeof touchTypes)[number];
-type SideType = (typeof side)[number];
+type TouchType = "touches" | "corners" | "freekicks" | "penalties" | "outofplay";
+type SideType = "home" | "away";
 
 const props = defineProps<{
   openPeriod: Period;

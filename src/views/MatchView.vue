@@ -99,10 +99,7 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
     setTimeout(() => {
       fetch(dataURL)
         .then((res) => res.blob())
-        .then((blob) => {
-          const sanitize = (str: string) =>
-            str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
-          const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
+        .then(() => {
           //saveBlob(blob, filename);
         });
     }, 1000);
