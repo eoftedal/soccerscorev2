@@ -455,10 +455,12 @@ const currentPossession = computed(() => {
 .grid {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
+  gap: 2px;
 }
 div.big {
   height: 38vh;
   width: 100%;
+  gap: 2px;
 }
 div.big .plus {
   width: 100%;

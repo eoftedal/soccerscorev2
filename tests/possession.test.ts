@@ -1,5 +1,5 @@
-import { GoalScorer, MatchEventWithDelta, Period, Timestamp } from "../src/types";
-import { getPossession } from "../src/match";
+import { GoalScorer, MatchEventWithDelta, Period, Timestamp } from "../src/models/types";
+import { getPeriodPossession } from "../src/models/match";
 
 function asTimeseries(data: Array<[number, number]>) {
   return data as Array<MatchEventWithDelta>;
@@ -51,7 +51,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPossession(period);
+    const result = getPeriodPossession(period);
     expect(result[2]).toBe(5000);
     expect(result[3]).toBe(5000);
   });
@@ -76,7 +76,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPossession(period);
+    const result = getPeriodPossession(period);
     expect(result[2]).toBe(4300);
     expect(result[3]).toBe(5000);
   });
@@ -101,7 +101,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPossession(period);
+    const result = getPeriodPossession(period);
     expect(result[2]).toBe(4300);
     expect(result[3]).toBe(5000);
   });
@@ -127,7 +127,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPossession(period);
+    const result = getPeriodPossession(period);
     expect(result[2]).toBe(4000);
     expect(result[3]).toBe(5000);
   });
@@ -153,7 +153,7 @@ describe("should calculate possession", () => {
         ]),
       },
     };
-    const result = getPossession(period);
+    const result = getPeriodPossession(period);
     expect(result[2]).toBe(4000);
     expect(result[3]).toBe(5000);
   });
