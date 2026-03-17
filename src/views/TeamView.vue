@@ -99,7 +99,10 @@ function editTeam() {
 
     <h2 class="finished-header">
       <span>Finished matches</span>
-      <MdiIcon icon="mdiViewColumnOutline"  @click="router.push({ name: 'team-stats', params: { id: teamId } })" />
+      <MdiIcon
+        icon="mdiViewColumnOutline"
+        @click="router.push({ name: 'team-stats', params: { id: teamId } })"
+      />
     </h2>
     <input type="text" placeholder="Search" class="search" v-model="state.search" />
 
@@ -118,13 +121,15 @@ function editTeam() {
       </li>
     </ul>
     <div class="buttonRow">
-      <StyledButton @click="router.push({ name: 'export', params: { id: teamId } })"
+      <StyledButton
+        @click="router.push({ name: 'export', params: { id: teamId } })"
         icon="mdiDownloadMultipleOutline"
       >
         Export/import matches
       </StyledButton>
-      <StyledButton @click="router.push({ name: 'match-select', params: { id: teamId } })"
-      icon="mdiListBoxOutline"
+      <StyledButton
+        @click="router.push({ name: 'match-select', params: { id: teamId } })"
+        icon="mdiListBoxOutline"
       >
         Generate match list image
       </StyledButton>

@@ -315,7 +315,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </div>
 
       <div class="form swap-row">
-        <StyledButton @click="swapSides(match)" class="swap" icon="mdiSwapHorizontal">Swap sides</StyledButton>
+        <StyledButton @click="swapSides(match)" class="swap" icon="mdiSwapHorizontal"
+          >Swap sides</StyledButton
+        >
       </div>
 
       <div class="form team-with-logo">

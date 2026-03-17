@@ -6,7 +6,7 @@ import MdiIcon from "./MdiIcon.vue";
 const { onTouchStart } = useRipple();
 
 const props = defineProps<{
-  icon?: IconName,
+  icon?: IconName;
 }>();
 </script>
 
