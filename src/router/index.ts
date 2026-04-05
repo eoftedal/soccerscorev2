@@ -11,6 +11,7 @@ import LogoUpload from "@/views/LogoUpload.vue";
 import MatchSelectView from "@/views/MatchSelectView.vue";
 import MultiMatchImage from "@/views/MultiMatchImage.vue";
 import StatsView from "@/views/StatsView.vue";
+import ExportAllView from "@/views/ExportAllView.vue";
 
 import HelpView from "@/views/HelpView.vue";
 import StatsHelp from "@/views/StatsHelp.vue";
@@ -53,6 +54,11 @@ const router = createRouter({
       path: "/export/:id",
       name: "export",
       component: ExportView,
+    },
+    {
+      path: "/export-all/",
+      name: "export-all",
+      component: ExportAllView,
     },
     {
       path: "/match-select/:id",
