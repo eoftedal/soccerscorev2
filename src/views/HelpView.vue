@@ -111,7 +111,6 @@ function goHome() {
   margin: 0 auto;
   padding: 1rem;
   font-size: 1.1rem;
-  background: #fff;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -129,12 +128,13 @@ function goHome() {
 .close-btn {
   background: none;
   border: none;
-  font-size: 2rem;
   line-height: 1;
   cursor: pointer;
   color: #333;
   padding: 0 0.5rem;
+  font-size: 1.5rem;
 }
+
 .help-section {
   margin-bottom: 1.2rem;
 }
@@ -153,7 +153,10 @@ li {
   padding: 0.5rem;
   font-size: 1rem;
 }
-.close-btn {
-  font-size: 1.5rem;
+@media (prefers-color-scheme: dark) {
+  .close-btn {
+    color: var(--text-color);
+  }
 }
+
 </style>

@@ -104,7 +104,6 @@ function goHome() {
   margin: 0 auto;
   padding: 1rem;
   font-size: 1.1rem;
-  background: #fff;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -125,7 +124,7 @@ function goHome() {
   font-size: 2rem;
   line-height: 1;
   cursor: pointer;
-  color: #333;
+  color: var(--text-color);
   padding: 0 0.5rem;
 }
 .help-section {
@@ -139,7 +138,7 @@ function goHome() {
   font-weight: bold;
 }
 .stat-desc {
-  color: #333;
+  color: var(--text-color);
   font-size: 1em;
 }
 .help-view {
