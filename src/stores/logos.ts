@@ -41,6 +41,11 @@ export const useLogoStore = defineStore("logos", () => {
     return id;
   };
 
+  const importLogo = (logo: Logo): void => {
+    logos.value[logo.id] = logo;
+    saveLogos();
+  }
+
   // Remove a logo
   const removeLogo = (id: LogoId): void => {
     delete logos.value[id];
@@ -92,5 +97,6 @@ export const useLogoStore = defineStore("logos", () => {
     allLogos,
     findLogoByDataUrl,
     loadLogos,
+    importLogo,
   };
 });
