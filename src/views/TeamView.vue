@@ -76,7 +76,7 @@ function editTeam() {
       <!--
       <StyledButton v-if="!isUnassigned" @click="newMatch(teamId)">Add new match</StyledButton>
       -->
-      <h2 v-if="!isUnassigned" @click="newMatch(teamId)" class="plus">&#x2795;</h2>
+      <h2 v-if="!isUnassigned" @click="newMatch(teamId)" class="plus">&#x2795;&#xFE0E;</h2>
     </div>
     <ul class="matchList">
       <li
@@ -128,6 +128,10 @@ function editTeam() {
 <style scoped>
 .plus {
   cursor: pointer;
+  color: var(--color-text);
+  font-variant-emoji: text;
+  color: transparent;
+  text-shadow: 0 0 0 var(--color-text);
 }
 .header {
   display: flex;
