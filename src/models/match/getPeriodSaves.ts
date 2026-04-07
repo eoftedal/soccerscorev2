@@ -1,6 +1,6 @@
 import type { Period } from "../types";
 import { getPeriodAllEventsSorted } from "./getPeriodAllEventsSorted";
-import { CUTOFF, EventType, type Side, type TeamStat } from "./types";
+import { CUTOFF, EventType, type TeamStat } from "./types";
 
 export function getPeriodSaves(period: Period): TeamStat {
   const allEvents = getPeriodAllEventsSorted(period, true);
