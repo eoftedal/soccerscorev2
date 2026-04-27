@@ -1,69 +1,61 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { DataUrl, Logo, LogoId } from "@/models/types";
+import { idbGetAll, idbPut, idbDelete, idbGetMeta, idbSetMeta } from "./db";
 
-// Generate UUID v4
-const generateUUID = (): string => {
-  return crypto.randomUUID();
-};
+const generateUUID = (): string => crypto.randomUUID();
 
 export const useLogoStore = defineStore("logos", () => {
   const logos = ref<Record<LogoId, Logo>>({});
 
-  // Load from localStorage
-  const loadLogos = () => {
-    const stored = localStorage.getItem("logos");
-    if (stored) {
-      try {
-        logos.value = JSON.parse(stored);
-      } catch (e) {
-        console.error("Failed to parse logos from localStorage", e);
+  async function init() {
+    const migrated = await idbGetMeta("logos-localStorage-migrated");
+    if (migrated !== "true") {
+      const stored = localStorage.getItem("logos");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as Record<LogoId, Logo>;
+          for (const logo of Object.values(parsed)) {
+            await idbPut("logos", logo);
+          }
+        } catch (e) {
+          console.error("Failed to migrate logos from localStorage to IndexedDB", e);
+        }
       }
+      await idbSetMeta("logos-localStorage-migrated", "true");
     }
-  };
 
-  // Save to localStorage
-  const saveLogos = () => {
-    localStorage.setItem("logos", JSON.stringify(logos.value));
-  };
+    const allLogos = await idbGetAll<Logo>("logos");
+    logos.value = Object.fromEntries(allLogos.map((l) => [l.id, l])) as Record<LogoId, Logo>;
+  }
 
-  // Add a new logo
+  const initialized = init();
+
   const addLogo = (name: string, dataUrl: DataUrl): LogoId => {
     const id = generateUUID() as LogoId;
-    const logo: Logo = {
-      id,
-      name,
-      dataUrl,
-      uploadedAt: Date.now(),
-    };
+    const logo: Logo = { id, name, dataUrl, uploadedAt: Date.now() };
     logos.value[id] = logo;
-    saveLogos();
+    idbPut("logos", logo);
     return id;
   };
 
   const importLogo = (logo: Logo): void => {
     logos.value[logo.id] = logo;
-    saveLogos();
-  }
-
-  // Remove a logo
-  const removeLogo = (id: LogoId): void => {
-    delete logos.value[id];
-    saveLogos();
+    idbPut("logos", logo);
   };
 
-  // Get a logo by ID
+  const removeLogo = (id: LogoId): void => {
+    delete logos.value[id];
+    idbDelete("logos", id);
+  };
+
   const getLogo = (id: LogoId | undefined): Logo | undefined => {
     if (!id) return undefined;
     return logos.value[id];
   };
 
-  // Get logo data URL by ID
-  const getLogoUrl = (id: LogoId | undefined): string | undefined => {
-    return getLogo(id)?.dataUrl;
-  };
+  const getLogoUrl = (id: LogoId | undefined): string | undefined => getLogo(id)?.dataUrl;
 
-  // Search logos by name
   const searchLogos = computed(() => {
     return (query: string): Logo[] => {
       const lowerQuery = query.toLowerCase();
@@ -73,22 +65,18 @@ export const useLogoStore = defineStore("logos", () => {
     };
   });
 
-  // Get all logos sorted by upload date
   const allLogos = computed((): Logo[] => {
     return Object.values(logos.value).sort((a, b) => b.uploadedAt - a.uploadedAt);
   });
 
-  // Find logo by exact data URL (for migration)
   const findLogoByDataUrl = (dataUrl: string): LogoId | undefined => {
     const logo = Object.values(logos.value).find((l) => l.dataUrl === dataUrl);
     return logo?.id;
   };
 
-  // Initialize on store creation
-  loadLogos();
-
   return {
     logos,
+    initialized,
     addLogo,
     removeLogo,
     getLogo,
@@ -96,7 +84,6 @@ export const useLogoStore = defineStore("logos", () => {
     searchLogos,
     allLogos,
     findLogoByDataUrl,
-    loadLogos,
     importLogo,
   };
 });

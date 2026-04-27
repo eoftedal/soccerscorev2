@@ -308,7 +308,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
     >
       <div class="form teamselect">
         <label>Team:</label>
-        <select type="text" v-model="match.belongsTo">
+        <select v-model="match.belongsTo">
           <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
         </select>
       </div>

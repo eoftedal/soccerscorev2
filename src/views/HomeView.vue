@@ -89,7 +89,7 @@ function navigateToUnassigned() {
       >
       <StyledButton @click="router.push({ name: 'export-all' })">Export all</StyledButton>
     </div>
-    <footer @click="reload()">Version: {{ buildDate }}</footer>
+    <footer @click="reload()">Version: {{ buildDate }} Ixdb</footer>
   </main>
 </template>
 

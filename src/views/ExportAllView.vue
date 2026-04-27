@@ -56,7 +56,8 @@ function download() {
     };
     const asText = JSON.stringify(data);
     const file = new Blob([asText], { type: "application/json" });
-    saveBlob(file, "full-export-2024-04-05.json")
+    const date = new Date().toISOString().split("T")[0];
+    saveBlob(file, `full-export-${date}.json`);
 }
 
 </script>
