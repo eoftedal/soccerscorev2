@@ -281,7 +281,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         ><span v-if="!showLogos" class="teamName">{{ match.awayTeam }}</span>
       </h1>
     </header>
-    <header :class="{ pending: state.saveTimeout != undefined }" v-if="!openPeriod">
+    <header :class="{ pending: state.saveTimeout != undefined, pauseHeader: true }" v-if="!openPeriod">
       <h1>
         {{ match.homeTeam }}
       </h1>
@@ -456,6 +456,17 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   </ModalDialog>
 </template>
 <style scoped>
+
+.pauseHeader {
+  padding: 0.25em 0.5em;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid var(--color-border);
+}
+.pauseHeader h1 {
+  align-self: center;
+  text-wrap: balance;
+}
+
 h1 .teamName {
   font-size: 100%;
 }
@@ -485,7 +496,7 @@ h1.middle {
   border-top: 1px solid #fff;
 }
 .match header.pending {
-  border-color: #44f;
+  border-top-color: #44f;
 }
 .match header h1 {
   font-size: 120%;
