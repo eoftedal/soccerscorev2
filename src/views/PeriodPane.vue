@@ -460,7 +460,7 @@ const currentPossession = computed(() => {
   gap: 2px;
 }
 div.big {
-  height: 37vh;
+  height: 36vh;
   width: 100%;
   gap: 2px;
 }
@@ -484,7 +484,7 @@ div.big.right .plus span.num {
 }
 
 div.mid {
-  width: 1em;
+  width: 2em;
 }
 .goalsDialog input {
   width: 100%;
