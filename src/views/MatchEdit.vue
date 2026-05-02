@@ -314,11 +314,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
           </select>
         </div>
 
-        <div class="form swap-row">
-          <StyledButton @click="swapSides(match)" class="swap">Swap sides</StyledButton>
-        </div>
+ 
 
-        <div class="form team-with-logo">
+        <div class="form team-with-logo home">
           <label>Home:</label>
           <input type="text" v-model="match.homeTeam" />
           <div class="logo-container" @click="!homeLogoUrl && navigateToLogoUpload('home')">
@@ -334,7 +332,9 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
             <span v-if="homeLogoUrl" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
           </div>
         </div>
-
+        <div class="form swap-row">
+          <StyledButton @click="swapSides(match)" class="swap">Swap sides</StyledButton>
+        </div>
         <div class="form team-with-logo">
           <label>Away:</label>
           <input type="text" v-model="match.awayTeam" />
@@ -613,7 +613,8 @@ div.form > button {
 
 div.form.swap-row {
   justify-content: center;
-  padding: 0.5em 0;
+  padding: 0;
+  margin: -0.5em 0;
 }
 
 div.form.swap-row button {
@@ -626,6 +627,10 @@ div.form.team-with-logo {
   align-items: center;
   gap: 0.5em;
   margin-bottom: 0.25em;
+}
+
+div.form.team-with-logo.home {
+  margin-bottom: 0em;
 }
 
 div.form.team-with-logo input[type="text"] {
