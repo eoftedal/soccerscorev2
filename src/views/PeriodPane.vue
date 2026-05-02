@@ -460,7 +460,7 @@ const currentPossession = computed(() => {
   gap: 2px;
 }
 div.big {
-  height: 38vh;
+  height: 37vh;
   width: 100%;
   gap: 2px;
 }
@@ -496,6 +496,8 @@ div.mid {
   display: flex;
   height: 5.5vh;
   justify-content: space-between;
+  gap: 2px;
+
 }
 button span {
   pointer-events: none;
@@ -512,6 +514,8 @@ button {
 }
 .button button.plus {
   min-width: 27vw;
+  width: 100%;
+  padding: 0em 0.5em;
 }
 .button:nth-child(3n),
 .button:nth-child(3n) button {
@@ -524,6 +528,40 @@ button {
 .button .minus {
   display: inline-block;
 }
+
+
+.button:nth-child(3n) button.plus {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.button:nth-child(3n) button.minus {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.button:nth-child(3n+1) button.plus {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.button:nth-child(3n+1) button.minus {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.button.big.left button.plus {
+  border-radius: 0.75em 0 0 0.75em;
+}
+.button.big.left button.minus {
+  border-radius: 0 0.75em 0.75em 0;
+}
+.button.big.right button.plus {
+  border-radius: 0 0.75em 0.75em 0;
+}
+.button.big.right button.minus {
+  border-radius: 0.75em 0 0 0.75em;
+}
+
+
+
 .homePossession .button.big.left button.plus:not(.active) {
   background: linear-gradient(
     to bottom,

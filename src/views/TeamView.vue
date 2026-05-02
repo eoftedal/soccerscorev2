@@ -19,15 +19,14 @@ const isUnassigned = teamId === "unassigned";
 const { newMatch } = useMatchStore();
 const { matches, teams } = storeToRefs(useMatchStore());
 const state = reactive({
-  search: "",
-  teamName: isUnassigned ? "Unassigned" : (teams.value[teamId]?.name ?? ""),
+  search: ""
 });
 
-watch(teams, (newVal) => {
-  if (!isUnassigned) {
-    state.teamName = newVal[teamId]?.name ?? "";
-  }
+const teamName = computed(() => {
+  if (isUnassigned) return "Unassigned";
+  return teams.value[teamId]?.name ?? "";
 });
+
 const team = computed(() => {
   return teams.value[teamId];
 });
@@ -82,7 +81,7 @@ const logoUrl = computed(() => {
   <main>
     <h1 @click="editTeam" :class="{ clickable: !isUnassigned, teamNameHeader: true }">
       <img :src="logoUrl" alt="Team logo" class="teamlogo" v-if="logoUrl"/>
-      {{ state.teamName }}
+      {{ teamName }}
     </h1>
     <div class="header">
       <h2>New matches</h2>
