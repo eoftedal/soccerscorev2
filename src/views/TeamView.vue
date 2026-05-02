@@ -7,6 +7,9 @@ import TagList from "@/components/TagList.vue";
 import { getMatchGoals } from "../models/match";
 import { storeToRefs } from "pinia";
 import StyledButton from "@/components/StyledButton.vue";
+import { useLogos } from "@/composables/useLogos";
+
+const { getLogoUrl } = useLogos();
 
 const router = useRouter();
 const route = useRoute();
@@ -24,6 +27,9 @@ watch(teams, (newVal) => {
   if (!isUnassigned) {
     state.teamName = newVal[teamId]?.name ?? "";
   }
+});
+const team = computed(() => {
+  return teams.value[teamId];
 });
 
 function score(match: Match) {
@@ -66,11 +72,18 @@ function editTeam() {
     router.push({ name: "team-edit", params: { id: teamId } });
   }
 }
+const logoUrl = computed(() => {
+  if (!team.value?.logo) return undefined;
+  return getLogoUrl(team.value.logo);
+});
 </script>
 
 <template>
   <main>
-    <h1 @click="editTeam" :class="{ clickable: !isUnassigned }">{{ state.teamName }}</h1>
+    <h1 @click="editTeam" :class="{ clickable: !isUnassigned, teamNameHeader: true }">
+      <img :src="logoUrl" alt="Team logo" class="teamlogo" v-if="logoUrl"/>
+      {{ state.teamName }}
+    </h1>
     <div class="header">
       <h2>New matches</h2>
       <!--
@@ -126,6 +139,21 @@ function editTeam() {
   </main>
 </template>
 <style scoped>
+
+.teamNameHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.teamNameHeader img {
+  width: 1.5em;
+  height: 1.5em;
+  object-fit: contain;
+}
+  
+
 .plus {
   cursor: pointer;
   color: var(--color-text);
