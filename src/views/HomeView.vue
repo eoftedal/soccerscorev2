@@ -87,7 +87,7 @@ function navigateToUnassigned() {
         class="help-btn"
         >Explain the stats</StyledButton
       >
-      <StyledButton @click="router.push({ name: 'export-all' })">Export all</StyledButton>
+      <StyledButton @click="router.push({ name: 'export-all' })">Export / import all</StyledButton>
     </div>
     <footer @click="reload()">Version: {{ buildDate }} Ixdb</footer>
   </main>

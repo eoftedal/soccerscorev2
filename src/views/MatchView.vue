@@ -103,7 +103,8 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
           const sanitize = (str: string) =>
             str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
           const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
-          //saveBlob(blob, filename);
+          saveBlob(blob, filename);
+          state.matchImageUrl = "";
         });
     }, 1000);
   });

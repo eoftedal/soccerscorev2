@@ -306,93 +306,95 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         (match.periods.length == 0 || match.periods.every((x) => x.stop)) && !state.showPenalties
       "
     >
-      <div class="form teamselect">
-        <label>Team:</label>
-        <select v-model="match.belongsTo">
-          <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
-        </select>
-      </div>
-
-      <div class="form swap-row">
-        <StyledButton @click="swapSides(match)" class="swap">Swap sides</StyledButton>
-      </div>
-
-      <div class="form team-with-logo">
-        <label>Home:</label>
-        <input type="text" v-model="match.homeTeam" />
-        <div class="logo-container" @click="!homeLogoUrl && navigateToLogoUpload('home')">
-          <img v-if="homeLogoUrl" :src="homeLogoUrl" alt="Home logo" class="team-logo" />
-          <svg
-            v-else
-            class="default-crest"
-            viewBox="0 0 100 120"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
-          </svg>
-          <span v-if="homeLogoUrl" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
+      <div class="formWrapper">
+        <div class="form teamselect">
+          <label>Team:</label>
+          <select v-model="match.belongsTo">
+            <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
+          </select>
         </div>
-      </div>
 
-      <div class="form team-with-logo">
-        <label>Away:</label>
-        <input type="text" v-model="match.awayTeam" />
-        <div class="logo-container" @click="!awayLogoUrl && navigateToLogoUpload('away')">
-          <img v-if="awayLogoUrl" :src="awayLogoUrl" alt="Away logo" class="team-logo" />
-          <svg
-            v-else
-            class="default-crest"
-            viewBox="0 0 100 120"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
-          </svg>
-          <span v-if="awayLogoUrl" class="remove-logo" @click.stop="removeLogo('away')">✕</span>
+        <div class="form swap-row">
+          <StyledButton @click="swapSides(match)" class="swap">Swap sides</StyledButton>
         </div>
-      </div>
-      <div class="form">
-        <label>Date:</label>
-        <input type="date" v-model="match.date" />
-      </div>
-      <div class="form">
-        <label>Time:</label>
-        <input type="time" v-model="match.time" />
-      </div>
-      <div class="form">
-        <label>Location:</label>
-        <input type="text" v-model="match.location" />
-      </div>
-      <div class="form">
-        <label>Gametype:</label>
-        <select v-model="match.gameType">
-          <option>11v11</option>
-          <option>9v9</option>
-          <option>7v7</option>
-        </select>
-      </div>
-      <div class="form slider">
-        <label>Half time:</label>
-        <span>{{ match.periodLength }} min</span>
-        <input type="range" v-model="match.periodLength" min="10" max="45" />
-      </div>
-      <div class="form slider">
-        <label>Extra time:</label>
-        <span>{{ match.extraPeriodLength }} min</span>
-        <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
-      </div>
-      <div class="form tags">
-        <label>Tags:</label>
-        <input type="text" @keydown.enter.prevent="addTag($event.target as HTMLInputElement)" />
-        <div class="tags">
-          <TagList :tags="match.tags" @click="removeTag" />
+
+        <div class="form team-with-logo">
+          <label>Home:</label>
+          <input type="text" v-model="match.homeTeam" />
+          <div class="logo-container" @click="!homeLogoUrl && navigateToLogoUpload('home')">
+            <img v-if="homeLogoUrl" :src="homeLogoUrl" alt="Home logo" class="team-logo" />
+            <svg
+              v-else
+              class="default-crest"
+              viewBox="0 0 100 120"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+            </svg>
+            <span v-if="homeLogoUrl" class="remove-logo" @click.stop="removeLogo('home')">✕</span>
+          </div>
         </div>
-      </div>
-      <div class="toolbar">
-        <StyledButton @click="newPeriod()">Start new period</StyledButton>
-        <StyledButton @click="showPenalties()">
-          {{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties
-        </StyledButton>
-        <StyledButton @click="endMatch()">End match</StyledButton>
+
+        <div class="form team-with-logo">
+          <label>Away:</label>
+          <input type="text" v-model="match.awayTeam" />
+          <div class="logo-container" @click="!awayLogoUrl && navigateToLogoUpload('away')">
+            <img v-if="awayLogoUrl" :src="awayLogoUrl" alt="Away logo" class="team-logo" />
+            <svg
+              v-else
+              class="default-crest"
+              viewBox="0 0 100 120"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M 10 10 L 90 10 L 90 80 L 50 110 L 10 80 Z" />
+            </svg>
+            <span v-if="awayLogoUrl" class="remove-logo" @click.stop="removeLogo('away')">✕</span>
+          </div>
+        </div>
+        <div class="form">
+          <label>Date:</label>
+          <input type="date" v-model="match.date" />
+        </div>
+        <div class="form">
+          <label>Time:</label>
+          <input type="time" v-model="match.time" />
+        </div>
+        <div class="form">
+          <label>Location:</label>
+          <input type="text" v-model="match.location" />
+        </div>
+        <div class="form">
+          <label>Gametype:</label>
+          <select v-model="match.gameType">
+            <option>11v11</option>
+            <option>9v9</option>
+            <option>7v7</option>
+          </select>
+        </div>
+        <div class="form slider">
+          <label>Half time:</label>
+          <span>{{ match.periodLength }} min</span>
+          <input type="range" v-model="match.periodLength" min="10" max="45" />
+        </div>
+        <div class="form slider">
+          <label>Extra time:</label>
+          <span>{{ match.extraPeriodLength }} min</span>
+          <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
+        </div>
+        <div class="form tags">
+          <label>Tags:</label>
+          <input type="text" @keydown.enter.prevent="addTag($event.target as HTMLInputElement)" />
+          <div class="tags">
+            <TagList :tags="match.tags" @click="removeTag" />
+          </div>
+        </div>
+        <div class="toolbar">
+          <StyledButton @click="newPeriod()">Start new period</StyledButton>
+          <StyledButton @click="showPenalties()">
+            {{ match.penaltyRound != undefined ? "Show" : "Add" }} penalties
+          </StyledButton>
+          <StyledButton @click="endMatch()">End match</StyledButton>
+        </div>
       </div>
       <div class="activityScrollWrapper">
         <div class="activityWrapper">
@@ -597,6 +599,11 @@ div.form > button {
   height: 2.4em;
   display: flex;
   vertical-align: middle;
+}
+
+.formWrapper {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
 }
 
 .pause .form label {
