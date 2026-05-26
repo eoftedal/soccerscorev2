@@ -1,3 +1,5 @@
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { MatchEventWithDelta, Period, Timestamp } from "../src/models/types";
 import { getPeriodPasses, getPeriodPassStrings } from "../src/models/match";
 function asTimeseries(data: Array<[number, number]>) {
@@ -51,8 +53,8 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPasses(period);
-    expect(result[0]).toBe(2);
-    expect(result[1]).toBe(1);
+    assert.strictEqual(result[0], 2);
+    assert.strictEqual(result[1], 1);
   });
 
   it("should work with out of play", () => {
@@ -77,8 +79,8 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPasses(period);
-    expect(result[0]).toBe(1);
-    expect(result[1]).toBe(1);
+    assert.strictEqual(result[0], 1);
+    assert.strictEqual(result[1], 1);
   });
 });
 
@@ -101,10 +103,10 @@ describe("should calculate strings", () => {
       },
     };
     const x = getPeriodPassStrings(period);
-    expect(x[0].length).toBe(0);
-    expect(x[1].length).toBe(0);
-    expect(x[2]).toBe(0);
-    expect(x[3]).toBe(0);
+    assert.strictEqual(x[0].length, 0);
+    assert.strictEqual(x[1].length, 0);
+    assert.strictEqual(x[2], 0);
+    assert.strictEqual(x[3], 0);
 
   });
   it("should be 1 for a single pass", () => {
@@ -126,12 +128,12 @@ describe("should calculate strings", () => {
       },
     };
     const x = getPeriodPassStrings(period);
-    expect(x[0][1]).toBe(1);
-    expect(x[1].length).toBe(0);
-    expect(x[2]).toBe(1);
-    expect(x[3]).toBe(0);
-    expect(x[4]).toEqual([1,1]);
-    expect(x[5]).toEqual([0,0]);
+    assert.strictEqual(x[0][1], 1);
+    assert.strictEqual(x[1].length, 0);
+    assert.strictEqual(x[2], 1);
+    assert.strictEqual(x[3], 0);
+    assert.deepStrictEqual(x[4], [1,1]);
+    assert.deepStrictEqual(x[5], [0,0]);
   });
 
   it("should be 1.5 for a 2 and a 1", () => {
@@ -156,12 +158,12 @@ describe("should calculate strings", () => {
       },
     };
     const x = getPeriodPassStrings(period);
-    expect(x[0]).toEqual([undefined, 2, 1]);
-    expect(x[1].length).toBe(0);
-    expect(x[2]).toBe(1.5);
-    expect(x[3]).toBe(0);
-    expect(x[4]).toEqual([3,2]);
-    expect(x[5]).toEqual([0,0]);
+    assert.deepStrictEqual(x[0], [, 2, 1]);
+    assert.strictEqual(x[1].length, 0);
+    assert.strictEqual(x[2], 1.5);
+    assert.strictEqual(x[3], 0);
+    assert.deepStrictEqual(x[4], [3,2]);
+    assert.deepStrictEqual(x[5], [0,0]);
   });
   it("should be 2 for a 1 and 3 string", () => {
     const period: Period = {
@@ -188,12 +190,12 @@ describe("should calculate strings", () => {
       },
     };
     const x = getPeriodPassStrings(period);
-    expect(x[0]).toEqual([undefined, 2, 1, 1]);
-    expect(x[1]).toEqual([undefined, 1]);
-    expect(x[2]).toBe(2);
-    expect(x[3]).toBe(1);
-    expect(x[4]).toEqual([4,2]);
-    expect(x[5]).toEqual([1,1]);
+    assert.deepStrictEqual(x[0], [, 2, 1, 1]);
+    assert.deepStrictEqual(x[1], [, 1]);
+    assert.strictEqual(x[2], 2);
+    assert.strictEqual(x[3], 1);
+    assert.deepStrictEqual(x[4], [4,2]);
+    assert.deepStrictEqual(x[5], [1,1]);
   });
   it("should count interceptions", () => {
     const period: Period = {
@@ -218,11 +220,11 @@ describe("should calculate strings", () => {
       },
     };
     const x = getPeriodPassStrings(period);
-    expect(x[0]).toEqual([undefined, 1, 1]);
-    expect(x[1]).toEqual([]);
-    expect(x[2]).toBe(2);
-    expect(x[3]).toBe(0);
-    expect(x[4]).toEqual([2,1]);
-    expect(x[5]).toEqual([0,0]);
+    assert.deepStrictEqual(x[0], [, 1, 1]);
+    assert.deepStrictEqual(x[1], []);
+    assert.strictEqual(x[2], 2);
+    assert.strictEqual(x[3], 0);
+    assert.deepStrictEqual(x[4], [2,1]);
+    assert.deepStrictEqual(x[5], [0,0]);
   });
 });

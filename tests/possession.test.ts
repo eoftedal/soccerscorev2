@@ -1,3 +1,5 @@
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { GoalScorer, MatchEventWithDelta, Period, Timestamp } from "../src/models/types";
 import { getPeriodPossession } from "../src/models/match";
 
@@ -52,8 +54,8 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPossession(period);
-    expect(result[2]).toBe(5000);
-    expect(result[3]).toBe(5000);
+    assert.strictEqual(result[2], 5000);
+    assert.strictEqual(result[3], 5000);
   });
 
   it("should work with normal delayed event", () => {
@@ -77,8 +79,8 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPossession(period);
-    expect(result[2]).toBe(4300);
-    expect(result[3]).toBe(5000);
+    assert.strictEqual(result[2], 4300);
+    assert.strictEqual(result[3], 5000);
   });
   it("should work with normal delayed corner", () => {
     const period: Period = {
@@ -102,8 +104,8 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPossession(period);
-    expect(result[2]).toBe(4300);
-    expect(result[3]).toBe(5000);
+    assert.strictEqual(result[2], 4300);
+    assert.strictEqual(result[3], 5000);
   });
 
   it("should work with out-of-play events", () => {
@@ -128,8 +130,8 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPossession(period);
-    expect(result[2]).toBe(4000);
-    expect(result[3]).toBe(5000);
+    assert.strictEqual(result[2], 4000);
+    assert.strictEqual(result[3], 5000);
   });
 
   it("should work with goal events", () => {
@@ -154,7 +156,7 @@ describe("should calculate possession", () => {
       },
     };
     const result = getPeriodPossession(period);
-    expect(result[2]).toBe(4000);
-    expect(result[3]).toBe(5000);
+    assert.strictEqual(result[2], 4000);
+    assert.strictEqual(result[3], 5000);
   });
 });
