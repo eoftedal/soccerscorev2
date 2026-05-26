@@ -95,3 +95,9 @@ export type TeamData = {
   yellowCards: Array<MatchEvent>;
   redCards: Array<MatchEvent>;
 };
+
+export const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
+export const side = ["home", "away"] as const;
+
+export type TouchType = (typeof touchTypes)[number];
+export type SideType = (typeof side)[number];

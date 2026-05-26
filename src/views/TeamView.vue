@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
-import { computed, reactive, watch } from "vue";
+import { computed, reactive } from "vue";
 import { type Match, type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import TagList from "@/components/TagList.vue";
@@ -19,7 +19,7 @@ const isUnassigned = teamId === "unassigned";
 const { newMatch } = useMatchStore();
 const { matches, teams } = storeToRefs(useMatchStore());
 const state = reactive({
-  search: ""
+  search: "",
 });
 
 const teamName = computed(() => {
@@ -80,7 +80,7 @@ const logoUrl = computed(() => {
 <template>
   <main>
     <h1 @click="editTeam" :class="{ clickable: !isUnassigned, teamNameHeader: true }">
-      <img :src="logoUrl" alt="Team logo" class="teamlogo" v-if="logoUrl"/>
+      <img :src="logoUrl" alt="Team logo" class="teamlogo" v-if="logoUrl" />
       {{ teamName }}
     </h1>
     <div class="header">
@@ -139,7 +139,6 @@ const logoUrl = computed(() => {
   </main>
 </template>
 <style scoped>
-
 .teamNameHeader {
   display: flex;
   align-items: center;
@@ -152,7 +151,6 @@ const logoUrl = computed(() => {
   height: 1.5em;
   object-fit: contain;
 }
-  
 
 .plus {
   cursor: pointer;

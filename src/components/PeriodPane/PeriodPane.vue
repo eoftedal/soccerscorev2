@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
 import {
+  type SideType,
+  type TouchType,
   type Assister,
   type Delta,
   type GoalScorer,
@@ -13,11 +15,6 @@ import { setActive, setInactive } from "./buttonUtil";
 import { delta, msToTimeString, now } from "../../timeUtils";
 import ModalDialog from "../ModalDialog.vue";
 import StyledButton from "@/components/StyledButton.vue";
-
-const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
-const side = ["home", "away"] as const;
-type TouchType = (typeof touchTypes)[number];
-type SideType = (typeof side)[number];
 
 const props = defineProps<{
   openPeriod: Period;
@@ -498,7 +495,6 @@ div.mid {
   height: 5.5vh;
   justify-content: space-between;
   gap: 2px;
-
 }
 button span {
   pointer-events: none;
@@ -530,7 +526,6 @@ button {
   display: inline-block;
 }
 
-
 .button:nth-child(3n) button.plus {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -539,11 +534,11 @@ button {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-.button:nth-child(3n+1) button.plus {
+.button:nth-child(3n + 1) button.plus {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-.button:nth-child(3n+1) button.minus {
+.button:nth-child(3n + 1) button.minus {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -560,8 +555,6 @@ button {
 .button.big.right button.minus {
   border-radius: 0.75em 0 0 0.75em;
 }
-
-
 
 .homePossession .button.big.left button.plus:not(.active) {
   background: linear-gradient(

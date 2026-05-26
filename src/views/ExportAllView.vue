@@ -23,7 +23,6 @@ const teams = ref<Team[]>([]);
 const matches = ref<Match[]>([]);
 const logos = ref<Logo[]>([]);
 
-
 const readJsonFile = (file: File) => {
   const reader = new FileReader();
   teams.value = [];
@@ -32,11 +31,15 @@ const readJsonFile = (file: File) => {
 
   reader.onload = (e) => {
     try {
-      const data = JSON.parse(e.target?.result as string) as { teams: Team[], matches: Match[], logos: Logo[] };
+      const data = JSON.parse(e.target?.result as string) as {
+        teams: Team[];
+        matches: Match[];
+        logos: Logo[];
+      };
       teams.value = data.teams;
       matches.value = data.matches;
       logos.value = data.logos;
-    } catch (error) {
+    } catch {
       alert("Error parsing match data");
     }
   };
@@ -44,35 +47,36 @@ const readJsonFile = (file: File) => {
 };
 
 function importAll() {
-    teams.value.forEach(t => store.saveTeam(t));
-    matches.value.forEach(m => store.saveMatch(m));
-    logos.value.forEach(l => logoStore.importLogo(l));
+  teams.value.forEach((t) => store.saveTeam(t));
+  matches.value.forEach((m) => store.saveMatch(m));
+  logos.value.forEach((l) => logoStore.importLogo(l));
 }
 function download() {
-    const data = {
-        teams: Object.values(store.teams),
-        matches: Object.values(store.teams).map(t => store.getMatches(t.id)).reduce((a,b) => a.concat(b), []),
-        logos: Object.values(logoStore.allLogos)
-    };
-    const asText = JSON.stringify(data);
-    const file = new Blob([asText], { type: "application/json" });
-    const date = new Date().toISOString().split("T")[0];
-    saveBlob(file, `full-export-${date}.json`);
+  const data = {
+    teams: Object.values(store.teams),
+    matches: Object.values(store.teams)
+      .map((t) => store.getMatches(t.id))
+      .reduce((a, b) => a.concat(b), []),
+    logos: Object.values(logoStore.allLogos),
+  };
+  const asText = JSON.stringify(data);
+  const file = new Blob([asText], { type: "application/json" });
+  const date = new Date().toISOString().split("T")[0];
+  saveBlob(file, `full-export-${date}.json`);
 }
-
 </script>
 <template>
-<main>
+  <main>
     <h2>Import matches</h2>
     <div>
       <input type="file" @change="handleFileUpload" accept="application/json" />
 
       <div v-if="file">
-      <div>Teams: {{ teams.length }}</div>
-      <div>Matches: {{ matches.length }}</div>
-      <div>Logos: {{ logos.length }}</div>
+        <div>Teams: {{ teams.length }}</div>
+        <div>Matches: {{ matches.length }}</div>
+        <div>Logos: {{ logos.length }}</div>
 
-      <StyledButton @click="importAll()">Import</StyledButton>
+        <StyledButton @click="importAll()">Import</StyledButton>
       </div>
     </div>
     <h2>Export matches</h2>

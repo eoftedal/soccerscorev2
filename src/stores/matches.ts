@@ -171,5 +171,15 @@ export const useMatchStore = defineStore("match", () => {
     return matches.value.filter((m) => m.belongsTo == teamId);
   }
 
-  return { matches, teams, initialized, newMatch, saveMatch, getMatch, newTeam, getMatches, saveTeam };
+  return {
+    matches,
+    teams,
+    initialized,
+    newMatch,
+    saveMatch,
+    getMatch,
+    newTeam,
+    getMatches,
+    saveTeam,
+  };
 });

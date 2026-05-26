@@ -90,7 +90,7 @@ const readJsonFile = (file: File) => {
     try {
       const data = JSON.parse(e.target?.result as string);
       importMatches.value = Array.isArray(data) ? data : [data];
-    } catch (error) {
+    } catch {
       alert("Error parsing match data");
     }
   };

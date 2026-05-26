@@ -3,7 +3,14 @@ import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { type Assister, type GoalScorer, type Period, type Timestamp } from "../models/types";
+import {
+  type TouchType,
+  type SideType,
+  type Assister,
+  type GoalScorer,
+  type Period,
+  type Timestamp,
+} from "../models/types";
 import { getPeriodGoalEvents, getMatchGoals, swapSides } from "../models/match";
 import ActivityDisplay from "@/components/ActivityDisplay";
 import ModalDialog from "../components/ModalDialog.vue";
@@ -22,11 +29,6 @@ const { saveMatch, getMatch, teams } = matchStore;
 const { getLogoUrl } = useLogos();
 
 const match = getMatch(id as string);
-
-const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;
-const side = ["home", "away"] as const;
-type TouchType = (typeof touchTypes)[number];
-type SideType = (typeof side)[number];
 
 const lockState = ref<WakeLockSentinel | undefined>(undefined);
 
@@ -279,7 +281,10 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         ><span v-if="!showLogos" class="teamName">{{ match.awayTeam }}</span>
       </h1>
     </header>
-    <header :class="{ pending: state.saveTimeout != undefined, pauseHeader: true }" v-if="!openPeriod">
+    <header
+      :class="{ pending: state.saveTimeout != undefined, pauseHeader: true }"
+      v-if="!openPeriod"
+    >
       <h1>
         {{ match.homeTeam }}
       </h1>
@@ -311,8 +316,6 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
             <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
           </select>
         </div>
-
- 
 
         <div class="form team-with-logo home">
           <label>Home:</label>
@@ -454,7 +457,6 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
   </ModalDialog>
 </template>
 <style scoped>
-
 .pauseHeader {
   padding: 0.25em 0.5em;
   margin-bottom: 0.5em;
