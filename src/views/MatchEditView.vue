@@ -9,8 +9,8 @@ import ActivityDisplay from "@/components/ActivityDisplay";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
 import { now } from "@/timeUtils";
-import PeriodPane from "./PeriodPane.vue";
-import PenaltyRound from "./PenaltyRound.vue";
+import PeriodPane from "../components/PeriodPane";
+import PenaltyRound from "../components/PenaltyRound.vue";
 import { getMatchGoalEvents } from "@/models/match/getMatchGoalEvents";
 import StyledButton from "@/components/StyledButton.vue";
 
@@ -86,7 +86,6 @@ if (match) {
           state.saveTimeout = undefined;
         }, 2000);
       }
-      //saveMatch(m);
     },
     { deep: true },
   );
@@ -259,7 +258,6 @@ const awayLogoUrl = computed(() => getLogoUrl(match?.awayLogo));
 const showLogos = computed(() => homeLogoUrl.value && awayLogoUrl.value);
 
 const scoreModal = ref<InstanceType<typeof ModalDialog> | null>(null);
-const promptModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
 

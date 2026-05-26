@@ -6,12 +6,12 @@ import {
   type GoalScorer,
   type Period,
   type Timestamp,
-} from "../models/types";
+} from "../../models/types";
 import UpDown from "./UpDown.vue";
-import { CUTOFF, getPeriodPossession } from "../models/match";
+import { CUTOFF, getPeriodPossession } from "../../models/match";
 import { setActive, setInactive } from "./buttonUtil";
-import { delta, msToTimeString, now } from "../timeUtils";
-import ModalDialog from "../components/ModalDialog.vue";
+import { delta, msToTimeString, now } from "../../timeUtils";
+import ModalDialog from "../ModalDialog.vue";
 import StyledButton from "@/components/StyledButton.vue";
 
 const touchTypes = ["touches", "corners", "freekicks", "penalties", "outofplay"] as const;

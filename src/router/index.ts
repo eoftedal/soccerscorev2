@@ -2,19 +2,19 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import ExportView from "../views/ExportView.vue";
 import MatchView from "@/views/MatchView.vue";
-import MatchEdit from "@/views/MatchEdit.vue";
-import MatchImage from "@/views/MatchImage.vue";
+import MatchEdit from "@/views/MatchEditView.vue";
+import MatchImage from "@/views/MatchImageView.vue";
 import TestView from "@/views/TestView.vue";
 import TeamView from "@/views/TeamView.vue";
-import TeamEdit from "@/views/TeamEdit.vue";
-import LogoUpload from "@/views/LogoUpload.vue";
+import TeamEdit from "@/views/TeamEditView.vue";
+import LogoUpload from "@/views/LogoUploadView.vue";
 import MatchSelectView from "@/views/MatchSelectView.vue";
-import MultiMatchImage from "@/views/MultiMatchImage.vue";
+import MultiMatchImage from "@/views/MultiMatchImageView.vue";
 import StatsView from "@/views/StatsView.vue";
 import ExportAllView from "@/views/ExportAllView.vue";
 
 import HelpView from "@/views/HelpView.vue";
-import StatsHelp from "@/views/StatsHelp.vue";
+import StatsHelp from "@/views/StatsHelpView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),

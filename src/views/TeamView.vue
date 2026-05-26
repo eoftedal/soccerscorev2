@@ -103,6 +103,7 @@ const logoUrl = computed(() => {
           <div class="away">{{ m.awayTeam }}</div>
         </div>
       </li>
+      <li v-if="notFinished.length == 0" class="emptyPlaceholder">No upcoming matches</li>
     </ul>
 
     <div class="finished-header">
@@ -217,5 +218,11 @@ h1.clickable {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5em;
+}
+.emptyPlaceholder {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  padding: 1em !important;
 }
 </style>
