@@ -10,6 +10,7 @@ import {
   type GoalScorer,
   type Period,
   type Timestamp,
+  gameTypes,
 } from "../models/types";
 import { getPeriodGoalEvents, getMatchGoals, swapSides } from "../models/match";
 import ActivityDisplay from "@/components/ActivityDisplay";
@@ -32,7 +33,7 @@ const match = getMatch(id as string);
 
 const lockState = ref<WakeLockSentinel | undefined>(undefined);
 
-onMounted(async () => {
+async function requestWakeLock() {
   try {
     const wakeLock = await navigator.wakeLock.request("screen");
     wakeLock.addEventListener("release", () => {
@@ -49,7 +50,23 @@ onMounted(async () => {
     console.log(err);
     lockState.value = undefined;
   }
+}
+
+let currentWakeLockRequest: Promise<void> | null = null;
+function ensureWakeLock() {
+  if (lockState.value && lockState.value.released === false) return;
+  if (!currentWakeLockRequest) {
+    currentWakeLockRequest = requestWakeLock().finally(() => {
+      currentWakeLockRequest = null;
+    });
+  }
+  return currentWakeLockRequest;
+}
+
+onMounted(async () => {
+  await ensureWakeLock();
 });
+
 onUnmounted(() => {
   if (lockState.value?.released === false) lockState.value?.release();
   lockState.value = undefined;
@@ -296,7 +313,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
       </h1>
     </header>
 
-    <PeriodPane :open-period="openPeriod" v-if="openPeriod" />
+    <PeriodPane :open-period="openPeriod" v-if="openPeriod" @newTouch="ensureWakeLock" />
     <PenaltyRound
       :penaltyRound="match.penaltyRound"
       v-if="match.penaltyRound && state.showPenalties"
@@ -367,9 +384,7 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <div class="form">
           <label>Gametype:</label>
           <select v-model="match.gameType">
-            <option>11v11</option>
-            <option>9v9</option>
-            <option>7v7</option>
+            <option v-for="type in gameTypes" :key="type" :value="type">{{ type }}</option>
           </select>
         </div>
         <div class="form slider">

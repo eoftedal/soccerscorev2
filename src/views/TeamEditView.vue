@@ -2,7 +2,7 @@
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { computed } from "vue";
-import { type TeamId } from "@/models/types";
+import { gameTypes, type PeriodLength, type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import StyledButton from "@/components/StyledButton.vue";
@@ -19,6 +19,9 @@ const team = teams.value[teamId];
 if (!team) {
   router.push({ name: "home" });
 }
+
+team.defaultGameType = team.defaultGameType ?? "11v11";
+team.defaultPeriodLength = team.defaultPeriodLength ?? (35 as PeriodLength);
 
 const logoUrl = computed(() => {
   if (!team?.logo) return undefined;
@@ -73,13 +76,26 @@ function cancel() {
     </div>
 
     <div class="form-group">
-      <label for="displayName">Home ground</label>
+      <label for="homeground">Home ground</label>
       <input
-        id="displayName"
+        id="homeground"
         type="text"
         v-model="team.homeground"
         placeholder="Home ground for matches"
       />
+    </div>
+
+    <div class="form-group">
+      <label for="defaultGameType">Default Game Type</label>
+      <select id="defaultGameType" v-model="team.defaultGameType">
+        <option v-for="type in gameTypes" :key="type" :value="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Half time:</label>
+      <span>{{ team.defaultPeriodLength }} min</span>
+      <input type="range" v-model="team.defaultPeriodLength" min="10" max="45" />
     </div>
 
     <div class="form-group">

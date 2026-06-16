@@ -20,6 +20,10 @@ const props = defineProps<{
   openPeriod: Period;
 }>();
 
+const emit = defineEmits<{
+  (e: "newTouch", value: void): void;
+}>();
+
 const openPeriod = ref<Period>(props.openPeriod);
 
 watch(
@@ -45,7 +49,6 @@ const state = reactive({
 });
 
 const scoreModal = ref<InstanceType<typeof ModalDialog> | null>(null);
-const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 
 function isOutOfPlay() {
   if (state.outOfPlayHold) return true;
@@ -115,8 +118,10 @@ function addGoal(period: Period, team: "home" | "away") {
     const name = state.scoreDialog.goalScorer;
     if (name == null || name == undefined) return;
     period[team].goals.push([t, name as GoalScorer, state.scoreDialog.assister as Assister]);
+    window.scrollTo(0, 0);
   };
   scoreModal.value?.open();
+  window.scrollTo(0, 0);
 }
 function removeGoal(period: Period, team: "home" | "away") {
   period[team].goals.pop();
@@ -166,6 +171,7 @@ function finishTouch(event: TouchEvent, side: "home" | "away") {
   state.outOfPlayHold = false;
   if (openPeriod.value) addTouch(openPeriod.value, side);
   setInactive(event);
+  emit("newTouch");
 }
 
 function addTouch(period: Period, team: SideType) {

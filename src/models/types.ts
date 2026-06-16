@@ -40,7 +40,12 @@ export type Team = {
   homeground: string;
   displayName?: TeamName;
   logo?: TeamLogoRef;
+  defaultGameType?: GameType;
+  defaultPeriodLength?: PeriodLength;
 };
+
+export const gameTypes = ["11v11", "9v9", "7v7", "5v5"] as const;
+export type GameType = (typeof gameTypes)[number];
 
 export type Match = {
   id: string;
@@ -52,7 +57,7 @@ export type Match = {
   location: string;
   date: DateString;
   time: TimeString;
-  gameType: string;
+  gameType: GameType;
   state: "not_started" | "paused" | "in_progress" | "finished";
   currentPeriod: PeriodNumber;
   periods: Period[];
