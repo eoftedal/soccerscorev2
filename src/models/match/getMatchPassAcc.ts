@@ -8,5 +8,8 @@ export function getMatchPassAcc(match: Match): TeamStat {
     .map((p) => getPeriodAllTouches(p))
     .reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
   const allPasses = getMatchPasses(match);
-  return [(allPasses[0] / allTouches[0]) * 100, (allPasses[1] / allTouches[1]) * 100];
+  return [
+    allTouches[0] == 0 ? 0 : (allPasses[0] / allTouches[0]) * 100,
+    allTouches[1] == 0 ? 0 : (allPasses[1] / allTouches[1]) * 100,
+  ];
 }

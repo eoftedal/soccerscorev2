@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { gameTypes, type PeriodLength, type TeamId } from "@/models/types";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
@@ -11,21 +11,31 @@ const router = useRouter();
 const route = useRoute();
 const teamId = route.params.id as TeamId;
 
-const { saveTeam } = useMatchStore();
-const { teams } = storeToRefs(useMatchStore());
+const matchStore = useMatchStore();
+const { saveTeam } = matchStore;
+const { teams } = storeToRefs(matchStore);
 const { getLogoUrl } = useLogos();
 
-const team = teams.value[teamId];
-if (!team) {
-  router.push({ name: "home" });
-}
+// Teams are loaded asynchronously, so the team may not be present yet on a page reload
+const team = computed(() => teams.value[teamId]);
 
-team.defaultGameType = team.defaultGameType ?? "11v11";
-team.defaultPeriodLength = team.defaultPeriodLength ?? (35 as PeriodLength);
+watch(
+  team,
+  (t) => {
+    if (!t) return;
+    t.defaultGameType = t.defaultGameType ?? "11v11";
+    t.defaultPeriodLength = t.defaultPeriodLength ?? (35 as PeriodLength);
+  },
+  { immediate: true },
+);
+
+matchStore.initialized.then(() => {
+  if (!team.value) router.push({ name: "home" });
+});
 
 const logoUrl = computed(() => {
-  if (!team?.logo) return undefined;
-  return getLogoUrl(team.logo);
+  if (!team.value?.logo) return undefined;
+  return getLogoUrl(team.value.logo);
 });
 
 function navigateToLogoUpload() {
@@ -33,20 +43,20 @@ function navigateToLogoUpload() {
     name: "logo-upload",
     params: {
       context: "team",
-      teamId: teamId,
+      id: teamId,
     },
   });
 }
 
 function removeLogo() {
-  if (!team) return;
-  team.logo = undefined;
-  saveTeam(team);
+  if (!team.value) return;
+  team.value.logo = undefined;
+  saveTeam(team.value);
 }
 
 function save() {
-  if (!team) return;
-  saveTeam(team);
+  if (!team.value) return;
+  saveTeam(team.value);
   router.back();
 }
 
@@ -56,7 +66,7 @@ function cancel() {
 </script>
 
 <template>
-  <main>
+  <main v-if="team">
     <h1>Edit Team</h1>
 
     <div class="form-group">
@@ -95,7 +105,7 @@ function cancel() {
     <div class="form-group">
       <label>Half time:</label>
       <span>{{ team.defaultPeriodLength }} min</span>
-      <input type="range" v-model="team.defaultPeriodLength" min="10" max="45" />
+      <input type="range" v-model.number="team.defaultPeriodLength" min="10" max="45" />
     </div>
 
     <div class="form-group">

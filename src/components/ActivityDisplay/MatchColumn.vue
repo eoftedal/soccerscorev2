@@ -31,12 +31,15 @@ function chunk(data: number[], chunkSize: number = 2) {
 }
 function getLongestStringMatch(match: Match): [number, number] {
   const passStrings = getMatchPassStrings(match);
-  return [passStrings[0].length - 1, passStrings[1].length - 1];
+  return [Math.max(0, passStrings[0].length - 1), Math.max(0, passStrings[1].length - 1)];
 }
 function getMatchAverageRecoveryTime(match?: Match): [number, number] {
   if (!match) return [0, 0];
   const data = getMatchRecoveryTime(match);
-  return [data[0][0] / data[0][1] / 1000, data[1][0] / data[1][1] / 1000];
+  return [
+    data[0][1] == 0 ? 0 : data[0][0] / data[0][1] / 1000,
+    data[1][1] == 0 ? 0 : data[1][0] / data[1][1] / 1000,
+  ];
 }
 </script>
 <template>

@@ -5,7 +5,7 @@ import type { Match, TeamId } from "@/models/types";
 import { useMatchStore } from "@/stores/matches";
 import { levenshteinDistance } from "@/stringutils";
 import { storeToRefs } from "pinia";
-import { computed, reactive, watch } from "vue";
+import { computed, reactive } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -15,15 +15,11 @@ const { matches, teams } = storeToRefs(useMatchStore());
 
 const state = reactive({
   search: "",
-  teamName: teams.value[teamId]?.name ?? "",
-  teamLogo: teams.value[teamId]?.logo,
   showSingle: false,
 });
 
-watch(teams, (newVal) => {
-  state.teamName = newVal[teamId]?.name ?? "";
-  state.teamLogo = teams.value[teamId]?.logo;
-});
+const teamName = computed(() => teams.value[teamId]?.name ?? "");
+const teamLogo = computed(() => teams.value[teamId]?.logo);
 
 function isTextMatch(m: Match) {
   return (
@@ -33,12 +29,12 @@ function isTextMatch(m: Match) {
   );
 }
 function isHomeMatch(match: Match) {
-  if (match.homeLogo && match.homeLogo == state.teamLogo) return true;
-  if (match.awayLogo && match.awayLogo == state.teamLogo) return false;
-  if (match.homeTeam == state.teamName) return true;
-  if (match.awayTeam == state.teamName) return false;
-  const hdist = levenshteinDistance(match.homeTeam, state.teamName);
-  const adist = levenshteinDistance(match.awayTeam, state.teamName);
+  if (match.homeLogo && match.homeLogo == teamLogo.value) return true;
+  if (match.awayLogo && match.awayLogo == teamLogo.value) return false;
+  if (match.homeTeam == teamName.value) return true;
+  if (match.awayTeam == teamName.value) return false;
+  const hdist = levenshteinDistance(match.homeTeam, teamName.value);
+  const adist = levenshteinDistance(match.awayTeam, teamName.value);
   if (hdist < adist) return true;
   return false;
 }
@@ -65,7 +61,7 @@ const sorted = computed(() => {
 <template>
   <div :class="{ main: true, singleColumn: state.showSingle, doubleColumn: !state.showSingle }">
     <div class="top">
-      <h3>{{ state.teamName }}</h3>
+      <h3>{{ teamName }}</h3>
 
       <div class="icon" @click="state.showSingle = !state.showSingle">
         <div></div>

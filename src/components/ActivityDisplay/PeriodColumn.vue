@@ -20,11 +20,14 @@ const period = props.period;
 
 function getAverageRecoveryTime(period: Period): [number, number] {
   const data = getPeriodRecoveryTime(period);
-  return [data[0][0] / data[0][1] / 1000, data[1][0] / data[1][1] / 1000];
+  return [
+    data[0][1] == 0 ? 0 : data[0][0] / data[0][1] / 1000,
+    data[1][1] == 0 ? 0 : data[1][0] / data[1][1] / 1000,
+  ];
 }
 function getLongestString(period: Period): [number, number] {
   const passStrings = getPeriodPassStrings(period);
-  return [passStrings[0].length - 1, passStrings[1].length - 1];
+  return [Math.max(0, passStrings[0].length - 1), Math.max(0, passStrings[1].length - 1)];
 }
 function firstTwo(data: number[]): [number, number] {
   return [data[0], data[1]];

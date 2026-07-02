@@ -57,6 +57,10 @@ export const useMatchStore = defineStore("match", () => {
 
     const allTeams = await idbGetAll<Team>("teams");
     for (const team of allTeams) {
+      // Range inputs used to store these as strings
+      if (team.defaultPeriodLength) {
+        team.defaultPeriodLength = Number(team.defaultPeriodLength) as PeriodLength;
+      }
       teams.value[team.id] = team;
     }
 
@@ -64,6 +68,9 @@ export const useMatchStore = defineStore("match", () => {
     for (const match of allMatches) {
       if (!match.gameType) match.gameType = "9v9";
       if (!match.extraPeriodLength) match.extraPeriodLength = 10 as ExtraPeriodLength;
+      // Range inputs used to store these as strings
+      if (match.periodLength) match.periodLength = Number(match.periodLength) as PeriodLength;
+      match.extraPeriodLength = Number(match.extraPeriodLength) as ExtraPeriodLength;
       matches.value.push(match);
     }
 

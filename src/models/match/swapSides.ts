@@ -11,4 +11,8 @@ export function swapSides(match: Match) {
   match.awayTeam = homeTeam;
   match.homeLogo = awayLogo;
   match.awayLogo = homeLogo;
+  if (match.penaltyRound) {
+    match.penaltyRound.start = match.penaltyRound.start == "home" ? "away" : "home";
+    match.penaltyRound.events = match.penaltyRound.events.map(([home, away]) => [away, home]);
+  }
 }

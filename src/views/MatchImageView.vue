@@ -46,7 +46,7 @@ const translations = {
 };
 
 const state = reactive({
-  match: getMatch(id) as Match,
+  match: computed(() => getMatch(id) as Match),
   msg: "",
   hidePossession: false,
   hidePasses: false,
@@ -74,6 +74,14 @@ watch(
   () => state.lang,
   () => download(true),
 );
+// The match arrives via async store init and the grass background via fetch;
+// the image can only be generated once both are present
+watch(
+  () => state.match != undefined && state.grass != "",
+  (ready) => {
+    if (ready) requestAnimationFrame(() => download(true));
+  },
+);
 
 function toggleLanguage() {
   state.lang = state.lang === "NO" ? "EN" : "NO";
@@ -95,6 +103,7 @@ function download(restartCounter = false) {
   document.body.scrollTo(0, 0);
   requestAnimationFrame(() => {
     const node = document.querySelector("div.match") as HTMLElement;
+    if (!node) return;
     toPng(node, {
       canvasHeight: 1920,
       canvasWidth: 1080,
@@ -149,13 +158,12 @@ fetch(GrassImage2)
     reader.onload = function () {
       console.log("Data URL created");
       state.grass = reader.result as string;
-      requestAnimationFrame(() => download());
     };
     reader.readAsDataURL(blob);
   });
 </script>
 <template>
-  <main :class="{ home: state.match.homeTeam.includes('Stabæk') }">
+  <main v-if="state.match" :class="{ home: state.match.homeTeam.includes('Stabæk') }">
     <div class="buttonRow">
       <StyledButton @click="state.hidePossession = !state.hidePossession">
         {{ state.hidePossession ? t("showPossession") : t("hidePossession") }}

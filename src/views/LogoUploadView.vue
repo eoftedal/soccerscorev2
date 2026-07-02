@@ -15,8 +15,8 @@ const { teams } = storeToRefs(matchStore);
 
 // Context from route params
 const context = route.params.context as string; // e.g., "match-home", "match-away", "team"
-const matchId = route.params.matchId as string | undefined;
-const teamId = route.params.teamId as string | undefined;
+// The id is a match id for match contexts and a team id for the team context
+const id = route.params.id as string;
 
 // State
 const searchQuery = ref("");
@@ -81,8 +81,8 @@ const uploadLogo = () => {
 
 // Select existing logo
 const selectLogo = (logoId: LogoId) => {
-  if (context === "match-home" && matchId) {
-    const match = matchStore.getMatch(matchId);
+  if (context === "match-home" && id) {
+    const match = matchStore.getMatch(id);
     if (match) {
       // Check if homeLogo is a team reference
       if (match.homeLogo && match.homeLogo.startsWith("team:")) {
@@ -98,8 +98,8 @@ const selectLogo = (logoId: LogoId) => {
         matchStore.saveMatch(match);
       }
     }
-  } else if (context === "match-away" && matchId) {
-    const match = matchStore.getMatch(matchId);
+  } else if (context === "match-away" && id) {
+    const match = matchStore.getMatch(id);
     if (match) {
       // Check if awayLogo is a team reference
       if (match.awayLogo && match.awayLogo.startsWith("team:")) {
@@ -115,8 +115,8 @@ const selectLogo = (logoId: LogoId) => {
         matchStore.saveMatch(match);
       }
     }
-  } else if (context === "team" && teamId) {
-    const team = teams.value[teamId as TeamId];
+  } else if (context === "team" && id) {
+    const team = teams.value[id as TeamId];
     if (team) {
       team.logo = logoId;
       matchStore.saveTeam(team);

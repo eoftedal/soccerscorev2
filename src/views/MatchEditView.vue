@@ -68,6 +68,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  clearInterval(clockInterval);
   if (lockState.value?.released === false) lockState.value?.release();
   lockState.value = undefined;
 });
@@ -112,7 +113,7 @@ if (match) {
 
 const gameClock = ref<number>(Date.now());
 
-setInterval(() => {
+const clockInterval = setInterval(() => {
   if (!openPeriod.value) return;
   gameClock.value = Date.now();
 }, 500);
@@ -257,7 +258,7 @@ function navigateToLogoUpload(side: "home" | "away") {
     name: "logo-upload",
     params: {
       context: `match-${side}`,
-      matchId: match.id,
+      id: match.id,
     },
   });
 }
@@ -390,12 +391,12 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
         <div class="form slider">
           <label>Half time:</label>
           <span>{{ match.periodLength }} min</span>
-          <input type="range" v-model="match.periodLength" min="10" max="45" />
+          <input type="range" v-model.number="match.periodLength" min="10" max="45" />
         </div>
         <div class="form slider">
           <label>Extra time:</label>
           <span>{{ match.extraPeriodLength }} min</span>
-          <input type="range" v-model="match.extraPeriodLength" min="3" max="30" />
+          <input type="range" v-model.number="match.extraPeriodLength" min="3" max="30" />
         </div>
         <div class="form tags">
           <label>Tags:</label>

@@ -86,7 +86,7 @@ const router = createRouter({
       component: MatchImage,
     },
     {
-      path: "/logo-upload/:context/:matchId?/:teamId?",
+      path: "/logo-upload/:context/:id",
       name: "logo-upload",
       component: LogoUpload,
     },
