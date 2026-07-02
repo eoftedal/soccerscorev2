@@ -147,7 +147,7 @@ const awayLogo = computed(() => getLogoUrl(state.match.awayLogo));
 const showLogos = computed(() => homeLogo.value && awayLogo.value);
 
 const imageTitle = computed(() => {
-  return `image.png`;
+  return state.match ? `${state.match.date}_${state.match.homeTeam}_vs_${state.match.awayTeam}.png` : "image.png";
 });
 
 fetch(GrassImage2)
