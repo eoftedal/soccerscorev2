@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import StyledButton from "@/components/StyledButton.vue";
+import InstallHint from "@/components/InstallHint.vue";
 
 const buildDate = import.meta.env.VITE_BUILD_DATE;
 
@@ -33,6 +34,7 @@ function navigateToUnassigned() {
 </script>
 <template>
   <main>
+    <InstallHint />
     <h1>Teams</h1>
     <div class="teams-grid">
       <div
