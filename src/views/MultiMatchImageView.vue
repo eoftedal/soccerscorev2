@@ -7,6 +7,8 @@ import { useLogos } from "@/composables/useLogos";
 import { type Match } from "@/models/types";
 import GrassImage2 from "../assets/grass.avif";
 import { getMatchGoals } from "@/models/match";
+import StyledButton from "@/components/StyledButton.vue";
+import { saveBlob } from "./viewUtils";
 
 const route = useRoute();
 
@@ -27,6 +29,7 @@ const matches = computed(() => {
 });
 
 const dataUrl = ref("");
+const imageBlob = ref<Blob | null>(null);
 const counter = ref(0);
 const matchbg = ref(undefined as undefined | HTMLDivElement);
 
@@ -59,6 +62,11 @@ function download(restartCounter = false) {
         if (data.length < 1400000) return setTimeout(() => download(), 500);
         console.log(data.length, data.length < 1400000);
         dataUrl.value = data;
+        fetch(data)
+          .then((res) => res.blob())
+          .then((blob) => {
+            imageBlob.value = blob;
+          });
       })
       .catch(function (error: Error) {
         console.error("oops, something went wrong!", error);
@@ -82,6 +90,12 @@ const imageTitle = computed(() => {
   return `matches.png`;
 });
 
+function saveImage() {
+  if (!imageBlob.value) return;
+  const date = new Date().toISOString().split("T")[0];
+  saveBlob(imageBlob.value, `matches-${date}.png`);
+}
+
 fetch(GrassImage2)
   .then((response) => response.blob())
   .then((blob) => {
@@ -98,13 +112,15 @@ fetch(GrassImage2)
 <template>
   <main>
     <div class="buttonRow">
-      <a
+      <!--a
         :class="{ linkButton: true, disabled: dataUrl == '' }"
         :href="dataUrl"
         :download="imageTitle"
         type="image/png"
         >Download image</a
-      >
+      -->
+      <StyledButton :disabled="imageBlob == null" @click="saveImage()">Save image</StyledButton>
+      <StyledButton :disabled="imageBlob == null" @click="download(true)">Regenerate</StyledButton>
     </div>
     <div v-if="dataUrl != ''">
       {{ ((dataUrl.length * 3) / 4 / (1024 * 1024)).toFixed(1) }} MB
