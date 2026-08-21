@@ -190,14 +190,14 @@ fetch(GrassImage2)
         {{ state.lang === "NO" ? "EN" : "NO" }}
       </StyledButton>
 
-      <StyledButton v-if="imageBlob" @click="saveImage">{{ t("downloadImage") }} new</StyledButton>
-      <a
+      <StyledButton :disabled="imageBlob == null" @click="saveImage">{{ t("downloadImage") }}</StyledButton>
+      <!--a
         :class="{ linkButton: true, disabled: dataUrl == '' }"
         :href="dataUrl"
         :download="imageTitle"
         type="image/png"
         >{{ t("downloadImage") }}</a
-      >
+      -->
     </div>
     <div v-if="dataUrl != ''">
       {{ ((dataUrl.length * 3) / 4 / (1024 * 1024)).toFixed(1) }} MB
