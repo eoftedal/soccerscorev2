@@ -10,3 +10,6 @@ export const saveBlob = (function () {
     window.URL.revokeObjectURL(url);
   };
 })();
+
+export const sanitizeName = (str: string) =>
+  str.replace(/\s+/g, "-").replace(/[^a-zæøåÆØÅA-Z0-9-_.]/g, "_");

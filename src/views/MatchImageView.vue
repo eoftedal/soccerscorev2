@@ -18,6 +18,7 @@ import {
 } from "@/models/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 import StyledButton from "@/components/StyledButton.vue";
+import { sanitizeName, saveBlob } from "./viewUtils.ts";
 
 const route = useRoute();
 
@@ -56,6 +57,7 @@ const state = reactive({
 
 const t = (key: keyof typeof translations) => translations[key][state.lang];
 const dataUrl = ref("");
+const imageBlob = ref<Blob | null>(null);
 const counter = ref(0);
 
 const matchbg = ref(undefined as undefined | HTMLDivElement);
@@ -115,9 +117,13 @@ function download(restartCounter = false) {
       .then(function (data: string) {
         //if (!blob) return alert("error");
         //saveAs(blob, 'match.png')
-        if (data.length < 1400000) return setTimeout(() => download(), 500);
-        console.log(data.length, data.length < 1400000);
+        if (data.length < 1400000) return setTimeout(() => download(), 1000);
         dataUrl.value = data;
+        fetch(data)
+          .then((res) => res.blob())
+          .then((blob) => {
+            imageBlob.value = blob;
+          });
       })
       .catch(function (error: Error) {
         console.error("oops, something went wrong!", error);
@@ -151,6 +157,13 @@ const imageTitle = computed(() => {
     ? `${state.match.date}_${state.match.homeTeam}_vs_${state.match.awayTeam}.png`
     : "image.png";
 });
+function saveImage() {
+  if (!imageBlob.value) return;
+  saveBlob(
+    imageBlob.value,
+    `match-poster-${state.match.date}-${sanitizeName(state.match.homeTeam || "")}-vs-${sanitizeName(state.match.awayTeam || "")}.png`,
+  );
+}
 
 fetch(GrassImage2)
   .then((response) => response.blob())
@@ -177,6 +190,7 @@ fetch(GrassImage2)
         {{ state.lang === "NO" ? "EN" : "NO" }}
       </StyledButton>
 
+      <StyledButton v-if="imageBlob" @click="saveImage">{{ t("downloadImage") }} new</StyledButton>
       <a
         :class="{ linkButton: true, disabled: dataUrl == '' }"
         :href="dataUrl"

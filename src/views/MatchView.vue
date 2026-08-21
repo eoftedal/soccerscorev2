@@ -5,7 +5,7 @@ import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay";
 import { getMatchAllGoalsWithTiming, getMatchGoalScorers, getPenaltyScore } from "@/models/match";
-import { saveBlob } from "./viewUtils";
+import { sanitizeName, saveBlob } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
 import type { ExportMatch } from "@/models/types";
 import { toPng } from "html-to-image";
@@ -74,7 +74,10 @@ function download() {
 
   const data = JSON.stringify(exportMatch);
   const file = new Blob([data], { type: "application/json" });
-  saveBlob(file, "data.json");
+  saveBlob(
+    file,
+    `match-${match.value?.date}-${sanitizeName(match.value?.homeTeam || "")}-vs-${sanitizeName(match.value?.awayTeam || "")}.json`,
+  );
 }
 const main = ref<HTMLElement | undefined>(undefined);
 
@@ -100,9 +103,7 @@ function convertAndDownload(main: HTMLElement, width: number, height: number) {
       fetch(dataURL)
         .then((res) => res.blob())
         .then((blob) => {
-          const sanitize = (str: string) =>
-            str.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_.]/g, "");
-          const filename = `match-${match.value?.date}-${sanitize(match.value?.homeTeam || "")}-vs-${sanitize(match.value?.awayTeam || "")}.png`;
+          const filename = `match-${match.value?.date}-${sanitizeName(match.value?.homeTeam || "")}-vs-${sanitizeName(match.value?.awayTeam || "")}.png`;
           saveBlob(blob, filename);
           state.matchImageUrl = "";
         });
