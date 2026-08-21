@@ -190,7 +190,9 @@ fetch(GrassImage2)
         {{ state.lang === "NO" ? "EN" : "NO" }}
       </StyledButton>
 
-      <StyledButton :disabled="imageBlob == null" @click="saveImage">{{ t("downloadImage") }}</StyledButton>
+      <StyledButton :disabled="imageBlob == null" @click="saveImage">{{
+        t("downloadImage")
+      }}</StyledButton>
       <!--a
         :class="{ linkButton: true, disabled: dataUrl == '' }"
         :href="dataUrl"
