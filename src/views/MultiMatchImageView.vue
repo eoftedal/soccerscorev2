@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { type Match } from "@/models/types";
 import GrassImage2 from "../assets/grass.avif";
 import { getMatchGoals } from "@/models/match";
 import StyledButton from "@/components/StyledButton.vue";
-import { saveBlob } from "./viewUtils";
+import { saveBlob, toPngWithImages } from "./viewUtils";
 
 const route = useRoute();
 
@@ -50,7 +49,7 @@ function download(restartCounter = false) {
   document.body.scrollTo(0, 0);
   requestAnimationFrame(() => {
     const node = document.querySelector("div.match") as HTMLElement;
-    toPng(node, {
+    toPngWithImages(node, {
       canvasHeight: 1920,
       canvasWidth: 1080,
       height: 1920,
@@ -85,10 +84,6 @@ function getAwayLogo(match: Match) {
 function getScore(match: Match) {
   return getMatchGoals(match, "home") + " - " + getMatchGoals(match, "away");
 }
-
-const imageTitle = computed(() => {
-  return `matches.png`;
-});
 
 function saveImage() {
   if (!imageBlob.value) return;

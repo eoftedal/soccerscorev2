@@ -5,10 +5,9 @@ import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ActivityDisplay from "@/components/ActivityDisplay";
 import { getMatchAllGoalsWithTiming, getMatchGoalScorers, getPenaltyScore } from "@/models/match";
-import { sanitizeName, saveBlob } from "./viewUtils";
+import { sanitizeName, saveBlob, toPngWithImages } from "./viewUtils";
 import { formatScoringTime } from "@/timeUtils";
 import type { ExportMatch } from "@/models/types";
-import { toPng } from "html-to-image";
 import StyledButton from "@/components/StyledButton.vue";
 
 const route = useRoute();
@@ -91,7 +90,7 @@ function downloadImage() {
 }
 
 function convertAndDownload(main: HTMLElement, width: number, height: number) {
-  toPng(main, {
+  toPngWithImages(main, {
     canvasHeight: height,
     canvasWidth: width,
     height: height,

@@ -2,7 +2,6 @@
 import { computed, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import DateView from "../components/DateView.vue";
-import { toPng } from "html-to-image";
 import { useMatchStore } from "@/stores/matches";
 import { useLogos } from "@/composables/useLogos";
 import { type Match } from "@/models/types";
@@ -18,7 +17,7 @@ import {
 } from "@/models/match";
 import { msToTimeString, formatScoringTime } from "@/timeUtils";
 import StyledButton from "@/components/StyledButton.vue";
-import { sanitizeName, saveBlob } from "./viewUtils.ts";
+import { sanitizeName, saveBlob, toPngWithImages } from "./viewUtils.ts";
 
 const route = useRoute();
 
@@ -106,7 +105,7 @@ function download(restartCounter = false) {
   requestAnimationFrame(() => {
     const node = document.querySelector("div.match") as HTMLElement;
     if (!node) return;
-    toPng(node, {
+    toPngWithImages(node, {
       canvasHeight: 1920,
       canvasWidth: 1080,
       height: 1920,
