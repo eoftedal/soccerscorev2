@@ -20,6 +20,7 @@ const id = route.params.id as string;
 
 // State
 const searchQuery = ref("");
+const showUpload = ref(false);
 const uploadName = ref("");
 const selectedFile = ref<File | null>(null);
 const previewUrl = ref<DataUrl>("" as DataUrl);
@@ -32,6 +33,14 @@ const filteredLogos = computed(() => {
   }
   return logoStore.searchLogos(searchQuery.value);
 });
+
+// Reveal the upload form, using the search query as a suggested name
+const startUpload = () => {
+  if (!uploadName.value) {
+    uploadName.value = searchQuery.value.trim();
+  }
+  showUpload.value = true;
+};
 
 // Handle file selection
 const handleFileSelect = (event: Event) => {
@@ -135,10 +144,39 @@ const cancel = () => {
 
 <template>
   <main class="logo-upload">
-    <h2>Select or Upload Logo</h2>
+    <h2>Pick a Logo</h2>
+
+    <!-- Search and Gallery Section -->
+    <section class="gallery-section">
+      <div class="search-box">
+        <input v-model="searchQuery" type="text" placeholder="Search logos..." />
+      </div>
+
+      <div class="logo-grid">
+        <div
+          v-for="logo in filteredLogos"
+          :key="logo.id"
+          class="logo-item"
+          @click="selectLogo(logo.id)"
+        >
+          <img :src="logo.dataUrl" :alt="logo.name" />
+          <span class="logo-name">{{ logo.name }}</span>
+        </div>
+
+        <!-- Shown when the search has no hits or no logos exist yet -->
+        <div
+          v-if="filteredLogos.length === 0"
+          class="logo-item upload-placeholder"
+          @click="startUpload"
+        >
+          <span class="plus">&#x2795;&#xFE0E;</span>
+          <span class="logo-name">Upload new</span>
+        </div>
+      </div>
+    </section>
 
     <!-- Upload Section -->
-    <section class="upload-section">
+    <section v-if="showUpload" class="upload-section">
       <h3>Upload New Logo</h3>
 
       <div class="upload-form">
@@ -173,31 +211,6 @@ const cancel = () => {
       </div>
     </section>
 
-    <!-- Search and Gallery Section -->
-    <section class="gallery-section">
-      <h3>Select Existing Logo</h3>
-
-      <div class="search-box">
-        <input v-model="searchQuery" type="text" placeholder="Search logos..." />
-      </div>
-
-      <div class="logo-grid">
-        <div
-          v-for="logo in filteredLogos"
-          :key="logo.id"
-          class="logo-item"
-          @click="selectLogo(logo.id)"
-        >
-          <img :src="logo.dataUrl" :alt="logo.name" />
-          <span class="logo-name">{{ logo.name }}</span>
-        </div>
-      </div>
-
-      <div v-if="filteredLogos.length === 0" class="no-results">
-        No logos found. Upload a new one above.
-      </div>
-    </section>
-
     <div class="actions">
       <StyledButton @click="cancel" class="btn-cancel">Cancel</StyledButton>
     </div>
@@ -220,8 +233,11 @@ h3 {
   font-size: 1.2em;
 }
 
-.upload-section,
 .gallery-section {
+  margin-bottom: 2em;
+}
+
+.upload-section {
   margin-bottom: 2em;
   padding: 1em;
   border: 1px solid #ccc;
@@ -342,10 +358,21 @@ h3 {
   word-break: break-word;
 }
 
-.no-results {
-  text-align: center;
-  padding: 2em;
-  color: #666;
+.upload-placeholder {
+  justify-content: center;
+  border-style: dashed;
+}
+
+.upload-placeholder .plus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  font-size: 2.5em;
+  font-variant-emoji: text;
+  color: transparent;
+  text-shadow: 0 0 0 var(--color-text);
 }
 
 .actions {
