@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import HeaderColumn from "@/components/ActivityDisplay/HeaderColumn.vue";
 import MatchColumn from "@/components/ActivityDisplay/MatchColumn.vue";
+import {
+  matchMetrics,
+  type MatchMetric,
+  type MetricTrend,
+} from "@/components/ActivityDisplay/matchMetrics";
 import type { Match, TeamId } from "@/models/types";
 import { useMatchStore } from "@/stores/matches";
 import { levenshteinDistance } from "@/stringutils";
@@ -57,6 +62,58 @@ const sorted = computed(() => {
       return { ...m, isHomeMatch: isHomeMatch(m) };
     });
 });
+
+// true = a higher value than the previous match is an improvement for the team.
+const positiveIsGood: Record<MatchMetric, boolean> = {
+  goals: true,
+  shots: true,
+  shotAccuracy: true,
+  corners: true,
+  offsides: false,
+  freekicks: true,
+  penalties: true,
+  possession: true,
+  possessionTime: true,
+  recoveryTime: false,
+  touches: true,
+  passAccuracy: true,
+  passes: true,
+  passStrings3: true,
+  passStrings5: true,
+  passStrings7: true,
+  longestPassString: true,
+  averagePassString: true,
+  yellowCards: false,
+  redCards: false,
+};
+
+// This team's value for every metric, per match (same order as `sorted`)
+const teamValues = computed(() =>
+  sorted.value.map((m) => {
+    const side = m.isHomeMatch ? 0 : 1;
+    const values = {} as Record<MatchMetric, number>;
+    for (const metric of matchMetrics) values[metric.key] = metric.values(m)[side];
+    return values;
+  }),
+);
+
+// Change per metric compared to the previous match in the displayed list (the column to the right)
+const trends = computed(() =>
+  sorted.value.map((m, i) => {
+    const trend: Partial<Record<MatchMetric, MetricTrend>> = {};
+    const previous = teamValues.value[i + 1];
+    if (!previous) return trend;
+    const current = teamValues.value[i];
+    const team = m.isHomeMatch ? "home" : "away";
+    for (const metric of matchMetrics) {
+      const diff = current[metric.key] - previous[metric.key];
+      if (diff == 0) continue;
+      const improved = diff > 0 == positiveIsGood[metric.key];
+      trend[metric.key] = { team, change: improved ? "better" : "worse" };
+    }
+    return trend;
+  }),
+);
 </script>
 <template>
   <div :class="{ main: true, singleColumn: state.showSingle, doubleColumn: !state.showSingle }">
@@ -82,8 +139,9 @@ const sorted = computed(() => {
         </template>
       </HeaderColumn>
       <MatchColumn
-        v-for="m in sorted.slice(0, 10)"
+        v-for="(m, i) in sorted.slice(0, 10)"
         :match="m"
+        :trend="trends[i]"
         :key="m.id"
         :class="{ home: m.isHomeMatch, away: !m.isHomeMatch }"
       >

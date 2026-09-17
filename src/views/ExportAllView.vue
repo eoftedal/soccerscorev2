@@ -10,6 +10,7 @@ const store = useMatchStore();
 const logoStore = useLogoStore();
 
 const file = ref<File | null>(null);
+const isReadingFile = ref<boolean>(false);
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -24,12 +25,14 @@ const matches = ref<Match[]>([]);
 const logos = ref<Logo[]>([]);
 
 const readJsonFile = (file: File) => {
+  isReadingFile.value = true;
   const reader = new FileReader();
   teams.value = [];
   matches.value = [];
   logos.value = [];
 
   reader.onload = (e) => {
+    isReadingFile.value = false;
     try {
       const data = JSON.parse(e.target?.result as string) as {
         teams: Team[];
@@ -71,13 +74,14 @@ function download() {
     <div>
       <input type="file" @change="handleFileUpload" accept="application/json" />
 
-      <div v-if="file">
+      <div v-if="file && !isReadingFile">
         <div>Teams: {{ teams.length }}</div>
         <div>Matches: {{ matches.length }}</div>
         <div>Logos: {{ logos.length }}</div>
 
         <StyledButton @click="importAll()">Import</StyledButton>
       </div>
+      <div v-else-if="isReadingFile">Reading file...</div>
     </div>
     <h2>Export matches</h2>
 

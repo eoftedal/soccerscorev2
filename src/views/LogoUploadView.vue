@@ -165,7 +165,6 @@ const cancel = () => {
 
         <!-- Shown when the search has no hits or no logos exist yet -->
         <div
-          v-if="filteredLogos.length === 0"
           class="logo-item upload-placeholder"
           @click="startUpload"
         >
