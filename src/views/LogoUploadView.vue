@@ -164,10 +164,7 @@ const cancel = () => {
         </div>
 
         <!-- Shown when the search has no hits or no logos exist yet -->
-        <div
-          class="logo-item upload-placeholder"
-          @click="startUpload"
-        >
+        <div class="logo-item upload-placeholder" @click="startUpload">
           <span class="plus">&#x2795;&#xFE0E;</span>
           <span class="logo-name">Upload new</span>
         </div>
