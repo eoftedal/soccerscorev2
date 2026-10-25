@@ -12,7 +12,7 @@ import {
   type Timestamp,
   gameTypes,
 } from "../models/types";
-import { getPeriodGoalEvents, getMatchGoals, swapSides } from "../models/match";
+import { getMatchGoals, getPeriodGoalEvents, swapSides } from "../models/match";
 import ActivityDisplay from "@/components/ActivityDisplay";
 import ModalDialog from "../components/ModalDialog.vue";
 import TagList from "@/components/TagList.vue";
@@ -21,6 +21,8 @@ import PeriodPane from "../components/PeriodPane";
 import PenaltyRound from "../components/PenaltyRound.vue";
 import { getMatchGoalEvents } from "@/models/match/getMatchGoalEvents";
 import StyledButton from "@/components/StyledButton.vue";
+import { getMatchCardEvents } from "@/models/match/getMatchCardEvents.ts";
+import { getPeriodCardEvents } from "@/models/match/getPeriodCardEvents.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -205,14 +207,28 @@ function confirmEnd() {
   confirmModal.value?.open();
 }
 
-const goalEvents = computed(() => {
-  if (!openPeriod.value) return [];
-  return getPeriodGoalEvents(openPeriod.value);
+const bigEventsMatch = computed(() => {
+  if (!match?.periods?.length) return [];
+  const events = [
+    ...getMatchGoalEvents(match).map(
+      (e) =>
+        [...e, "goal"] as [[Timestamp, GoalScorer, Assister?], "home" | "away", Period, "goal"],
+    ),
+    ...getMatchCardEvents(match),
+  ].sort((a, b) => a[0][0] - b[0][0]);
+  return events;
 });
 
-const goalEventsMatch = computed(() => {
-  if (!match?.periods?.length) return [];
-  return getMatchGoalEvents(match);
+const bigEventsPeriod = computed(() => {
+  if (!openPeriod.value) return [];
+  const events = [
+    ...getPeriodGoalEvents(openPeriod.value).map(
+      (e) =>
+        [...e, "goal"] as [[Timestamp, GoalScorer, Assister?], "home" | "away", Period, "goal"],
+    ),
+    ...getPeriodCardEvents(openPeriod.value),
+  ].sort((a, b) => a[0][0] - b[0][0]);
+  return events;
 });
 
 function changeName(e: [number, GoalScorer, Assister?]) {
@@ -236,6 +252,26 @@ function swapGoalSide(e: [Timestamp, GoalScorer], side: "home" | "away", period:
     if (ix == undefined || ix == -1) return;
     period[side].goals.splice(ix, 1);
     period[side == "home" ? "away" : "home"].goals.push(e);
+  };
+  confirmModal.value?.open();
+}
+
+function swapCardSide(e: [Timestamp, "yellow" | "red"], side: "home" | "away", period: Period) {
+  const team: "homeTeam" | "awayTeam" = side == "home" ? "awayTeam" : "homeTeam";
+  state.confirm.title = "Move card to " + match?.[team] + " ?";
+  state.confirm.onOk = () => {
+    const ts = e[0];
+    if (e[1] == "yellow") {
+      const ix = period[side].yellowCards.findIndex((c) => c == ts);
+      if (ix == -1) return;
+      period[side].yellowCards.splice(ix, 1);
+      period[side == "home" ? "away" : "home"].yellowCards.push(ts);
+    } else {
+      const ix = period[side].redCards.findIndex((c) => c == ts);
+      if (ix == -1) return;
+      period[side].redCards.splice(ix, 1);
+      period[side == "home" ? "away" : "home"].redCards.push(ts);
+    }
   };
   confirmModal.value?.open();
 }
@@ -418,30 +454,59 @@ const confirmModal = ref<InstanceType<typeof ModalDialog> | null>(null);
           <ActivityDisplay :match="match" v-if="match.periods.length > 0" />
         </div>
       </div>
-      <div class="goalEvents">
-        <h2>Goals:</h2>
-        <div v-for="(e, i) of goalEventsMatch" v-bind:key="i" :class="e[1]">
+
+      <div class="events">
+        <h2>Events:</h2>
+        <div v-for="(e, i) of bigEventsMatch" v-bind:key="i" :class="e[1]">
+          <template v-if="e[3] === 'card'">
+            <span class="card">
+              <span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
+              <span :class="e[0][1]"></span>
+            </span>
+            <StyledButton
+              @click.prevent="swapCardSide(e[0] as [Timestamp, 'yellow' | 'red'], e[1], e[2])"
+            >
+              Switch team
+            </StyledButton>
+          </template>
+          <template v-if="e[3] === 'goal'">
+            <span @click="changeName(e[0])"
+              ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
+              {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
+            >
+            <StyledButton
+              @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])"
+            >
+              Switch team
+            </StyledButton>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="events" v-if="openPeriod">
+      <h2>Events:</h2>
+      <div v-for="(e, i) of bigEventsPeriod" v-bind:key="i" :class="e[1]">
+        <template v-if="e[3] === 'card'">
+          <span class="card">
+            <span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
+            <span :class="e[0][1]"></span>
+          </span>
+          <StyledButton
+            @click.prevent="swapCardSide(e[0] as [Timestamp, 'yellow' | 'red'], e[1], e[2])"
+          >
+            Switch team
+          </StyledButton>
+        </template>
+        <template v-if="e[3] === 'goal'">
           <span @click="changeName(e[0])"
-            ><span class="time">{{ Math.ceil((e[0][0] - e[2].start) / 60000) }}'</span>
+            ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
             {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
           >
           <StyledButton @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
             Switch team
           </StyledButton>
-        </div>
-      </div>
-    </div>
-
-    <div class="goalEvents" v-if="openPeriod">
-      <h2>Goals:</h2>
-      <div v-for="(e, i) of goalEvents" v-bind:key="i" :class="e[1]">
-        <span @click="changeName(e[0])"
-          ><span class="time">{{ Math.ceil((e[0][0] - openPeriod.start) / 60000) }}'</span>
-          {{ e[0][1] }} {{ e[0][2] ? `(${e[0][2]})` : "" }}</span
-        >
-        <StyledButton @click.prevent="swapGoalSide(e[0] as [Timestamp, GoalScorer], e[1], e[2])">
-          Switch team
-        </StyledButton>
+        </template>
       </div>
     </div>
   </div>
@@ -490,22 +555,34 @@ h1.middle {
   display: flex;
   flex-direction: column;
 }
-.goalEvents h2 {
+.events h2 {
   text-align: center;
   font-size: 100%;
   border-bottom: 1px solid var(--color-border);
 }
-.goalEvents {
+.events {
   padding: 0.5em;
   padding-bottom: 2em;
 }
-.goalEvents div {
+.events div {
   display: flex;
   justify-content: space-between;
 }
-.goalEvents div.away {
+.events div.away {
   flex-direction: row-reverse;
 }
+.events div .time {
+  margin-right: 0.25em;
+}
+.events div.away .time {
+  margin-right: 0em;
+  margin-left: 0.5em;
+}
+.events div.away span {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
 .match header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -758,5 +835,21 @@ header h1 {
   display: flow-root;
   word-break: break-word;
   word-wrap: break-word;
+}
+
+.card .yellow {
+  margin-top: 0.4em;
+  height: 0.8em;
+  width: 0.5em;
+  background: rgb(220, 220, 0);
+  display: inline-block;
+}
+
+.card .red {
+  margin-top: 0.4em;
+  height: 0.8em;
+  width: 0.5em;
+  background: red;
+  display: inline-block;
 }
 </style>
